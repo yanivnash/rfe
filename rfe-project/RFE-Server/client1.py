@@ -1,6 +1,6 @@
 
 """
-this program is the  client
+this program is the  clien
 """
 
 import socket
