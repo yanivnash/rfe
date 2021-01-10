@@ -12,10 +12,12 @@ from termcolor import colored
 MSG_LEN = 2048
 PORT = 5050
 FORMAT = 'utf-8'
-SERVER = socket.gethostbyname(socket.gethostname())
+# SERVER = socket.gethostbyname(socket.gethostname())
+SERVER = '0.0.0.0'
 
 
 def manage_client_db(conn, addr):
+    global answr
     with sqlite3.connect('RFE.db') as db:
         cursor = db.cursor()
 
@@ -38,7 +40,6 @@ def manage_client_db(conn, addr):
 
     print(colored(f"\n{datetime.datetime.now()}", "blue"))
     print(colored(f"[CONNECTED] {addr[0]}", "green"))
-    # answr = None
     msg = conn.recv(MSG_LEN).decode(FORMAT)
     msg = json.loads(msg)
     action = msg["action"]
