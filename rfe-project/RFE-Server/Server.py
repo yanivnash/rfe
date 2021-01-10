@@ -5,15 +5,26 @@ A server that can receive multiple requests from multiple clients at the same ti
 import socket
 import threading
 import sqlite3
+from PIL import ImageTk, Image
 import json
 import datetime
 from termcolor import colored
+import os
 
 MSG_LEN = 2048
 PORT = 5050
 FORMAT = 'utf-8'
 # SERVER = socket.gethostbyname(socket.gethostname())
 SERVER = '0.0.0.0'
+ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def create_icons_dict():
+    global icons_dict
+    icons_dict = dict()
+    icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
+    for icon in icons_list:
+        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
 
 
 def manage_client_db(conn, addr):
@@ -27,13 +38,6 @@ def manage_client_db(conn, addr):
         password TEXT NOT NULL,
         ip_dict dictionary NOT NULL);
         """)
-
-    # maybe delete and just store the pictures on the local server
-    # cursor.execute("""
-    # CREATE TABLE IF NOT EXISTS assets(
-    # pic_name VARCHAR(max) PRIMARY KEY NOT NULL,
-    # pic VARCHAR(max) NOT NULL);
-    # """)
 
     sqlite3.register_adapter(dict, lambda d: json.dumps(d).encode('utf-8'))
     sqlite3.register_converter("dictionary", lambda d: json.loads(d.decode('utf-8')))
@@ -108,7 +112,7 @@ def manage_client_db(conn, addr):
         new_password = msg["new_password"]
         update_password = "UPDATE users SET password = ? WHERE email = ? AND password = ?"
         cursor.execute(update_password, [(new_password.encode(FORMAT)), (email.lower().encode(FORMAT)), (password.encode(FORMAT))])
-        find_user = ("SELECT password FROM users WHERE email = ?")
+        find_user = "SELECT password FROM users WHERE email = ?"
         cursor.execute(find_user, [(email.lower().encode(FORMAT))])
         answr = cursor.fetchall()[0][0].decode(FORMAT)
         if answr:
@@ -119,8 +123,8 @@ def manage_client_db(conn, addr):
         else:
             answr = False
 
-    elif action == "GET_ICON":
-        pass
+    elif action == "GET_ICONS":
+        answr = icons_dict
 
     else:
         answr = None

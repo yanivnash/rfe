@@ -1,11 +1,11 @@
 import tkinter
 from tkinter import messagebox, ttk
-import wx
+# import wx
 import re
 from PIL import ImageTk, Image
 import os  # DELETE
 import socket
-import manageDB
+import manageSERVER
 
 
 # def check_if_password_matches():
@@ -13,10 +13,10 @@ import manageDB
 
 
 
-app = wx.App(False)
-screen_width, screen_height = wx.GetDisplaySize()
-x = int(screen_width/2 - 1200/2)
-y = int(screen_height/2 - 700/2)
+# app = wx.App(False)
+# screen_width, screen_height = wx.GetDisplaySize()
+# x = int(screen_width/2 - 1200/2)
+# y = int(screen_height/2 - 700/2)
 
 def email_regex(email):
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
@@ -41,10 +41,10 @@ def start_login_window(root):
                     email_error_title.place(x=55, y=110, width=500)
                 if enter_password.get() == '':
                     pass_error_title.place(x=55, y=215, width=500)
-            if manageDB.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
+            if manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
                 email_error_title.configure(text="This email address doesn't have an account")
                 email_error_title.place(x=55, y=110, width=500)
-            if manageDB.login(enter_email.get(), enter_password.get(), check_var.get()):  # check if password doesn't match the email
+            if manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()):  # check if password doesn't match the email
                 pass  # add label under the login button that says that the email or password are incorrect
                 break
             if root == '':  # email exists and the password matches
@@ -277,13 +277,13 @@ def main(ROOT_PROJ_DIR):
     global root, show_icon, hide_icon
     root = tkinter.Tk()
     root.protocol("WM_DELETE_WINDOW", close_window)
-    root.geometry(f'1070x700+{x}+{y}')
+    root.geometry(f'1070x700')#+{x}+{y}')
     root.iconbitmap('icon.ico')
     root.resizable(False, False)
     bg = tkinter.PhotoImage(file='background.png')
     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\show.png'))
-    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\hide.png'))
+    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
+    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
     form = start_login_window(root)
     # print(form)
     # while form == 'forgot' or form == 'login' or form == 'register':

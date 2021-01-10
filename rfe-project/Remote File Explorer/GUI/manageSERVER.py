@@ -2,7 +2,8 @@ import socket
 import json
 import os
 
-SERVER_IP = '192.168.56.1'
+# SERVER_IP = '192.168.56.1'
+SERVER_IP = '84.111.109.58'
 PORT = 5050
 FORMAT = 'utf-8'
 MSG_LEN = 2048
@@ -46,15 +47,19 @@ def change_password(email, password, new_password):
     send_object = json.dumps({'action': 'CHANGE_PASSWORD', 'email': email, 'password': password, 'new_password': new_password}).encode(FORMAT)
     return send_to_server(send_object)  # True =  password changed | False = password didn't change
 
+def get_icons_dict():
+    send_object = json.dumps({'action': 'GET_ICONS'})
+    return send_to_server(send_object)  # True =  password changed | False = password didn't change
+
 
 # DELETE
-# if __name__ == '__main__':
-#     print(create_new_user('yanivnash@gmail.com', '123456789', {'mypc': '192.168.1.20', 'router': '192.168.1.1'}))
-#     print(create_new_user('yaniv/@gmail.com', 'test', {'router': '192.168.1.1'}))
-#     print(check_if_email_exists('yanivnash@gmail.com'))
-#     print(check_if_email_exists('yaniv/@gmail.com'))
-#     print(check_if_email_exists('yaniv@gmail.com'))
-#     print(check_if_email_exists('Yaniv@gmail.com'))
+if __name__ == '__main__':
+    print(create_new_user('yanivnash@gmail.com', '123456789', {'mypc': '192.168.1.20', 'router': '192.168.1.1'}))
+    print(create_new_user('yaniv/@gmail.com', 'test', {'router': '192.168.1.1'}))
+    print(check_if_email_exists('yanivnash@gmail.com'))
+    print(check_if_email_exists('yaniv/@gmail.com'))
+    print(check_if_email_exists('yaniv@gmail.com'))
+    print(check_if_email_exists('Yaniv@gmail.com'))
 #     update_pc_in_account('yanivnash@gmail.com')
 #     print(login('yaniv/@gmail.com', 'test', False))
 #     print(login('yanivnash@gmail.com', 'test', True))
