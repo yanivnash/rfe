@@ -143,6 +143,7 @@ def manage_client_db(conn, addr):
 
 
 def start_server():
+    create_icons_dict()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER, PORT))
     print(colored("[STARTING] Server is up", "yellow"))
