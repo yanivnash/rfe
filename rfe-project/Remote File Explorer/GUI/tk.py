@@ -1,6 +1,6 @@
 import manageSSH  # the file with funcs that connect to the ssh
-# import LoginRegister
-import manageSERVER
+import LoginRegister
+# import manageSERVER
 import tkinter
 from tkinter import ttk
 import os
@@ -25,10 +25,10 @@ ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 # cur_path = r'D:\Program Files\obs-studio\screen records'
 cur_path = r'C:\Users\yaniv\Desktop\Remote File Explorer'
 
-# def get_icons_dict():
-#     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
-#     for icon in icons_list:
-#         icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))#.resize((61, 50),Image.ANTIALIAS))
+def get_icons_dict():
+    icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
+    for icon in icons_list:
+        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))#.resize((61, 50),Image.ANTIALIAS))
 
 # def sort_files_list(items_list):
 #     i = 0
@@ -338,9 +338,8 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 if __name__ == '__main__':
     global frame, ssh, sftp
 
-    # email = LoginRegister.main(ROOT_PROJ_DIR)
-    # print(email)  # DELETE
-    email = 'DELETE'
+    email = LoginRegister.main(ROOT_PROJ_DIR)
+    print(email)  # DELETE
     if email != None:
         root = tkinter.Tk()
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -367,7 +366,8 @@ if __name__ == '__main__':
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         # items_list = ['new', 'parallels crack', '20200111_162640.jpg', 'apple watch.txt', 'iphone 12 pro.png', 'iphone.txt', 'macbook.txt', 'macos crack.txt']
-        icons_dict = manageSERVER.get_icons_dict()
+        icons_dict = get_icons_dict()
+        # icons_dict = manageSERVER.get_icons_dict()
         create_frame(items_list)
         # items_list = sort_files_list(items_list)
         create_bttn(frame)

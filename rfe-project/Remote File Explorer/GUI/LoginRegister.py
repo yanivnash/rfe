@@ -8,10 +8,6 @@ import socket
 import manageSERVER
 
 
-
-
-
-
 app = wx.App(False)
 screen_width, screen_height = wx.GetDisplaySize()
 x = int(screen_width/2 - 1200/2)
@@ -27,6 +23,11 @@ def email_regex(email):
 def start_login_window(root):
     global email
     email = None
+
+    def return_button(event):
+        login_button.invoke()
+    root.bind('<Return>', return_button)
+
     root.title('Remote File Explorer - Login')
     def submit():
         global email
@@ -40,17 +41,18 @@ def start_login_window(root):
                     email_error_title.place(x=55, y=110, width=500)
                 if enter_password.get() == '':
                     pass_error_title.place(x=55, y=215, width=500)
-            if manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
+                break
+            elif manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
                 email_error_title.configure(text="This email address doesn't have an account")
                 email_error_title.place(x=55, y=110, width=500)
-            if manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()):  # check if password doesn't match the email
-                pass  # add label under the login button that says that the email or password are incorrect
                 break
-            if root == '':  # email exists and the password matches
+            elif manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()) == False:  # check if password doesn't match the email
+                pass_error_title.configure(text='Email or Password are incorrect, Try again')
+                pass_error_title.place(x=55, y=215, width=500)
+                break
+            else:  # email exists and the password matches
                 email = enter_email.get()
                 root.destroy()
-                break
-            else:
                 break
 
     def forgot_pass():
@@ -119,9 +121,12 @@ def start_login_window(root):
 def start_register_window(root):
     global email
     email = None
+
+    def return_button(event):
+        register_button.invoke()
+    root.bind('<Return>', return_button)
+
     root.title('Remote File Explorer - Register')
-    ip = socket.gethostbyname(socket.gethostname())
-    pc_username = os.getlogin()
     def submit():
         global email
         email_error_title.place_forget()
@@ -140,20 +145,21 @@ def start_register_window(root):
                 if not email_regex(enter_email.get()) and enter_email.get() != '':  # check if email is invalid
                     email_error_title.configure(text='Please enter a valid email address')
                     email_error_title.place(x=55, y=85, width=500)
-            if root == '':  # check if email exists already
-                email_error_title.configure(text='This email address already has an account')
-                email_error_title.place(x=55, y=85, width=500)
-            if enter_password.get() != re_enter_password.get():  # check if the two passwords aren't the same
+                break
+            elif enter_password.get() != re_enter_password.get():  # check if the two passwords aren't the same
                 re_pass_error_title.configure(text="The passwords don't match")
                 re_pass_error_title.place(x=55, y=275, width=500)
                 break
-            if enter_email.get() == 'yanivnash@gmail.com':  # email email doesn't exist and the passwords are the same
-                email = enter_email.get()
-                password = enter_password.get()
-                ip_list = f'"(""{pc_username}"":""{ip}"")"'
-                root.destroy()
+            elif manageSERVER.check_if_email_exists(enter_email.get()):  # check if email exists already
+                email_error_title.configure(text='This email address already has an account')
+                email_error_title.place(x=55, y=85, width=500)
                 break
             else:
+                email = enter_email.get()
+                password = enter_password.get()
+                ip_dict = dict()  # maybe add a tic box as well
+                manageSERVER.create_new_user(email, password, ip_dict)
+                root.destroy()
                 break
 
     def login():
@@ -222,22 +228,30 @@ def start_register_window(root):
 def start_forgot_window(root):
     global email
     email = None
+
+    def return_button(event):
+        send_email_button.invoke()
+    root.bind('<Return>', return_button)
+
     root.title('Remote File Explorer - Reset Password')
     def submit():
         global email
         email_error_title.place_forget()
         while True:
             if enter_email.get() == '':
-                email_error_title.configure(text='Please enter your email')
+                email_error_title.configure(text='Please enter your email', fg='red')
                 email_error_title.place(x=55, y=205, width=500)
-            if root == '':  # check if email doesn't exist
-                email_error_title.configure(text="This email address doesn't have an account")
                 break
-            if root == '':  # email exists
+            if manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist
+                email_error_title.configure(text="This email address doesn't have an account", fg='red')
+                email_error_title.place(x=55, y=205, width=500)
+                break
+            else:  # email exists
                 email = enter_email.get()
-                root.destroy()
-                break
-            else:
+                email_error_title.configure(text='Email Sent! Check your inbox', fg='green')
+                email_error_title.place(x=55, y=205, width=500)
+                # send reset email
+                # root.destroy()
                 break
 
     def login():
@@ -262,8 +276,8 @@ def start_forgot_window(root):
     send_email = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', 15), fg='gray20', bg='#d9dcc7', command=submit)
     send_email.place(x=235, y=270, width=140, height=35)
 
-    login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg='#d9dcc7', command=login)
-    login_button.place(x=227, y=350)
+    send_email_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg='#d9dcc7', command=login)
+    send_email_button.place(x=228, y=350)
     root.mainloop()
     return email
 
