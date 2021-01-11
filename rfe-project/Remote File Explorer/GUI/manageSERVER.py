@@ -28,9 +28,9 @@ def check_if_email_exists(email):
     return send_to_server(send_object)  # True =  email exists | False = email doesn't exist
 
 def update_pc_in_account(email):  # name_ip_tup = ('pc_username', 'pc_ip')
-    pc_name = os.getlogin()
     pc_ip = socket.gethostbyname(socket.gethostname())
-    name_ip_tup = (pc_name, pc_ip)
+    pc_name = os.getlogin()
+    name_ip_tup = (pc_ip, pc_name)
     send_object = json.dumps({'action': 'UPDATE_PC', 'email': email, 'name_ip_tup': name_ip_tup}).encode(FORMAT)
     send_to_server(send_object)  # maybe delete this note and not return anything
     # True =  pc was in account / pc wasn't in account and now is | False = pc wasn't in account but adding hit an error
