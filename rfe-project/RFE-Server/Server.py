@@ -5,6 +5,8 @@ A server that can receive multiple requests from multiple clients at the same ti
 import socket
 import threading
 import sqlite3
+import tkinter
+
 from PIL import ImageTk, Image
 import json
 import datetime
@@ -22,9 +24,11 @@ ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 def create_icons_dict():
     global icons_dict
     icons_dict = dict()
-    icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
+    # icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
+    icons_list = os.listdir(f'{ROOT_PROJ_DIR}/icons')
     for icon in icons_list:
-        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
+        # icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
+        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/icons/{icon}'))
 
 
 def manage_client_db(conn, addr):
@@ -94,7 +98,6 @@ def manage_client_db(conn, addr):
         else:
             answr = False
 
-
     elif action == "LOGIN":
         email = msg["email"]
         password = msg["password"]
@@ -143,7 +146,9 @@ def manage_client_db(conn, addr):
 
 
 def start_server():
+    temp_root = tkinter.Tk()
     create_icons_dict()
+    temp_root.destroy()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER, PORT))
     print(colored("[STARTING] Server is up", "yellow"))
