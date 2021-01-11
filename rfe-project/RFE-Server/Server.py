@@ -22,14 +22,12 @@ SERVER = '0.0.0.0'
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def create_icons_dict():
-    global icons_dict
-    icons_dict = dict()
-    # icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
-    icons_list = os.listdir(f'{ROOT_PROJ_DIR}/icons')
-    for icon in icons_list:
-        # icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
-        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/icons/{icon}'))
+# def create_icons_dict():
+#     global icons_dict
+#     icons_dict = dict()
+#     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
+#     for icon in icons_list:
+#         icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
 
 
 def manage_client_db(conn, addr):
@@ -81,18 +79,19 @@ def manage_client_db(conn, addr):
 
     elif action == "UPDATE_PC":
         email = msg["email"]
-        pc_name = msg["name_ip_tup"][0]
-        pc_ip = msg["name_ip_tup"][1]
+        pc_ip = msg["name_ip_tup"][0]
+        pc_name = msg["name_ip_tup"][1]
+
         find_user = ("SELECT ip_dict FROM users WHERE email = ?")
         cursor.execute(find_user, [(email.lower().encode(FORMAT))])
         answr = cursor.fetchall()
         if answr:
             ip_dict = json.loads(answr[0][0])
-            dict_values = []
-            for _, value in ip_dict.items():
-                dict_values.append(value)
-            if not pc_ip in dict_values:
-                ip_dict[pc_name] = pc_ip
+            # dict_values = []
+            # for key in ip_dict.keys():
+            #     dict_values.append(key)
+            if not pc_ip in ip_dict.keys():# dict_values:
+                ip_dict[pc_ip] = pc_name
                 update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ?"
                 cursor.execute(update_ip_dict, [(ip_dict), (email.lower().encode(FORMAT))])
             answr = ip_dict
@@ -127,8 +126,8 @@ def manage_client_db(conn, addr):
         else:
             answr = False
 
-    elif action == "GET_ICONS":
-        answr = icons_dict
+    # elif action == "GET_ICONS":
+    #     answr = icons_dict
 
     else:
         answr = None
@@ -147,14 +146,13 @@ def manage_client_db(conn, addr):
 
 
 def start_server():
-    temp_root = tkinter.Tk()
-    create_icons_dict()
-    temp_root.destroy()
+    # temp_root = tkinter.Tk()
+    # create_icons_dict()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.bind((SERVER, PORT))
     print(colored("[STARTING] Server is up", "yellow"))
     server.listen()
-    print(colored(f"[LISTENING] Server is listening - {SERVER}:{PORT}", "yellow"))
+    print(colored(f"[LISTENING] Server is listening - 84.111.109.58:{PORT}", "yellow"))
     while True:
         conn, addr = server.accept()
         thread = threading.Thread(target=manage_client_db, args=(conn, addr))

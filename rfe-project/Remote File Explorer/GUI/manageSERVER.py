@@ -27,10 +27,10 @@ def check_if_email_exists(email):
     send_object = json.dumps({'action': 'CHECK_EMAIL', 'email': email}).encode(FORMAT)
     return send_to_server(send_object)  # True =  email exists | False = email doesn't exist
 
-def update_pc_in_account(email):
-    pc_ip = socket.gethostbyname(socket.gethostname())
+def update_pc_in_account(email):  # name_ip_tup = ('pc_username', 'pc_ip')
     pc_name = os.getlogin()
-    name_ip_tup = (pc_ip, pc_name)
+    pc_ip = socket.gethostbyname(socket.gethostname())
+    name_ip_tup = (pc_name, pc_ip)
     send_object = json.dumps({'action': 'UPDATE_PC', 'email': email, 'name_ip_tup': name_ip_tup}).encode(FORMAT)
     send_to_server(send_object)  # maybe delete this note and not return anything
     # True =  pc was in account / pc wasn't in account and now is | False = pc wasn't in account but adding hit an error
@@ -48,24 +48,25 @@ def change_password(email, password, new_password):
     return send_to_server(send_object)  # True =  password changed | False = password didn't change
 
 def get_icons_dict():
-    send_object = json.dumps({'action': 'GET_ICONS'}).encode(FORMAT)
+    send_object = json.dumps({'action': 'GET_ICONS'})
     return send_to_server(send_object)  # True =  password changed | False = password didn't change
 
 
 # DELETE
 if __name__ == '__main__':
-    print(create_new_user('yanivnash@gmail.com', '123456789', {'192.168.1.20': 'mypc', '192.168.1.1': 'router'}))
-    print(create_new_user('yaniv/@gmail.com', 'test', {'192.168.1.1': 'router'}))
-    print(check_if_email_exists('yanivnash@gmail.com'))
-    print(check_if_email_exists('yaniv/@gmail.com'))
-    print(check_if_email_exists('yaniv@gmail.com'))
-    print(check_if_email_exists('Yaniv@gmail.com'))
-    update_pc_in_account('yanivnash@gmail.com')
-    print(login('yaniv/@gmail.com', 'test', False))
-    print(login('yanivnash@gmail.com', 'test', True))
-    print(login('yanivnash@gmail.com', '123456789', True))
-    print(change_password('yaniv/@gmail.com', 'test1', 'new_pass'))
-    print(change_password('yaniv/@gmail.com', 'test', 'new_pass'))
+    print(get_icons_dict())
+    # print(create_new_user('yanivnash@gmail.com', '123456789', {'mypc': '192.168.1.20', 'router': '192.168.1.1'}))
+    # print(create_new_user('yaniv/@gmail.com', 'test', {'router': '192.168.1.1'}))
+    # print(check_if_email_exists('yanivnash@gmail.com'))
+    # print(check_if_email_exists('yaniv/@gmail.com'))
+    # print(check_if_email_exists('yaniv@gmail.com'))
+    # print(check_if_email_exists('Yaniv@gmail.com'))
+    # update_pc_in_account('yanivnash@gmail.com')
+    # print(login('yaniv/@gmail.com', 'test', False))
+    # print(login('yanivnash@gmail.com', 'test', True))
+    # print(login('yanivnash@gmail.com', '123456789', True))
+    # print(change_password('yaniv/@gmail.com', 'test1', 'new_pass'))
+    # print(change_password('yaniv/@gmail.com', 'test', 'new_pass'))
 
 
 
