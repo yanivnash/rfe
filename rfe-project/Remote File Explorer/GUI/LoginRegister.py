@@ -1,6 +1,6 @@
 import tkinter
 from tkinter import messagebox, ttk
-# import wx
+import wx
 import re
 from PIL import ImageTk, Image
 import os  # DELETE
@@ -8,15 +8,14 @@ import socket
 import manageSERVER
 
 
-# def check_if_password_matches():
 
 
 
 
-# app = wx.App(False)
-# screen_width, screen_height = wx.GetDisplaySize()
-# x = int(screen_width/2 - 1200/2)
-# y = int(screen_height/2 - 700/2)
+app = wx.App(False)
+screen_width, screen_height = wx.GetDisplaySize()
+x = int(screen_width/2 - 1200/2)
+y = int(screen_height/2 - 700/2)
 
 def email_regex(email):
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
@@ -277,7 +276,7 @@ def main(ROOT_PROJ_DIR):
     global root, show_icon, hide_icon
     root = tkinter.Tk()
     root.protocol("WM_DELETE_WINDOW", close_window)
-    root.geometry(f'1070x700')#+{x}+{y}')
+    root.geometry(f'1070x700+{x}+{y}')
     root.iconbitmap('icon.ico')
     root.resizable(False, False)
     bg = tkinter.PhotoImage(file='background.png')
