@@ -47,9 +47,9 @@ def change_password(email, password, new_password):
     send_object = json.dumps({'action': 'CHANGE_PASSWORD', 'email': email, 'password': password, 'new_password': new_password}).encode(FORMAT)
     return send_to_server(send_object)  # True =  password changed | False = password didn't change
 
-def get_icons_dict():
-    send_object = json.dumps({'action': 'GET_ICONS'})
-    return send_to_server(send_object)  # True =  password changed | False = password didn't change
+# def get_icons_dict():
+#     send_object = json.dumps({'action': 'GET_ICONS'}).encode(FORMAT)
+#     return send_to_server(send_object)  # True =  password changed | False = password didn't change
 
 
 # DELETE
