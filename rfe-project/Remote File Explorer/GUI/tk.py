@@ -29,6 +29,7 @@ def get_icons_dict():
     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
     for icon in icons_list:
         icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))#.resize((61, 50),Image.ANTIALIAS))
+    return icons_dict
 
 # def sort_files_list(items_list):
 #     i = 0
@@ -345,9 +346,13 @@ if __name__ == '__main__':
         root.protocol("WM_DELETE_WINDOW", close_window)
         app = wx.App(False)
         screen_width, screen_height = wx.GetDisplaySize()
-        x = int(screen_width / 2 - 1070 / 2)
-        y = int(screen_height / 2 - 700 / 2)
-        root.geometry(f'1070x700+{x}+{y}')
+        # x = int(screen_width / 2 - 1070 / 2)
+        # y = int(screen_height / 2 - 700 / 2)
+        app_width = 1070
+        app_height = 700
+        x = int((screen_width - app_width) / 2)
+        y = int((screen_height - app_height) / 2)
+        root.geometry(f'{app_width}x{app_height}+{x}+{y}')
         root.minsize(width=1070, height=700)
 
         # root.resizable(False, False)
