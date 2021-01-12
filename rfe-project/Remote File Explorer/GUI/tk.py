@@ -357,7 +357,7 @@ if __name__ == '__main__':
 
         host = "192.168.56.1"
         username = "yaniv-pc\yaniv"
-        password = 'Yanivn911911'  # DELETE
+        password = input('Enter your password: ')  # DELETE
         ssh = manageSSH.connect_to_ssh(host, username, password)
         sftp = ssh.open_sftp()
 
