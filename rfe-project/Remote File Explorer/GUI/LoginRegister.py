@@ -3,9 +3,10 @@ from tkinter import messagebox, ttk
 import wx
 import re
 from PIL import ImageTk, Image
-import os  # DELETE
+import os
 import socket
 import manageSERVER
+from time import sleep
 
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -16,9 +17,25 @@ def email_regex(email):
     else:
         return False
 
+def choose_is_control(root, old_frame):
+    def control_bttn():
+        return True
+    def be_controlled_bttn():
+        return False
+    main_title = tkinter.Label(root, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg='#d9dcc7')  # fg='goldenrod2'
+    main_title.place(x=180, y=25)
+    old_frame.destroy()
+    frame = tkinter.Frame(root, bg='white')
+    frame.place(x=229, y=132, width=610, height=392)
+    control_button = tkinter.Button(frame, image=show_icon, cursor='hand2', bg='#d9dcc7', command=control_bttn)
+    control_button.place(x=555, y=180, width=35, height=35)
+    be_controlled_button = tkinter.Button(frame, image=show_icon, cursor='hand2', bg='#d9dcc7', command=be_controlled_bttn)
+    be_controlled_button.place(x=100, y=180, width=35, height=35)
+
 def start_login_window(root):
-    global email
+    global email, is_control
     email = None
+    is_control = None
 
     def return_button(event):
         login_button.invoke()
@@ -26,7 +43,7 @@ def start_login_window(root):
 
     root.title('Remote File Explorer - Login')
     def submit():
-        global email
+        global email, is_control
         email_error_title.place_forget()
         pass_error_title.place_forget()
         while True:
@@ -48,6 +65,8 @@ def start_login_window(root):
                 break
             else:  # email exists and the password matches
                 email = enter_email.get()
+                is_control = choose_is_control(root, login_frame)
+                # print(is_control)
                 root.destroy()
                 break
 
@@ -112,11 +131,12 @@ def start_login_window(root):
     forgot_button.place(x=320, y=350)
 
     root.mainloop()
-    return email
+    return email, is_control
 
 def start_register_window(root):
-    global email
+    global email, is_control
     email = None
+    is_control = None
 
     def return_button(event):
         register_button.invoke()
@@ -124,7 +144,7 @@ def start_register_window(root):
 
     root.title('Remote File Explorer - Register')
     def submit():
-        global email
+        global email, is_control
         email_error_title.place_forget()
         pass_error_title.place_forget()
         re_pass_error_title.place_forget()
@@ -155,6 +175,7 @@ def start_register_window(root):
                 password = enter_password.get()
                 ip_dict = dict()  # maybe add a tic box as well
                 manageSERVER.create_new_user(email, password, ip_dict)
+                is_control = choose_is_control(root, register_frame)
                 root.destroy()
                 break
 
@@ -219,7 +240,7 @@ def start_register_window(root):
     login_button = tkinter.Button(register_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg='#d9dcc7', command=login)
     login_button.place(x=227, y=350)
     root.mainloop()
-    return email
+    return email, is_control
 
 def start_forgot_window(root):
     global email
@@ -238,7 +259,7 @@ def start_forgot_window(root):
                 email_error_title.configure(text='Please enter your email', fg='red')
                 email_error_title.place(x=55, y=205, width=500)
                 break
-            if manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist
+            elif manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist
                 email_error_title.configure(text="This email address doesn't have an account", fg='red')
                 email_error_title.place(x=55, y=205, width=500)
                 break
@@ -246,6 +267,8 @@ def start_forgot_window(root):
                 email = enter_email.get()
                 email_error_title.configure(text='Email Sent! Check your inbox', fg='green')
                 email_error_title.place(x=55, y=205, width=500)
+                # sleep(2)
+                login()
                 # send reset email
                 # root.destroy()
                 break
@@ -269,11 +292,11 @@ def start_forgot_window(root):
     enter_email = tkinter.Entry(reset_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center')
     enter_email.place(x=55, y=170, width=500, height=35)
 
-    send_email = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', 15), fg='gray20', bg='#d9dcc7', command=submit)
-    send_email.place(x=235, y=270, width=140, height=35)
+    send_email_button = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', 15), fg='gray20', bg='#d9dcc7', command=submit)
+    send_email_button.place(x=235, y=270, width=140, height=35)
 
-    send_email_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg='#d9dcc7', command=login)
-    send_email_button.place(x=228, y=350)
+    login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg='#d9dcc7', command=login)
+    login_button.place(x=228, y=350)
     root.mainloop()
     return email
 
@@ -302,7 +325,7 @@ def main(ROOT_PROJ_DIR):
     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
     show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
     hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
-    form = start_login_window(root)
+    form_response = start_login_window(root)
     # print(form)
     # while form == 'forgot' or form == 'login' or form == 'register':
     #     print(form)
@@ -312,6 +335,6 @@ def main(ROOT_PROJ_DIR):
     #         form = start_login_window(root)
     #     if form == 'register':
     #         form = start_register_window(root)
-    return form
+    return form_response
     # start_register_window(root)
     # start_forgot_window(root)
