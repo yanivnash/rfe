@@ -325,16 +325,28 @@ def main(ROOT_PROJ_DIR):
     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
     show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
     hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
-    form_response = start_login_window(root)
-    # print(form)
-    # while form == 'forgot' or form == 'login' or form == 'register':
-    #     print(form)
-    #     if form == 'forgot':
-    #         form = start_forgot_window(root)
-    #     if form == 'login':
-    #         form = start_login_window(root)
-    #     if form == 'register':
-    #         form = start_register_window(root)
-    return form_response
+    response = start_login_window(root)
+    # print(response)
+    # while response == 'forgot' or response == 'login' or response == 'register':
+    #     print(response)
+    #     if response == 'forgot':
+    #         response = start_forgot_window(root)
+    #     if response == 'login':
+    #         response = start_login_window(root)
+    #     if response == 'register':
+    #         response = start_register_window(root)
+
+    root = tkinter.Tk()
+    root.protocol("WM_DELETE_WINDOW", close_window)
+    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    root.geometry(f'1070x700+{x}+{y}')
+    root.iconbitmap('icon.ico')
+    root.resizable(False, False)
+    bg = tkinter.PhotoImage(file='background.png')
+    bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+
+    root.mainloop()
+
+    return response
     # start_register_window(root)
     # start_forgot_window(root)

@@ -339,8 +339,9 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 if __name__ == '__main__':
     global frame, ssh, sftp
 
-    email = LoginRegister.main(ROOT_PROJ_DIR)
+    email, mode = LoginRegister.main(ROOT_PROJ_DIR)
     print(email)  # DELETE
+    print(mode)
     if email != None:
         root = tkinter.Tk()
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -348,6 +349,8 @@ if __name__ == '__main__':
         screen_width, screen_height = wx.GetDisplaySize()
         # x = int(screen_width / 2 - 1070 / 2)
         # y = int(screen_height / 2 - 700 / 2)
+        print(screen_width)
+        print(screen_height)
         app_width = 1070
         app_height = 700
         x = int((screen_width - app_width) / 2)
