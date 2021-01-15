@@ -339,11 +339,14 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 if __name__ == '__main__':
     global frame, ssh, sftp
 
-    email, mode = LoginRegister.main(ROOT_PROJ_DIR)
+    root = tkinter.Tk()
+    email, mode = LoginRegister.main(root)
+    print('tk.py')
     print(email)  # DELETE
     print(mode)
-    if email != None:
-        root = tkinter.Tk()
+    if email != None and mode != None:
+    # if True:
+        # root = tkinter.Tk()
         root.protocol("WM_DELETE_WINDOW", close_window)
         app = wx.App(False)
         screen_width, screen_height = wx.GetDisplaySize()
