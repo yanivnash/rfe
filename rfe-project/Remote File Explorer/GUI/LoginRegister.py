@@ -13,6 +13,8 @@ from time import sleep
 
 lable_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
+start_video_name = 'start-animation.mp4'
+mid_video_name = 'mid-animation.mp4'
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def email_regex(email):
@@ -37,8 +39,8 @@ def choose_is_control(choose_frame):#, old_frame):
         mode = False
         choose_frame.quit()
     main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
-    main_title.place(x=180, y=25)
-    frame = tkinter.Frame(choose_frame, bg='black')
+    main_title.place(x=270, y=25)
+    frame = tkinter.Frame(choose_frame, bg='white')
     frame.place(x=229, y=132, width=610, height=392)
     control_button = tkinter.Button(frame, cursor='hand2', bg=buttons_bg_color, command=control_bttn)  # image=show_icon
     control_button.place(x=555, y=180, width=35, height=35)
@@ -89,11 +91,13 @@ def start_login_window(main_frame):
     def forgot_pass():
         main_title.destroy()
         login_frame.destroy()
+        play_video(mid_video_name)
         start_forgot_window(main_frame)
 
     def register():
         main_title.destroy()
         login_frame.destroy()
+        play_video(mid_video_name)
         start_register_window(main_frame)
 
     def show_hide_pass():
@@ -198,6 +202,7 @@ def start_register_window(main_frame):
     def login():
         main_title.destroy()
         register_frame.destroy()
+        play_video(mid_video_name)
         start_login_window(main_frame)
 
     def show_hide_pass1():
@@ -293,6 +298,7 @@ def start_forgot_window(main_frame):
     def login():
         main_title.destroy()
         reset_frame.destroy()
+        play_video(mid_video_name)
         start_login_window(main_frame)
 
     reset_frame = tkinter.Frame(main_frame, bg='white')
@@ -330,20 +336,22 @@ def play_video(video_name):
     vid_frame.place(x=0, y=0, width=app_width, height=app_height)
     vid_label = tkinter.Label(vid_frame)
     vid_label.place(x=0, y=0, width=app_width, height=app_height)
-    thread = threading.Thread(target=stream, args=(vid_label, vid_frame))
+    thread = threading.Thread(target=stream, args=(vid_label, vid_frame, video_name))
     thread.daemon = 1
     thread.start()
 
 
-def stream(vid_label, vid_frame):
-    global count
+def stream(vid_label, vid_frame, video_name):
+    global count, video
     for image in video.iter_data():
         frame_image = ImageTk.PhotoImage(Image.fromarray(image).resize((app_width, app_height), Image.ANTIALIAS))
         vid_label.config(image=frame_image)
         vid_label.image = frame_image
         count += 1
-        # print(count)  # find out the number of frames
-        if count == 20:
+        print(count)  # find out the number of frames
+        if video_name == 'mid-animation.mp4' and count == 25:
+            vid_frame.destroy()
+        elif video_name == 'start-animation.mp4' and count == 20:
             vid_frame.destroy()
 
 def main(r):
@@ -355,8 +363,13 @@ def main(r):
     screen_width, screen_height = wx.GetDisplaySize()
 
     # testing
-    # screen_width = 2080
-    # screen_height = 1000
+    # app = tkinter.Toplevel()
+    # app.geometry('1280x720')
+    # app2 = tkinter.Toplevel()
+    # app2.geometry('1070x700')
+
+    # # screen_width = 1280
+    # screen_height = 720
     # testing
 
     print(f'screen_width: {screen_width}')
@@ -381,8 +394,7 @@ def main(r):
     bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
     show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
     hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
-    video_name = 'start-animation.mp4'
-    play_video(video_name)
+    play_video(start_video_name)
     email = start_login_window(main_frame)
     print(email)  # DELETE
     # while response == 'forgot' or response == 'login' or response == 'register':
