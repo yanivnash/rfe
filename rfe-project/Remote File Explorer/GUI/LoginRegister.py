@@ -60,8 +60,9 @@ def choose_is_control(choose_frame, control_pic, be_controlled_pic):#, old_frame
     return mode
 
 def start_login_window(main_frame):
-    global email, root
+    global email, ip_dict, root
     email = None
+    ip_dict = None
 
     def return_button(event):
         login_button.invoke()
@@ -92,6 +93,7 @@ def start_login_window(main_frame):
             # break
         else:  # email exists and the password matches
             email = enter_email.get()
+            ip_dict = manageSERVER.get_ip_dict(email)
             # is_control = choose_is_control(root, login_frame)
             # print(is_control)
             login_frame.destroy()
@@ -166,8 +168,9 @@ def start_login_window(main_frame):
     forgot_button.place(x=320, y=350)
 
 def start_register_window(main_frame):
-    global email, root, register_frame
+    global email, ip_dict, root
     email = None
+    ip_dict = None
 
     def return_button(event):
         register_button.invoke()
@@ -204,8 +207,9 @@ def start_register_window(main_frame):
         else:
             email = enter_email.get()
             password = enter_password.get()
-            ip_dict = dict()  # maybe add a tic box as well
-            manageSERVER.create_new_user(email, password, ip_dict)
+            # ip_dict = dict()  # maybe add a tic box as well
+            manageSERVER.create_new_user(email, password)
+            ip_dict = manageSERVER.get_ip_dict(email)
             # is_control = choose_is_control(root, register_frame)
             register_frame.destroy()
             main_frame.quit()
@@ -366,16 +370,16 @@ def stream(vid_label, vid_frame, video_name):
         vid_label.config(image=frame_image)
         vid_label.image = frame_image
         count += 1
-        print(count)  # find out the number of frames
+        # print(count)  # find out the number of frames
         if video_name == 'mid-animation.mp4' and count == 25:
             vid_frame.destroy()
         elif video_name == 'start-animation.mp4' and count == 20:
             vid_frame.destroy()
-        elif video_name == 'end-animation.mp4' and count == 16:
+        elif video_name == 'end-animation.mp4' and count == 26:
             vid_frame.destroy()
 
 def main(r):
-    global main_frame, show_icon, hide_icon, mode, email, root, app_width, app_height
+    global main_frame, show_icon, hide_icon, mode, email, root, app_width, app_height, ip_dict
     # root = tkinter.Tk()
     root = r
     root.protocol("WM_DELETE_WINDOW", close_window)
@@ -409,21 +413,21 @@ def main(r):
 
 
     # good
-    # main_frame = tkinter.Frame(root)
-    # main_frame.place(x=0, y=0, width=app_width, height=app_height)
-    #
-    # # bg = tkinter.PhotoImage(file='background.png')
-    # bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-    # bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    # show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
-    # hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
-    # play_video(start_video_name)
-    # # email = start_login_window(main_frame)
-    #
-    # start_login_window(main_frame)
-    # main_frame.mainloop()
-    #
-    # print(email)  # DELETE
+    main_frame = tkinter.Frame(root)
+    main_frame.place(x=0, y=0, width=app_width, height=app_height)
+
+    # bg = tkinter.PhotoImage(file='background.png')
+    bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+    bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
+    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
+    play_video(start_video_name)
+    # email = start_login_window(main_frame)
+
+    start_login_window(main_frame)
+    main_frame.mainloop()
+
+    print(email)  # DELETE
     # good
 
 
@@ -470,9 +474,11 @@ def main(r):
 
     print(mode)
     # root.mainloop()
-    if email != None and mode != None:
-        play_video(end_video_name)
-    return email, mode
+    # if email != None and mode != None:
+    #     play_video(end_video_name)
+
+    return email, mode, ip_dict
+
     # start_register_window(root)
     # start_forgot_window(root)
 

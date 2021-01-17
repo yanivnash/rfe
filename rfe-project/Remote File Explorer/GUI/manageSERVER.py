@@ -19,8 +19,8 @@ def send_to_server(send_object):
     except ConnectionRefusedError:
         return 'SERVER IS DOWN'
 
-def create_new_user(email, password, ip_dict):
-    send_object = json.dumps({'action': 'NEW_USER', 'email': email, 'password': password, 'ip_dict': ip_dict}).encode(FORMAT)
+def create_new_user(email, password):
+    send_object = json.dumps({'action': 'NEW_USER', 'email': email, 'password': password, 'ip_dict': {}}).encode(FORMAT)
     answr = send_to_server(send_object)
     if answr:
         update_pc_in_account(email)
@@ -44,11 +44,19 @@ def login(email, password, is_update):
     if is_update == 1:
         if answr:
             update_pc_in_account(email)
-    return answr  # dict = ip_dict - logged in successfully | False = email doesn't exist / error logging in
+    return answr  # True - logged in successfully | False = email doesn't exist / error logging in
 
 def change_password(email, password, new_password):
     send_object = json.dumps({'action': 'CHANGE_PASSWORD', 'email': email, 'password': password, 'new_password': new_password}).encode(FORMAT)
-    return send_to_server(send_object)  # True =  password changed | False = password didn't change
+    return send_to_server(send_object)  # True = password changed | False = password didn't change
+
+def get_ip_dict(email):
+    send_object = json.dumps({'action': 'GET_IP_DICT', 'email': email}).encode(FORMAT)
+    return send_to_server(send_object)  # *dict* = success | False = user not found
+
+def delete_account(email, password):
+    send_object = json.dumps({'action': 'DELETE_USER', 'email': email, 'password': password}).encode(FORMAT)
+    return send_to_server(send_object)  # True = account deleted | False = account wasn't deleted
 
 # def get_icons_dict():
 #     send_object = json.dumps({'action': 'GET_ICONS'}).encode(FORMAT)
@@ -58,7 +66,8 @@ def change_password(email, password, new_password):
 # DELETE
 # if __name__ == '__main__':
 #     print(get_icons_dict())
-#     print(create_new_user('yanivnash@gmail.com', '123456789', {'mypc': '192.168.1.20', 'router': '192.168.1.1'}))
+#     print(create_new_user('yanivnash@gmail.com', '123456789'))
+#     print(create_new_user('ronitnash5@gmail.com', 'ronit5'))
 #     print(create_new_user('yaniv/@gmail.com', 'test', {'router': '192.168.1.1'}))
 #     print(check_if_email_exists('yanivnash@gmail.com'))
 #     print(check_if_email_exists('yaniv/@gmail.com'))
@@ -68,6 +77,7 @@ def change_password(email, password, new_password):
 #     print(login('yaniv/@gmail.com', 'test', False))
 #     print(login('yanivnash@gmail.com', 'test', True))
 #     print(login('yanivnash@gmail.com', '123456789', True))
+#     print(get_ip_dict('yanivnash@gmail.com'))
 #     print(change_password('yaniv/@gmail.com', 'test1', 'new_pass'))
 #     print(change_password('yaniv/@gmail.com', 'test', 'new_pass'))
 

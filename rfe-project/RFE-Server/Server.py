@@ -126,8 +126,33 @@ def manage_client_db(conn, addr):
         else:
             answr = False
 
+    elif action == "GET_IP_DICT":
+        email = msg["email"]
+
+        find_user = ("SELECT ip_dict FROM users WHERE email = ?")
+        cursor.execute(find_user, [(email.lower().encode(FORMAT))])
+        answr = cursor.fetchall()
+        if answr:
+            ip_dict = json.loads(answr[0][0])
+            answr = ip_dict
+        else:
+            answr = False
+
     # elif action == "GET_ICONS":
     #     answr = icons_dict
+
+    elif action == "DELETE_USER":
+        email = msg["email"]
+        password = msg["password"]
+        find_user = ("SELECT ip_dict FROM users WHERE email = ? AND password = ?")
+        cursor.execute(find_user, [(email.lower().encode(FORMAT)), (password.encode(FORMAT))])
+        answr = cursor.fetchall()
+        if answr:
+            answr = True
+        else:
+            answr = False
+        delete_user = ("DELETE FROM users WHERE email = ? AND password = ?")
+        cursor.execute(delete_user, [(email.lower().encode(FORMAT)), (password.encode(FORMAT))])
 
     else:
         answr = None

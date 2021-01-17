@@ -340,11 +340,14 @@ if __name__ == '__main__':
     global frame, ssh, sftp
 
     root = tkinter.Tk()
-    email, mode = LoginRegister.main(root)
+    email, mode, ip_dict = LoginRegister.main(root)
     print('tk.py')
     print(email)  # DELETE
     print(mode)
+    print(ip_dict)
     if email != None and mode != None:
+        # end_video_name = 'end-animation.mp4'
+        # LoginRegister.play_video(end_video_name)
     # if True:
         # root = tkinter.Tk()
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -368,7 +371,8 @@ if __name__ == '__main__':
 
         host = "192.168.56.1"
         username = "yaniv-pc\yaniv"
-        password = input('Enter your password: ')  # DELETE
+        # password = input('Enter your password: ')  # DELETE
+        password = 'Yanivn911911'
         ssh = manageSSH.connect_to_ssh(host, username, password)
         sftp = ssh.open_sftp()
 
@@ -382,6 +386,9 @@ if __name__ == '__main__':
         create_frame(items_list)
         # items_list = sort_files_list(items_list)
         create_bttn(frame)
+
+        end_video_name = 'end-animation.mp4'
+        LoginRegister.play_video(end_video_name)
 
         # #IN THE FUNC
         # for x in range(10):
