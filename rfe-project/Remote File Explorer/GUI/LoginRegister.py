@@ -445,8 +445,8 @@ def main(r):
         choose_frame.place(x=0, y=0, width=app_width, height=app_height)
         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
         bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        control_pic = ImageTk.PhotoImage(Image.open('control.png').resize((160, 160), Image.ANTIALIAS))
-        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled.png').resize((200, 160), Image.ANTIALIAS))
+        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
         mode = choose_is_control(choose_frame, control_pic, be_controlled_pic)
         # if email == 'yaniv2':
         #     choose_frame.destroy()
