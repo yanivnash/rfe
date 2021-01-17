@@ -11,6 +11,13 @@ import manageSERVER
 from time import sleep
 
 
+app = wx.App(False)
+# screen_width, screen_height = wx.GetDisplaySize()
+screen_width = 1280
+screen_height = 720
+app_width = int(screen_width / 1.794)
+app_height = int(screen_height / 1.542)
+
 lable_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
 start_video_name = 'start-animation.mp4'
@@ -27,6 +34,7 @@ def email_regex(email):
 
 def choose_is_control(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     global mode, root
+    global app_width, app_height
     mode = None
     def return_button(event):
         pass
@@ -39,22 +47,24 @@ def choose_is_control(choose_frame, control_pic, be_controlled_pic):#, old_frame
         global mode
         mode = 'be_controlled'
         choose_frame.quit()
-    main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
-    main_title.place(x=270, y=25)
+    # main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)
+    main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', int(app_width / (1070 / 35)), 'bold'), fg='gray20', bg=lable_bg_color)
+    main_title.place(x=int(app_width / (1070 / 270)), y=int(app_height / (700 / 25)))  # (x=270, y=25)
     frame = tkinter.Frame(choose_frame, bg='white')
-    frame.place(x=229, y=132, width=610, height=392)
-    choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', 25, 'bold underline'), fg='gray20', bg='white')
-    choose_label.place(x=55, y=25)
-    control_button = tkinter.Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')  # bg=buttons_bg_color)
-    # control_button.place(x=100, y=140)
-    control_button.place(x=70, y=142)
-    control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    control_label.place(x=75, y=100)
-    be_controlled_button = tkinter.Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0, bg='white')  # bg=buttons_bg_color)
-    # be_controlled_button.place(x=350, y=140)
-    be_controlled_button.place(x=360, y=140)
-    control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    control_label.place(x=320, y=100)
+    frame.place(x=int(app_width / (1070 / 231)), y=int(app_height / (700 / 133)), width=int(app_width / (1070 / 610)), height=int(app_height / (700 / 392)))  # (x=231, y=133, width=610, height=392)
+    # choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', 25, 'bold underline'), fg='gray20', bg='white')
+    choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', int(app_width / (1070 / 25)), 'bold underline'), fg='gray20', bg='white')
+    choose_label.place(x=int(app_width / (1070 / 55)), y=int(app_height / (700 / 25)))  # (x=55, y=25)
+    control_button = tkinter.Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')
+    control_button.place(x=int(app_width / (1070 / 70)), y=int(app_height / (700 / 142)))  # (x=70, y=142)
+    # control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
+    control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', int(app_width / (1070 / 20)), 'bold'), fg='gray20', bg='white')
+    control_label.place(x=int(app_width / (1070 / 75)), y=int(app_height / (700 / 100)))  # (x=75, y=100)
+    be_controlled_button = tkinter.Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0, bg='white')
+    be_controlled_button.place(x=int(app_width / (1070 / 360)), y=int(app_height / (700 / 140)))  # (x=360, y=140)
+    # control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
+    control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', int(app_width / (1070 / 20)), 'bold'), fg='gray20', bg='white')
+    control_label.place(x=int(app_width / (1070 / 320)), y=int(app_height / (700 / 100)))  # (x=320, y=100)
 
     choose_frame.mainloop()
     return mode
@@ -121,7 +131,7 @@ def start_login_window(main_frame):
             show_hide_button.configure(image=hide_icon)
 
     login_frame = tkinter.Frame(main_frame, bg='white')
-    login_frame.place(x=229, y=132, width=610, height=392)
+    login_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
 
     email_error_title = tkinter.Label(login_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
     email_error_title.place(x=55, y=110, width=500)
@@ -238,7 +248,7 @@ def start_register_window(main_frame):
             show_hide_button2.configure(image=hide_icon)
 
     register_frame = tkinter.Frame(main_frame, bg='white')
-    register_frame.place(x=229, y=132, width=610, height=392)
+    register_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
 
     email_error_title = tkinter.Label(register_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
     email_error_title.place(x=55, y=85, width=500)
@@ -321,7 +331,7 @@ def start_forgot_window(main_frame):
         start_login_window(main_frame)
 
     reset_frame = tkinter.Frame(main_frame, bg='white')
-    reset_frame.place(x=229, y=132, width=610, height=392)
+    reset_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
 
     email_error_title = tkinter.Label(reset_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
     email_error_title.place(x=55, y=205, width=500)
@@ -379,33 +389,41 @@ def stream(vid_label, vid_frame, video_name):
             vid_frame.destroy()
 
 def main(r):
-    global main_frame, show_icon, hide_icon, mode, email, root, app_width, app_height, ip_dict
+    global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
+    global app_width, app_height
     # root = tkinter.Tk()
     root = r
     root.protocol("WM_DELETE_WINDOW", close_window)
-    app = wx.App(False)
-    screen_width, screen_height = wx.GetDisplaySize()
+    # app = wx.App(False)
+    # screen_width, screen_height = wx.GetDisplaySize()
 
     # testing
     # app = tkinter.Toplevel()
     # app.geometry('1280x720')
     # app2 = tkinter.Toplevel()
     # app2.geometry('1070x700')
-
-    # # screen_width = 1280
+    #
+    # screen_width = 1280
     # screen_height = 720
+    # app_width = int(screen_width / 1.794)
+    # app_height = int(screen_height / 1.542)
     # testing
+
+    # if screen_width >= 1920 and screen_height >= 1080:
+    #     app_width = 1070
+    #     app_height = 700
+    # else:
+    #     app_width = int(screen_width / 1.794)
+    #     app_height = int(screen_height / 1.542)
 
     print(f'screen_width: {screen_width}')
     print(f'screen_height: {screen_height}')
-    # x = int(screen_width/2 - 1200/2)
-    # y = int(screen_height/2 - 700/2)
-    app_width = int(screen_width / 1.794)
-    app_height = int(screen_height / 1.542)
+
     print(f'app_width: {app_width}')
     print(f'app_height: {app_height}')
     x = int((screen_width - app_width) / 2)
     y = int((screen_height - app_height) / 2)
+    print(f'x={x}, y={y}')
     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
     # root.geometry(f'1070x700+{x}+{y}')
     root.iconbitmap('icon.ico')
@@ -440,7 +458,7 @@ def main(r):
     #     if response == 'register':
     #         response = start_register_window(root)
 
-    email = 'yaniv'  # test
+    # email = 'yaniv'  # test
 
     mode = None
     if email != None:
@@ -449,8 +467,10 @@ def main(r):
         choose_frame.place(x=0, y=0, width=app_width, height=app_height)
         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
         bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
-        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((int(app_width / 6.6875), int(app_height / 4.375)), Image.ANTIALIAS))
+        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((int(app_width / 5.35), int(app_height / 4.375)), Image.ANTIALIAS))
         mode = choose_is_control(choose_frame, control_pic, be_controlled_pic)
         # if email == 'yaniv2':
         #     choose_frame.destroy()
