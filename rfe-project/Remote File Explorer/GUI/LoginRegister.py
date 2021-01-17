@@ -15,6 +15,7 @@ lable_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
 start_video_name = 'start-animation.mp4'
 mid_video_name = 'mid-animation.mp4'
+end_video_name = 'end-animation.mp4'
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def email_regex(email):
@@ -24,7 +25,7 @@ def email_regex(email):
     else:
         return False
 
-def choose_is_control(choose_frame):#, old_frame):
+def choose_is_control(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     global mode, root
     mode = None
     def return_button(event):
@@ -32,20 +33,29 @@ def choose_is_control(choose_frame):#, old_frame):
     root.bind('<Return>', return_button)
     def control_bttn():
         global mode
-        mode = True
+        mode = 'control'
         choose_frame.quit()
     def be_controlled_bttn():
         global mode
-        mode = False
+        mode = 'be_controlled'
         choose_frame.quit()
     main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
     main_title.place(x=270, y=25)
     frame = tkinter.Frame(choose_frame, bg='white')
     frame.place(x=229, y=132, width=610, height=392)
-    control_button = tkinter.Button(frame, cursor='hand2', bg=buttons_bg_color, command=control_bttn)  # image=show_icon
-    control_button.place(x=555, y=180, width=35, height=35)
-    be_controlled_button = tkinter.Button(frame, cursor='hand2', bg=buttons_bg_color, command=be_controlled_bttn)  # image=show_icon
-    be_controlled_button.place(x=100, y=180, width=35, height=35)
+    choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', 25, 'bold underline'), fg='gray20', bg='white')
+    choose_label.place(x=55, y=25)
+    control_button = tkinter.Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')  # bg=buttons_bg_color)
+    # control_button.place(x=100, y=140)
+    control_button.place(x=70, y=142)
+    control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
+    control_label.place(x=75, y=100)
+    be_controlled_button = tkinter.Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0, bg='white')  # bg=buttons_bg_color)
+    # be_controlled_button.place(x=350, y=140)
+    be_controlled_button.place(x=360, y=140)
+    control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
+    control_label.place(x=320, y=100)
+
     choose_frame.mainloop()
     return mode
 
@@ -148,13 +158,15 @@ def start_login_window(main_frame):
     sep_line.place(x=302, y=342, width=1, height=40)
 
     forgot_button = tkinter.Button(login_frame, text='Reset your password', cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=forgot_pass)
+    # forgot_button.place(x=320, y=350)
+
+    # main_frame.mainloop()
+    # return email
+
     forgot_button.place(x=320, y=350)
 
-    main_frame.mainloop()
-    return email
-
 def start_register_window(main_frame):
-    global email
+    global email, root, register_frame
     email = None
 
     def return_button(event):
@@ -259,12 +271,15 @@ def start_register_window(main_frame):
     register_button.place(x=255, y=300, width=100, height=35)
 
     login_button = tkinter.Button(register_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=login)
+    # login_button.place(x=227, y=350)
+
+    # main_frame.mainloop()
+    # return email
+
     login_button.place(x=227, y=350)
-    main_frame.mainloop()
-    return email
 
 def start_forgot_window(main_frame):
-    global email
+    global email, root, reset_frame
     email = None
 
     def return_button(event):
@@ -319,9 +334,12 @@ def start_forgot_window(main_frame):
     send_email_button.place(x=235, y=270, width=140, height=35)
 
     login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=login)
+    # login_button.place(x=228, y=350)
+
+    # main_frame.mainloop()
+    # return email
+
     login_button.place(x=228, y=350)
-    main_frame.mainloop()
-    return email
 
 def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Exit the app', message='Are you sure you want to exit the app?')
@@ -352,6 +370,8 @@ def stream(vid_label, vid_frame, video_name):
         if video_name == 'mid-animation.mp4' and count == 25:
             vid_frame.destroy()
         elif video_name == 'start-animation.mp4' and count == 20:
+            vid_frame.destroy()
+        elif video_name == 'end-animation.mp4' and count == 16:
             vid_frame.destroy()
 
 def main(r):
@@ -386,17 +406,27 @@ def main(r):
     # root.geometry(f'1070x700+{x}+{y}')
     root.iconbitmap('icon.ico')
     root.resizable(False, False)
-    main_frame = tkinter.Frame(root)
-    main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
-    # bg = tkinter.PhotoImage(file='background.png')
-    bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-    bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
-    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
-    play_video(start_video_name)
-    email = start_login_window(main_frame)
-    print(email)  # DELETE
+
+    # good
+    # main_frame = tkinter.Frame(root)
+    # main_frame.place(x=0, y=0, width=app_width, height=app_height)
+    #
+    # # bg = tkinter.PhotoImage(file='background.png')
+    # bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+    # bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    # show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
+    # hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
+    # play_video(start_video_name)
+    # # email = start_login_window(main_frame)
+    #
+    # start_login_window(main_frame)
+    # main_frame.mainloop()
+    #
+    # print(email)  # DELETE
+    # good
+
+
     # while response == 'forgot' or response == 'login' or response == 'register':
     #     print(response)
     #     if response == 'forgot':
@@ -406,16 +436,20 @@ def main(r):
     #     if response == 'register':
     #         response = start_register_window(root)
 
+    email = 'yaniv'  # test
+
     mode = None
     if email != None:
         root.title('Remote File Explorer')
         choose_frame = tkinter.Frame(root)
         choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = tkinter.PhotoImage(file='background.png')
+        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
         bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        mode = choose_is_control(choose_frame)
-        if email == 'yaniv2':
-            choose_frame.destroy()
+        control_pic = ImageTk.PhotoImage(Image.open('control.png').resize((160, 160), Image.ANTIALIAS))
+        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled.png').resize((200, 160), Image.ANTIALIAS))
+        mode = choose_is_control(choose_frame, control_pic, be_controlled_pic)
+        # if email == 'yaniv2':
+        #     choose_frame.destroy()
         # choose_frame.mainloop()
 
     # if email != None:
@@ -436,6 +470,8 @@ def main(r):
 
     print(mode)
     # root.mainloop()
+    if email != None and mode != None:
+        play_video(end_video_name)
     return email, mode
     # start_register_window(root)
     # start_forgot_window(root)

@@ -135,7 +135,10 @@ def manage_client_db(conn, addr):
     db.commit()
     conn.send(json.dumps(answr).encode(FORMAT))
     # conn.send(str(answr).encode(FORMAT))
-    print(colored(f"{action} - {answr}"))
+    if type(answr) == type(dict()):
+        print(colored(f"{action} - True"))
+    else:
+        print(colored(f"{action} - {answr}"))
     conn.close()
     print(colored(f"[DISCONNECTED] {addr[0]}", "red"))
 
