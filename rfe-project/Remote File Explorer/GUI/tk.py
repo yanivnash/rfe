@@ -12,7 +12,12 @@ import re
 import wx  # get screen resolution
 # import win32api  # a module that shows the drives that are connected to the PC
 
-global cur_path, ROOT_PROJ_DIR, bttns_dict, icons_dict
+# global cur_path, ROOT_PROJ_DIR, bttns_dict, icons_dict
+
+app = wx.App(False)
+screen_width, screen_height = wx.GetDisplaySize()
+app_width = int(screen_width / 1.794)
+app_height = int(screen_height / 1.542)
 
 bttns_dict = dict()
 icons_dict = dict()
@@ -339,40 +344,41 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 if __name__ == '__main__':
     global frame, ssh, sftp
 
+    # test
+    screen_width = 1280
+    screen_height = 720
+    app_width = int(screen_width / 1.794)
+    app_height = int(screen_height / 1.542)
+    # test
+
     root = tkinter.Tk()
+    x = int((screen_width - app_width) / 2)
+    y = int((screen_height - app_height) / 2)
+    print(f'x={x}, y={y}')
+    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    root.iconbitmap('icon.ico')
+    root.resizable(False, False)
     email, mode, ip_dict = LoginRegister.main(root)
     print('tk.py')
     print(email)  # DELETE
     print(mode)
     print(ip_dict)
     if email != None and mode != None:
-        # end_video_name = 'end-animation.mp4'
-        # LoginRegister.play_video(end_video_name)
-    # if True:
-        # root = tkinter.Tk()
+        end_video_name = 'end-animation.mp4'
+        LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
-        app = wx.App(False)
-        screen_width, screen_height = wx.GetDisplaySize()
-        # x = int(screen_width / 2 - 1070 / 2)
-        # y = int(screen_height / 2 - 700 / 2)
-        print(screen_width)
-        print(screen_height)
-        app_width = 1070
-        app_height = 700
-        x = int((screen_width - app_width) / 2)
-        y = int((screen_height - app_height) / 2)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
-        root.minsize(width=1070, height=700)
+        # root.minsize(width=1070, height=700)
 
         # root.resizable(False, False)
 
         root.title('Remote File Explorer')
-        root.iconbitmap('icon.ico')
+        # root.iconbitmap('icon.ico')
 
         host = "192.168.56.1"
         username = "yaniv-pc\yaniv"
         # password = input('Enter your password: ')  # DELETE
-
+        password = 'Yanivn911911'
         ssh = manageSSH.connect_to_ssh(host, username, password)
         sftp = ssh.open_sftp()
 

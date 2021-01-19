@@ -10,6 +10,7 @@ import socket
 import manageSERVER
 from time import sleep
 
+ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = wx.App(False)
 # screen_width, screen_height = wx.GetDisplaySize()
@@ -20,10 +21,13 @@ app_height = int(screen_height / 1.542)
 
 lable_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
+# start_video_name = f'{ROOT_PROJ_DIR}\start-animation.mp4'
 start_video_name = 'start-animation.mp4'
+# mid_video_name = f'{ROOT_PROJ_DIR}\mid-animation.mp4'
 mid_video_name = 'mid-animation.mp4'
+# end_video_name = f'{ROOT_PROJ_DIR}\end-animation.mp4'
 end_video_name = 'end-animation.mp4'
-ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def email_regex(email):
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
@@ -385,7 +389,7 @@ def stream(vid_label, vid_frame, video_name):
             vid_frame.destroy()
         elif video_name == 'start-animation.mp4' and count == 20:
             vid_frame.destroy()
-        elif video_name == 'end-animation.mp4' and count == 26:
+        elif video_name == 'end-animation.mp4' and count == 52:
             vid_frame.destroy()
 
 def main(r):
@@ -416,18 +420,21 @@ def main(r):
     #     app_width = int(screen_width / 1.794)
     #     app_height = int(screen_height / 1.542)
 
-    print(f'screen_width: {screen_width}')
-    print(f'screen_height: {screen_height}')
 
-    print(f'app_width: {app_width}')
-    print(f'app_height: {app_height}')
-    x = int((screen_width - app_width) / 2)
-    y = int((screen_height - app_height) / 2)
-    print(f'x={x}, y={y}')
-    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
-    # root.geometry(f'1070x700+{x}+{y}')
-    root.iconbitmap('icon.ico')
-    root.resizable(False, False)
+    # good - but no need
+    # print(f'screen_width: {screen_width}')
+    # print(f'screen_height: {screen_height}')
+    #
+    # print(f'app_width: {app_width}')
+    # print(f'app_height: {app_height}')
+    # x = int((screen_width - app_width) / 2)
+    # y = int((screen_height - app_height) / 2)
+    # print(f'x={x}, y={y}')
+    # root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    # # root.geometry(f'1070x700+{x}+{y}')
+    # root.iconbitmap('icon.ico')
+    # root.resizable(False, False)
+    # good - but no need
 
 
     # good
@@ -505,4 +512,10 @@ def main(r):
 
 if __name__ == '__main__':
     root = tkinter.Tk()
+    x = int((screen_width - app_width) / 2)
+    y = int((screen_height - app_height) / 2)
+    print(f'x={x}, y={y}')
+    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    root.iconbitmap('icon.ico')
+    root.resizable(False, False)
     main(root)
