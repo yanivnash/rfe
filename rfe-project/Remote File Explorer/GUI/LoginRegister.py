@@ -13,11 +13,15 @@ from time import sleep
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 app = wx.App(False)
-# screen_width, screen_height = wx.GetDisplaySize()
-screen_width = 1280
-screen_height = 720
+screen_width, screen_height = wx.GetDisplaySize()
+# screen_width = 1280  # temp
+# screen_height = 720  # temp
+
+if screen_width / screen_height != (1920 / 1080):
+    screen_height = screen_width / (1920 / 1080)
 app_width = int(screen_width / 1.794)
 app_height = int(screen_height / 1.542)
+print(screen_width, screen_height, app_width, app_height)  # temp
 
 lable_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
@@ -28,6 +32,11 @@ mid_video_name = 'mid-animation.mp4'
 # end_video_name = f'{ROOT_PROJ_DIR}\end-animation.mp4'
 end_video_name = 'end-animation.mp4'
 
+
+def calc_width(size):
+    return int(app_width / (1070 / size))
+def calc_height(size):
+    return int(app_height / (700 / size))
 
 def email_regex(email):
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
@@ -52,23 +61,23 @@ def choose_is_control(choose_frame, control_pic, be_controlled_pic):#, old_frame
         mode = 'be_controlled'
         choose_frame.quit()
     # main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)
-    main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', int(app_width / (1070 / 35)), 'bold'), fg='gray20', bg=lable_bg_color)
-    main_title.place(x=int(app_width / (1070 / 270)), y=int(app_height / (700 / 25)))  # (x=270, y=25)
+    main_title = tkinter.Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', calc_width(35), 'bold'), fg='gray20', bg=lable_bg_color)
+    main_title.place(x=calc_width(270), y=calc_height(25))  # (x=270, y=25)
     frame = tkinter.Frame(choose_frame, bg='white')
-    frame.place(x=int(app_width / (1070 / 231)), y=int(app_height / (700 / 133)), width=int(app_width / (1070 / 610)), height=int(app_height / (700 / 392)))  # (x=231, y=133, width=610, height=392)
+    frame.place(x=calc_width(231), y=calc_height(133), width=calc_width(610), height=calc_height(392))  # (x=231, y=133, width=610, height=392)
     # choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', 25, 'bold underline'), fg='gray20', bg='white')
-    choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', int(app_width / (1070 / 25)), 'bold underline'), fg='gray20', bg='white')
-    choose_label.place(x=int(app_width / (1070 / 55)), y=int(app_height / (700 / 25)))  # (x=55, y=25)
+    choose_label = tkinter.Label(frame, text='Choose an action for this PC:', font=('Eras Bold ITC', calc_width(25), 'bold underline'), fg='gray20', bg='white')
+    choose_label.place(x=calc_width(55), y=calc_height(25))  # (x=55, y=25)
     control_button = tkinter.Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')
-    control_button.place(x=int(app_width / (1070 / 70)), y=int(app_height / (700 / 142)))  # (x=70, y=142)
+    control_button.place(x=calc_width(70), y=calc_height(142))  # (x=70, y=142)
     # control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', int(app_width / (1070 / 20)), 'bold'), fg='gray20', bg='white')
-    control_label.place(x=int(app_width / (1070 / 75)), y=int(app_height / (700 / 100)))  # (x=75, y=100)
+    control_label = tkinter.Label(frame, text='CONTROL', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white')
+    control_label.place(x=calc_width(75), y=calc_height(100))  # (x=75, y=100)
     be_controlled_button = tkinter.Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0, bg='white')
-    be_controlled_button.place(x=int(app_width / (1070 / 360)), y=int(app_height / (700 / 140)))  # (x=360, y=140)
+    be_controlled_button.place(x=calc_width(360), y=calc_height(140))  # (x=360, y=140)
     # control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', int(app_width / (1070 / 20)), 'bold'), fg='gray20', bg='white')
-    control_label.place(x=int(app_width / (1070 / 320)), y=int(app_height / (700 / 100)))  # (x=320, y=100)
+    control_label = tkinter.Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', calc_height(20), 'bold'), fg='gray20', bg='white')
+    control_label.place(x=calc_width(320), y=calc_height(100))  # (x=320, y=100)
 
     choose_frame.mainloop()
     return mode
@@ -93,17 +102,17 @@ def start_login_window(main_frame):
         if enter_email.get() == '' or enter_password.get() == '':
             if enter_email.get() == '':
                 email_error_title.configure(text='Please enter your email')
-                email_error_title.place(x=55, y=110, width=500)
+                email_error_title.place(x=calc_width(55), y=calc_height(110), width=calc_width(500))  # (x=55, y=110, width=500)
             if enter_password.get() == '':
-                pass_error_title.place(x=55, y=215, width=500)
+                pass_error_title.place(x=calc_width(55), y=calc_height(215), width=calc_width(500))  # (x=55, y=215, width=500)
             # break
         elif manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
             email_error_title.configure(text="This email address doesn't have an account")
-            email_error_title.place(x=55, y=110, width=500)
+            email_error_title.place(x=calc_width(55), y=calc_height(110), width=calc_width(500))  # (x=55, y=110, width=500)
             # break
         elif manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()) == False:  # check if password doesn't match the email
             pass_error_title.configure(text='Email or Password are incorrect, Try again')
-            pass_error_title.place(x=55, y=215, width=500)
+            pass_error_title.place(x=calc_width(55), y=calc_height(215), width=calc_width(500))  # (x=55, y=215, width=500)
             # break
         else:  # email exists and the password matches
             email = enter_email.get()
@@ -135,51 +144,53 @@ def start_login_window(main_frame):
             show_hide_button.configure(image=hide_icon)
 
     login_frame = tkinter.Frame(main_frame, bg='white')
-    login_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
+    login_frame.place(x=calc_width(231), y=calc_height(133), width=calc_width(610), height=calc_height(392))  # (x=231, y=133, width=610, height=392)
 
-    email_error_title = tkinter.Label(login_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    email_error_title.place(x=55, y=110, width=500)
-    pass_error_title = tkinter.Label(login_frame, text='Please enter your password', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    pass_error_title.place(x=55, y=215, width=500)
+    email_error_title = tkinter.Label(login_frame, text='Please enter your email', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    email_error_title.place(x=calc_width(55), y=calc_height(110), width=calc_width(500))  # (x=55, y=110, width=500)
+    pass_error_title = tkinter.Label(login_frame, text='Please enter your password', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    pass_error_title.place(x=calc_width(55), y=calc_height(215), width=calc_width(500))  # (x=55, y=215, width=500)
     email_error_title.place_forget()
     pass_error_title.place_forget()
 
-    main_title = tkinter.Label(main_frame, text='Remote File Explorer - Login', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
-    main_title.place(x=180, y=25)
+    main_title = tkinter.Label(main_frame, text='Remote File Explorer - Login', font=('Eras Bold ITC', calc_width(35), 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
+    main_title.place(x=calc_width(180), y=calc_height(25))  # (x=180, y=25)
 
-    email_title = tkinter.Label(login_frame, text='Email:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=255, y=35)
-    enter_email = tkinter.Entry(login_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center')
-    enter_email.place(x=55, y=75, width=500, height=35)
+    email_title = tkinter.Label(login_frame, text='Email:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(255), y=calc_height(35))  # (x=255, y=35)
+    enter_email = tkinter.Entry(login_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center')
+    enter_email.place(x=calc_width(55), y=calc_height(75), width=calc_width(500), height=calc_height(35))  # (x=55, y=75, width=500, height=35)
 
-    password_title = tkinter.Label(login_frame, text='Password:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=225, y=140)
-    enter_password = tkinter.Entry(login_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center', show='•')
-    enter_password.place(x=55, y=180, width=500, height=35)
+    password_title = tkinter.Label(login_frame, text='Password:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(225), y=calc_height(140))  # (x=225, y=140)
+    enter_password = tkinter.Entry(login_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center', show='•')
+    enter_password.place(x=calc_width(55), y=calc_height(180), width=calc_width(500), height=calc_height(35))  # (x=55, y=180, width=500, height=35)
 
     show_hide_button = tkinter.Button(login_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
-    show_hide_button.place(x=555, y=180, width=35, height=35)
+    show_hide_button.place(x=calc_width(555), y=calc_height(180), width=calc_width(35), height=calc_height(35))  # (x=555, y=180, width=35, height=35)
 
     check_var = tkinter.IntVar(value=1)
     save_to_acc = tkinter.Checkbutton(login_frame, cursor='hand2',
                                       text="Save this PC's info to your account for future connections", fg='gray20',
-                                      bg=buttons_bg_color, font=('Eras Bold ITC', 10), onvalue=1, offvalue=0, variable=check_var)
-    save_to_acc.place(x=105, y=245)
+                                      bg=buttons_bg_color, font=('Eras Bold ITC', calc_width(10)), onvalue=1, offvalue=0, variable=check_var)
+    save_to_acc.place(x=calc_width(105), y=calc_height(245))  # (x=105, y=245)
 
-    login_button = tkinter.Button(login_frame, text='Login', cursor='arrow', font=('Eras Bold ITC', 15), fg='gray20', bg=buttons_bg_color, command=submit)
-    login_button.place(x=255, y=292, width=100, height=35)
+    login_button = tkinter.Button(login_frame, text='Login', cursor='arrow', font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+    login_button.place(x=calc_width(255), y=calc_height(292), width=calc_width(100), height=calc_height(35))  # (x=255, y=292, width=100, height=35)
 
-    register_button = tkinter.Button(login_frame, text="Create a new account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=register)
-    register_button.place(x=130, y=350)
+    register_button = tkinter.Button(login_frame, text="Create a new account", cursor='hand2', bd=0, font=('Eras Bold ITC', calc_width(10)), fg='gray20', bg=buttons_bg_color, command=register)
+    register_button.place(x=calc_width(130), y=calc_height(350))  # (x=130, y=350)
 
     sep_line = ttk.Separator(login_frame, orient=tkinter.VERTICAL)
-    sep_line.place(x=302, y=342, width=1, height=40)
+    sep_line.place(x=calc_width(302), y=calc_height(342), width=calc_width(1), height=calc_height(40))  # (x=302, y=342, width=1, height=40)
 
-    forgot_button = tkinter.Button(login_frame, text='Reset your password', cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=forgot_pass)
+    forgot_button = tkinter.Button(login_frame, text='Reset your password', cursor='hand2', bd=0, font=('Eras Bold ITC', calc_width(10)), fg='gray20', bg=buttons_bg_color, command=forgot_pass)
     # forgot_button.place(x=320, y=350)
 
     # main_frame.mainloop()
     # return email
 
-    forgot_button.place(x=320, y=350)
+    forgot_button.place(x=calc_width(320), y=calc_height(350))  # (x=320, y=350)
+
+    enter_email.focus()
 
 def start_register_window(main_frame):
     global email, ip_dict, root
@@ -200,23 +211,23 @@ def start_register_window(main_frame):
         if enter_email.get() == '' or enter_password.get() == '' or re_enter_password.get() == '' or not email_regex(enter_email.get()):
             if enter_email.get() == '':
                 email_error_title.configure(text='Please enter your email')
-                email_error_title.place(x=55, y=85, width=500)
+                email_error_title.place(x=calc_width(55), y=calc_height(85), width=calc_width(500))  # (x=55, y=85, width=500)
             if enter_password.get() == '':
-                pass_error_title.place(x=55, y=180, width=500)
+                pass_error_title.place(x=calc_width(55), y=calc_height(180), width=calc_width(500))  # (x=55, y=180, width=500)
             if re_enter_password.get() == '':
                 re_pass_error_title.configure(text='Please Retype the password')
-                re_pass_error_title.place(x=55, y=275, width=500)
+                re_pass_error_title.place(x=calc_width(55), y=calc_height(275), width=calc_width(500))  # (x=55, y=275, width=500)
             if not email_regex(enter_email.get()) and enter_email.get() != '':  # check if email is invalid
                 email_error_title.configure(text='Please enter a valid email address')
-                email_error_title.place(x=55, y=85, width=500)
+                email_error_title.place(x=calc_width(55), y=calc_height(85), width=calc_width(500))  # (x=55, y=85, width=500)
             # break
         elif enter_password.get() != re_enter_password.get():  # check if the two passwords aren't the same
             re_pass_error_title.configure(text="The passwords don't match")
-            re_pass_error_title.place(x=55, y=275, width=500)
+            re_pass_error_title.place(x=calc_width(55), y=calc_height(275), width=calc_width(500))  # (x=55, y=275, width=500)
             # break
         elif manageSERVER.check_if_email_exists(enter_email.get()):  # check if email exists already
             email_error_title.configure(text='This email address already has an account')
-            email_error_title.place(x=55, y=85, width=500)
+            email_error_title.place(x=calc_width(55), y=calc_height(85), width=calc_width(500))  # (x=55, y=85, width=500)
             # break
         else:
             email = enter_email.get()
@@ -251,50 +262,88 @@ def start_register_window(main_frame):
             re_enter_password.configure(show='')
             show_hide_button2.configure(image=hide_icon)
 
-    register_frame = tkinter.Frame(main_frame, bg='white')
-    register_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
+    def key_entered(key):
+        password1 = enter_password.get()
+        password2 = re_enter_password.get()
+        if len(password1) > len(password2):
+            password2 = re_enter_password.get() + key.char
+        else:
+            password1 = enter_password.get() + key.char
+        print(f'pass1: {password1}\npass2: {password2}\n')
+        re_pass_error_title.place_forget()
+        if password1 != password2:
+            re_pass_error_title.configure(text="The passwords don't match")
+            re_pass_error_title.place(x=calc_width(55), y=calc_height(275), width=calc_width(500))  # (x=55, y=275, width=500)
 
-    email_error_title = tkinter.Label(register_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    email_error_title.place(x=55, y=85, width=500)
-    pass_error_title = tkinter.Label(register_frame, text='Please enter a password', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    pass_error_title.place(x=55, y=180, width=500)
-    re_pass_error_title = tkinter.Label(register_frame, text='Please Retype the password', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    re_pass_error_title.place(x=55, y=275, width=500)
+    # def pass_key_entered(key):
+    #     if enter_password.get() != '' and re_enter_password.get() != '':
+    #         password1 = enter_password.get() + key.char
+    #         password2 = re_enter_password.get()
+    #         re_pass_error_title.place_forget()
+    #         if password1 != password2:
+    #             re_pass_error_title.configure(text="The passwords don't match")
+    #             re_pass_error_title.place(x=55, y=275, width=500)
+    #
+    # def re_pass_key_entered(key):
+    #     if enter_password.get() != '' and re_enter_password.get() != '':
+    #         password1 = enter_password.get()
+    #         password2 = re_enter_password.get() + key.char
+    #         re_pass_error_title.place_forget()
+    #         if password1 != password2:
+    #             re_pass_error_title.configure(text="The passwords don't match")
+    #             re_pass_error_title.place(x=55, y=275, width=500)
+
+
+    register_frame = tkinter.Frame(main_frame, bg='white')
+    register_frame.place(x=calc_width(231), y=calc_height(133), width=calc_width(610), height=calc_height(392))  # (x=231, y=133, width=610, height=392)
+
+    email_error_title = tkinter.Label(register_frame, text='Please enter your email', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    email_error_title.place(x=calc_width(55), y=calc_height(85), width=calc_width(500))  # (x=55, y=85, width=500)
+    pass_error_title = tkinter.Label(register_frame, text='Please enter a password', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    pass_error_title.place(x=calc_width(55), y=calc_height(180), width=calc_width(500))  # (x=55, y=180, width=500)
+    re_pass_error_title = tkinter.Label(register_frame, text='Please Retype the password', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    re_pass_error_title.place(x=calc_width(55), y=calc_height(275), width=calc_width(500))  # (x=55, y=275, width=500)
     email_error_title.place_forget()
     pass_error_title.place_forget()
     re_pass_error_title.place_forget()
 
-    main_title = tkinter.Label(root, text='Remote File Explorer - Register', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
-    main_title.place(x=150, y=25)
+    main_title = tkinter.Label(root, text='Remote File Explorer - Register', font=('Eras Bold ITC', calc_width(35), 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
+    main_title.place(x=calc_width(150), y=calc_height(25))  # (x=150, y=25)
 
-    email_title = tkinter.Label(register_frame, text='Email:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=255, y=10)
-    enter_email = tkinter.Entry(register_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center')
-    enter_email.place(x=55, y=50, width=500, height=35)
+    email_title = tkinter.Label(register_frame, text='Email:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(255), y=calc_height(10))  # (x=255, y=10)
+    enter_email = tkinter.Entry(register_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center')
+    enter_email.place(x=calc_width(55), y=calc_height(50), width=calc_width(500), height=calc_height(35))  # (x=55, y=50, width=500, height=35)
 
-    password_title = tkinter.Label(register_frame, text='Password:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=225, y=105)
-    enter_password = tkinter.Entry(register_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center', show="•")
-    enter_password.place(x=55, y=145, width=500, height=35)
+    password_title = tkinter.Label(register_frame, text='Password:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(225), y=calc_height(105))  # (x=225, y=105)
+    enter_password = tkinter.Entry(register_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center', show="•")
+    enter_password.place(x=calc_width(55), y=calc_height(145), width=calc_width(500), height=calc_height(35))  # (x=55, y=145, width=500, height=35)
+
+    enter_password.bind("<Key>", key_entered)
 
     show_hide_button1 = tkinter.Button(register_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass1)
-    show_hide_button1.place(x=555, y=145, width=35, height=35)
+    show_hide_button1.place(x=calc_width(555), y=calc_height(145), width=calc_width(35), height=calc_height(35))  # (x=555, y=145, width=35, height=35)
 
-    re_password_title = tkinter.Label(register_frame, text='Retype Password:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=180, y=200)
-    re_enter_password = tkinter.Entry(register_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center', show="•")
-    re_enter_password.place(x=55, y=240, width=500, height=35)
+    re_password_title = tkinter.Label(register_frame, text='Retype Password:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(180), y=calc_height(200))  # (x=180, y=200)
+    re_enter_password = tkinter.Entry(register_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center', show="•")
+    re_enter_password.place(x=calc_width(55), y=calc_height(240), width=calc_width(500), height=calc_height(35))  # (x=55, y=240, width=500, height=35)
+
+    re_enter_password.bind("<Key>", key_entered)
 
     show_hide_button2 = tkinter.Button(register_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass2)
-    show_hide_button2.place(x=555, y=240, width=35, height=35)
+    show_hide_button2.place(x=calc_width(555), y=calc_height(240), width=calc_width(35), height=calc_height(35))  # (x=555, y=240, width=35, height=35)
 
-    register_button = tkinter.Button(register_frame, text='Register', cursor='hand2', font=('Eras Bold ITC', 15), fg='gray20', bg=buttons_bg_color, command=submit)
-    register_button.place(x=255, y=300, width=100, height=35)
+    register_button = tkinter.Button(register_frame, text='Register', cursor='hand2', font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+    register_button.place(x=calc_width(255), y=calc_height(300), width=calc_width(100), height=calc_height(35))  # (x=255, y=300, width=100, height=35)
 
-    login_button = tkinter.Button(register_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=login)
+    login_button = tkinter.Button(register_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', calc_width(10)), fg='gray20', bg=buttons_bg_color, command=login)
     # login_button.place(x=227, y=350)
 
     # main_frame.mainloop()
     # return email
 
-    login_button.place(x=227, y=350)
+    login_button.place(x=calc_width(227), y=calc_height(350))  # (x=227, y=350)
+
+    enter_email.focus()
 
 def start_forgot_window(main_frame):
     global email, root, reset_frame
@@ -311,16 +360,16 @@ def start_forgot_window(main_frame):
         # while True:
         if enter_email.get() == '':
             email_error_title.configure(text='Please enter your email', fg='red')
-            email_error_title.place(x=55, y=205, width=500)
+            email_error_title.place(x=calc_width(55), y=calc_height(205), width=calc_width(500))  # (x=55, y=205, width=500)
             # break
         elif manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist
             email_error_title.configure(text="This email address doesn't have an account", fg='red')
-            email_error_title.place(x=55, y=205, width=500)
+            email_error_title.place(x=calc_width(55), y=calc_height(205), width=calc_width(500))  # (x=55, y=205, width=500)
             # break
         else:  # email exists
             email = enter_email.get()
             email_error_title.configure(text='Email Sent! Check your inbox', fg='green')
-            email_error_title.place(x=55, y=205, width=500)
+            email_error_title.place(x=calc_width(55), y=calc_height(205), width=calc_width(500))  # (x=55, y=205, width=500)
             # sleep(2)
             login()
 
@@ -335,29 +384,31 @@ def start_forgot_window(main_frame):
         start_login_window(main_frame)
 
     reset_frame = tkinter.Frame(main_frame, bg='white')
-    reset_frame.place(x=int(app_width / 4.632), y=int(app_height / 5.263), width=int(app_width / 1.754), height=int(app_height / 1.7857))  # (x=231, y=133, width=610, height=392)
+    reset_frame.place(x=calc_width(231), y=calc_height(133), width=calc_width(610), height=calc_height(392))  # (x=231, y=133, width=610, height=392)
 
-    email_error_title = tkinter.Label(reset_frame, text='Please enter your email', font=('Eras Bold ITC', 10), fg='red', bg='white')
-    email_error_title.place(x=55, y=205, width=500)
+    email_error_title = tkinter.Label(reset_frame, text='Please enter your email', font=('Eras Bold ITC', calc_width(10)), fg='red', bg='white')
+    email_error_title.place(x=calc_width(55), y=calc_height(205), width=calc_width(500))  # (x=55, y=205, width=500)
     email_error_title.place_forget()
 
-    main_title = tkinter.Label(main_frame, text='Remote File Explorer - Reset Password', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
-    main_title.place(x=59, y=25)
+    main_title = tkinter.Label(main_frame, text='Remote File Explorer - Reset Password', font=('Eras Bold ITC', calc_width(35), 'bold'), fg='gray20', bg=lable_bg_color)  # fg='goldenrod2'
+    main_title.place(x=calc_width(59), y=calc_height(25))  # (x=59, y=25)
 
-    email_title = tkinter.Label(reset_frame, text='Email:', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white').place(x=255, y=130)
-    enter_email = tkinter.Entry(reset_frame, font=('Eras Bold ITC', 15), fg='gray20', bg='white', justify='center')
-    enter_email.place(x=55, y=170, width=500, height=35)
+    email_title = tkinter.Label(reset_frame, text='Email:', font=('Eras Bold ITC', calc_width(20), 'bold'), fg='gray20', bg='white').place(x=calc_width(255), y=calc_height(130))  # (x=255, y=130)
+    enter_email = tkinter.Entry(reset_frame, font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg='white', justify='center')
+    enter_email.place(x=calc_width(55), y=calc_height(170), width=calc_width(500), height=calc_height(35))  # (x=55, y=170, width=500, height=35)
 
-    send_email_button = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', 15), fg='gray20', bg=buttons_bg_color, command=submit)
-    send_email_button.place(x=235, y=270, width=140, height=35)
+    send_email_button = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+    send_email_button.place(x=calc_width(235), y=calc_height(270), width=calc_width(140), height=calc_height(35))  # (x=235, y=270, width=140, height=35)
 
-    login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', 10), fg='gray20', bg=buttons_bg_color, command=login)
+    login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', calc_width(10)), fg='gray20', bg=buttons_bg_color, command=login)
     # login_button.place(x=228, y=350)
 
     # main_frame.mainloop()
     # return email
 
-    login_button.place(x=228, y=350)
+    login_button.place(x=calc_width(228), y=calc_height(350))  # (x=228, y=350)
+
+    enter_email.focus()
 
 def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Exit the app', message='Are you sure you want to exit the app?')
@@ -444,8 +495,8 @@ def main(r):
     # bg = tkinter.PhotoImage(file='background.png')
     bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
     bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png'))
-    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png'))
+    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png').resize((calc_width(30), calc_height(30)), Image.ANTIALIAS))
+    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png').resize((calc_width(30), calc_height(30)), Image.ANTIALIAS))
     play_video(start_video_name)
     # email = start_login_window(main_frame)
 
@@ -476,8 +527,8 @@ def main(r):
         bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
-        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((int(app_width / 6.6875), int(app_height / 4.375)), Image.ANTIALIAS))
-        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((int(app_width / 5.35), int(app_height / 4.375)), Image.ANTIALIAS))
+        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((calc_width(160), calc_height(160)), Image.ANTIALIAS))
+        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((calc_width(200), calc_height(160)), Image.ANTIALIAS))
         mode = choose_is_control(choose_frame, control_pic, be_controlled_pic)
         # if email == 'yaniv2':
         #     choose_frame.destroy()

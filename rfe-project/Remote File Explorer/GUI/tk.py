@@ -364,8 +364,8 @@ if __name__ == '__main__':
     print(mode)
     print(ip_dict)
     if email != None and mode != None:
-        end_video_name = 'end-animation.mp4'
-        LoginRegister.play_video(end_video_name)
+        # end_video_name = 'end-animation.mp4'
+        # LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
         # root.minsize(width=1070, height=700)
