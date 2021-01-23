@@ -16,8 +16,21 @@ import wx  # get screen resolution
 
 app = wx.App(False)
 screen_width, screen_height = wx.GetDisplaySize()
+# screen_width = 1000  # temp
+# screen_height = 700  # temp
+# screen_width = 1280  # temp
+# screen_height = 720  # temp
+
+if screen_width / screen_height != (1920 / 1080):
+    screen_height = screen_width / (1920 / 1080)
+
+if screen_width >= 1070 and screen_height >= 700:
+    screen_width = 1920
+    screen_height = 1080
+
 app_width = int(screen_width / 1.794)
 app_height = int(screen_height / 1.542)
+print(screen_width, screen_height, app_width, app_height)  # temp
 
 bttns_dict = dict()
 icons_dict = dict()
@@ -29,6 +42,23 @@ ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 # cur_path = r'C:\Users\yaniv\Desktop\כיתה יב\10 יחידות מחשבים\cyber project'
 # cur_path = r'D:\Program Files\obs-studio\screen records'
 cur_path = r'C:\Users\yaniv\Desktop\Remote File Explorer'
+
+
+# MAYBE DELETE
+# def resize(event):
+#     global app_width, app_height
+#     if event.width > screen_width:
+#         app_width = screen_width
+#     if event.height > screen_height:
+#         app_height = screen_height
+#     # root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+#     print("New size is: {}x{}".format(event.width, event.height))
+
+
+def calc_width(size):
+    return int(app_width / (1070 / size))
+def calc_height(size):
+    return int(app_height / (700 / size))
 
 def get_icons_dict():
     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
@@ -341,15 +371,11 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     for x in range(10):
         tkinter.Grid.columnconfigure(wrapper1, x, weight=1)
 
+
 if __name__ == '__main__':
     global frame, ssh, sftp
 
-    # test
-    screen_width = 1280
-    screen_height = 720
-    app_width = int(screen_width / 1.794)
-    app_height = int(screen_height / 1.542)
-    # test
+    print(screen_width, screen_height, app_width, app_height)  # temp
 
     root = tkinter.Tk()
     x = int((screen_width - app_width) / 2)
@@ -357,13 +383,16 @@ if __name__ == '__main__':
     print(f'x={x}, y={y}')
     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
     root.iconbitmap('icon.ico')
-    root.resizable(False, False)
-    email, mode, ip_dict = LoginRegister.main(root)
-    print('tk.py')
+    # root.resizable(False, False)
+
+    # root.bind("<Configure>", resize)
+
+    email, mode, ip_dict = LoginRegister.main(root, app_width, app_height)
+    print('main_window.py')
     print(email)  # DELETE
     print(mode)
     print(ip_dict)
-    if email != None and mode != None:
+    if email != None and mode != None:  # (ADD) and chosen_ip != None:
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -378,7 +407,6 @@ if __name__ == '__main__':
         host = "192.168.56.1"
         username = "yaniv-pc\yaniv"
         # password = input('Enter your password: ')  # DELETE
-        password = 'Yanivn911911'
         ssh = manageSSH.connect_to_ssh(host, username, password)
         sftp = ssh.open_sftp()
 
