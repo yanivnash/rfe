@@ -387,12 +387,13 @@ if __name__ == '__main__':
 
     # root.bind("<Configure>", resize)
 
-    email, mode, ip_dict = LoginRegister.main(root, app_width, app_height)
+    email, mode, selected_ip, ip_dict = LoginRegister.main(root, app_width, app_height)
     print('main_window.py')
     print(email)  # DELETE
     print(mode)
+    print(selected_ip)
     print(ip_dict)
-    if email != None and mode != None:  # (ADD) and chosen_ip != None:
+    if email != None and mode != None and selected_ip !=None:  # (ADD) and chosen_ip != None:
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -407,6 +408,7 @@ if __name__ == '__main__':
         host = "192.168.56.1"
         username = "yaniv-pc\yaniv"
         # password = input('Enter your password: ')  # DELETE
+
         ssh = manageSSH.connect_to_ssh(host, username, password)
         sftp = ssh.open_sftp()
 

@@ -615,6 +615,7 @@ def main(r, a_w, a_h):
     # if email != None and mode != None:
     #     play_video(end_video_name)
 
+    selected_ip = None
     if mode != None:
         root.title('Remote File Explorer')
         ip_frame = tkinter.Frame(root)
@@ -623,9 +624,11 @@ def main(r, a_w, a_h):
         bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        show_ip_dict(ip_frame, ip_dict)
+        selected_ip = show_ip_dict(ip_frame, ip_dict)
 
-    return email, mode, ip_dict
+    selected_ip = 'no'  # DELETE
+
+    return email, mode, selected_ip, ip_dict
 
     # start_register_window(root)
     # start_forgot_window(root)
