@@ -3,6 +3,7 @@ import LoginRegister
 # import manageSERVER
 import tkinter
 from tkinter import ttk
+import socket
 import os
 from PIL import ImageTk, Image
 import tkinter.messagebox
@@ -13,6 +14,8 @@ import wx  # get screen resolution
 # import win32api  # a module that shows the drives that are connected to the PC
 
 # global cur_path, ROOT_PROJ_DIR, bttns_dict, icons_dict
+
+MENU_BAR_HEIGHT = 20
 
 app = wx.App(False)
 screen_width, screen_height = wx.GetDisplaySize()
@@ -29,7 +32,7 @@ if screen_width >= 1070 and screen_height >= 700:
     screen_height = 1080
 
 app_width = int(screen_width / 1.794)
-app_height = int(screen_height / 1.542)
+app_height = int(screen_height / 1.542)# + MENU_BAR_HEIGHT
 print(screen_width, screen_height, app_width, app_height)  # temp
 
 bttns_dict = dict()
@@ -56,9 +59,15 @@ cur_path = r'C:\Users\yaniv\Desktop\Remote File Explorer'
 
 
 def calc_width(size):
-    return int(app_width / (1070 / size))
+    if size == 0:
+        return 0
+    else:
+        return int(app_width / (1070 / size))
 def calc_height(size):
-    return int(app_height / (700 / size))
+    if size == 0:
+        return 0
+    else:
+        return int(app_height / (700 / size))
 
 def get_icons_dict():
     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
@@ -170,10 +179,12 @@ def double_click(event):
 def right_click(event):
     event.widget.configure(bg="blue")
 
-def dscon_bttn():
+def dscon_bttn():  # add disconnecting from the machine (SSH)
     discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect',message='Are you sure you want to disconnect?')
     if discon_msg_box == 'yes':
-        pass# add disconnecting form the machine (SSH)
+        manageSSH.disconnect_ssh(ssh)
+        root.destroy()
+        main()
 
 def DELE():
     # DELETE THIS FUNC AND BUTTON
@@ -228,7 +239,7 @@ def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect & Close', message='Are you sure you want to close the window and disconnect?')
     if discon_msg_box == 'yes':
         manageSSH.disconnect_ssh(ssh)
-        root.destroy() # add disconnecting form the machine (SSH)
+        root.destroy()  # add disconnecting form the machine (SSH)
 
 def copy_path_button(event):
     # import time
@@ -371,29 +382,46 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     for x in range(10):
         tkinter.Grid.columnconfigure(wrapper1, x, weight=1)
 
-
-if __name__ == '__main__':
-    global frame, ssh, sftp
+def main():
+    global root, frame, ssh, sftp
 
     print(screen_width, screen_height, app_width, app_height)  # temp
+
+    SELF_NAME = os.getlogin()
+    SELF_IP = socket.gethostbyname(socket.gethostname())
+
 
     root = tkinter.Tk()
     x = int((screen_width - app_width) / 2)
     y = int((screen_height - app_height) / 2)
     print(f'x={x}, y={y}')
-    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    root.geometry(f'{app_width}x{app_height}+{x}+{y}')# + MENU_BAR_HEIGHT}+{x}+{y}')
     root.iconbitmap('icon.ico')
-    # root.resizable(False, False)
+    menubar = tkinter.Menu(root)
+    account = tkinter.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label='Account', menu=account)
+    pc_info = tkinter.Menu(menubar, tearoff=0)
+    menubar.add_cascade(label='PC info', menu=pc_info)
+    pc_info.add_command(label='Click to copy:', command=None, state='disabled', activebackground='grey90')
+    pc_info.add_separator()
+    def copy_ip():
+        pyperclip.copy(SELF_IP)
+    def copy_name():
+        pyperclip.copy(SELF_NAME)
+    pc_info.add_command(label=f'IP: {SELF_IP}', command=copy_ip, activebackground='steelblue2', activeforeground='black')
+    pc_info.add_command(label=f'Name: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
+    root.config(menu=menubar)
+    root.resizable(False, False)
 
     # root.bind("<Configure>", resize)
 
-    email, mode, selected_ip, ip_dict = LoginRegister.main(root, app_width, app_height)
+    email, mode, ssh, sftp = LoginRegister.main(root, app_width, app_height, account)
     print('main_window.py')
     print(email)  # DELETE
     print(mode)
-    print(selected_ip)
-    print(ip_dict)
-    if email != None and mode != None and selected_ip !=None:  # (ADD) and chosen_ip != None:
+    print(ssh)
+    print(sftp)
+    if email != None and mode != None and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -405,12 +433,11 @@ if __name__ == '__main__':
         root.title('Remote File Explorer')
         # root.iconbitmap('icon.ico')
 
-        host = "192.168.56.1"
-        username = "yaniv-pc\yaniv"
-        # password = input('Enter your password: ')  # DELETE
-
-        ssh = manageSSH.connect_to_ssh(host, username, password)
-        sftp = ssh.open_sftp()
+        # host = "192.168.56.1"
+        # username = "yaniv-pc\yaniv"
+        # # password = input('Enter your password: ')  # DELETE
+        # ssh = manageSSH.connect_to_ssh(host, username, password)
+        # sftp = ssh.open_sftp()
 
 
 
@@ -434,3 +461,69 @@ if __name__ == '__main__':
         #     tkinter.Grid.rowconfigure(frame, y, weight=1)
 
         root.mainloop()
+
+if __name__ == '__main__':
+    main()
+
+# if __name__ == '__main__':
+#     global frame, ssh, sftp
+#
+#     print(screen_width, screen_height, app_width, app_height)  # temp
+#
+#     root = tkinter.Tk()
+#     x = int((screen_width - app_width) / 2)
+#     y = int((screen_height - app_height) / 2)
+#     print(f'x={x}, y={y}')
+#     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+#     root.iconbitmap('icon.ico')
+#     # root.resizable(False, False)
+#
+#     # root.bind("<Configure>", resize)
+#
+#     email, mode, ssh, sftp = LoginRegister.main(root, app_width, app_height)
+#     print('main_window.py')
+#     print(email)  # DELETE
+#     print(mode)
+#     print(ssh)
+#     print(sftp)
+#     if email != None and mode != None and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+#         # end_video_name = 'end-animation.mp4'
+#         # LoginRegister.play_video(end_video_name)
+#         root.protocol("WM_DELETE_WINDOW", close_window)
+#         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+#         # root.minsize(width=1070, height=700)
+#
+#         # root.resizable(False, False)
+#
+#         root.title('Remote File Explorer')
+#         # root.iconbitmap('icon.ico')
+#
+#         # host = "192.168.56.1"
+#         # username = "yaniv-pc\yaniv"
+#         # # password = input('Enter your password: ')  # DELETE
+#         # password = 'Yanivn911911'
+#         # ssh = manageSSH.connect_to_ssh(host, username, password)
+#         # sftp = ssh.open_sftp()
+#
+#
+#
+#         manageSSH.chdir(sftp, cur_path)
+#         items_list = sftp.listdir()
+#         # items_list = ['new', 'parallels crack', '20200111_162640.jpg', 'apple watch.txt', 'iphone 12 pro.png', 'iphone.txt', 'macbook.txt', 'macos crack.txt']
+#         icons_dict = get_icons_dict()
+#         # icons_dict = manageSERVER.get_icons_dict()
+#         create_frame(items_list)
+#         # items_list = sort_files_list(items_list)
+#         create_bttn(frame)
+#
+#         end_video_name = 'end-animation.mp4'
+#         LoginRegister.play_video(end_video_name)
+#
+#         # #IN THE FUNC
+#         # for x in range(10):
+#         #     tkinter.Grid.columnconfigure(frame, x, weight=1)
+#         #
+#         # for y in range(5):
+#         #     tkinter.Grid.rowconfigure(frame, y, weight=1)
+#
+#         root.mainloop()

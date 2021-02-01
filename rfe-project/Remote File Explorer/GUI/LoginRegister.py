@@ -1,6 +1,7 @@
 import threading
 import tkinter
 from tkinter import messagebox, ttk
+from tkinter import simpledialog  # opens the popup to add a new ip
 import imageio
 import wx
 import re
@@ -8,6 +9,7 @@ from PIL import ImageTk, Image
 import os
 import socket
 import manageSERVER
+import manageSSH
 from time import sleep
 import main_window
 
@@ -51,7 +53,7 @@ def email_regex(email):
     else:
         return False
 
-def choose_control(choose_frame, control_pic, be_controlled_pic):#, old_frame):
+def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     global mode, root
     global app_width, app_height
     mode = None
@@ -88,9 +90,11 @@ def choose_control(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     choose_frame.mainloop()
     return mode
 
-def show_ip_dict(ip_frame, ip_dict):
-    global mode, root, count
+def choose_ip_dict(ip_frame, ip_dict):
+    global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email
     global app_width, app_height
+
+    ip_butns_dict = dict()
 
     main_title = tkinter.Label(ip_frame, text='Choose an IP address to connect to:', font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window.calc_width(95), y=main_window.calc_height(25))
@@ -100,25 +104,170 @@ def show_ip_dict(ip_frame, ip_dict):
 
     canvas = tkinter.Canvas(frame)
     scrollbar = tkinter.Scrollbar(frame, orient="vertical", command=canvas.yview)
-    scrollable_frame = tkinter.Frame(canvas)
+    # scrollable_frame = tkinter.Frame(canvas)
 
     def mouse_wheel(event):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
+    def ip_butn_click(event):
+        global ssh, sftp, check_var
+
+        key_list = list(ip_butns_dict.keys())
+        val_list = list(ip_butns_dict.values())
+        bttn_name = key_list[val_list.index(event.widget)]
+        host = bttn_name[:bttn_name.index('-')]
+        username = bttn_name[bttn_name.index('-') + 1:]
+        check_var = tkinter.IntVar(value=0)
+        try_connect(host, username)
+
+        # event.widget.bind('<ButtonRelease-1>', True)  ###########
+
+    def try_connect(host, username):
+        global ssh, sftp
+        ssh = None
+        sftp = None
+        password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•')
+        # con_ask = tkinter.messagebox.askquestion(title='Connect', message=f'You are about to connect to {host}\nWould you like to connect')
+        # if con_ask == 'yes':
+        if password == None or password == '':
+            pass
+        # elif password == '':
+        #     password = simpledialog.askstring('Enter password', f'Enter the password to {host}:')
+        else:
+            ssh = manageSSH.connect_to_ssh(host, username, password)
+            if ssh == "wrong password":
+                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct and try again")
+            elif ssh == "no connection":
+                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure that the computer is connected to the internet and try again")
+            elif ssh == "timeout":
+                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct that the computer is connected to the internet and try again")
+            else:
+                sftp = ssh.open_sftp()
+                if check_var.get() == 1:
+                    manageSERVER.update_pc_in_account(email, (host, username))
+                ip_frame.quit()
+
+    # def create_scroll_frame():
+    #     global scrollable_frame, ip_butns_dict
+    #     scrollable_frame = tkinter.Frame(canvas)
+    #     scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    #     scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+    #
+    #     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
+    #     show_enter_ip_btn = tkinter.Button(scrollable_frame, command=open_ip_list, image=back_pic, cursor='hand2', bg=buttons_bg_color)
+    #     show_enter_ip_btn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+    #
+    #     for key, value in ip_dict.items():
+    #         ip_butns_dict[key] = tkinter.Button(scrollable_frame, text=f'{value} - {key}', cursor='hand2',
+    #                                             font=('Eras Bold ITC', main_window.calc_width(12)),
+    #                                             anchor=tkinter.CENTER, fg='gray20', bg=buttons_bg_color,
+    #                                             activebackground='yellow')
+    #         ip_butns_dict[key].pack(anchor=tkinter.CENTER, pady=4)
+    #         ip_butns_dict[key].bind("<Button-1>", ip_butn_click)
+    #
+    #     canvas.create_window((0, 0), window=scrollable_frame, anchor=tkinter.CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
+
+    # create_scroll_frame()
+
+
+
+    # for key, value in ip_dict.items():
+    #     ip_butns_dict[key] = tkinter.Button(scrollable_frame, text=f'{value} - {key}', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(12)), anchor=tkinter.CENTER, fg='gray20', bg=buttons_bg_color, activebackground='yellow')
+    #     ip_butns_dict[key].pack(anchor=tkinter.CENTER, pady=5)
+    #     ip_butns_dict[key].bind("<Button-1>", ip_butn_click)
+
+    # scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    # scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+    #
+    # canvas.create_window((0, 0), window=scrollable_frame, anchor=tkinter.CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
+
+    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
+    def create_enter_frame():
+        global check_var
+        def return_button(event):
+            connect_button.invoke()
+        root.bind('<Return>', return_button)
+
+        def check_ip():
+            host = enter_ip.get()
+            username = enter_username.get()
+            ip_error_title.place_forget()
+            username_error_title.place_forget()
+            if host == '' or username == '':
+                if host == '':
+                    ip_error_title.configure(text='Please enter an ip')
+                    ip_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(110), width=main_window.calc_width(500))
+                if username == '':
+                    username_error_title.configure(text='Please enter a username')
+                    username_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(215), width=main_window.calc_width(500))
+            else:
+                print(check_var.get())
+                try_connect(host, username)
+
+        enter_frame = tkinter.Frame(frame, bg='white')
+        enter_frame.place(x=main_window.calc_width(0), y=main_window.calc_height(0), width=main_window.calc_width(610), height=main_window.calc_height(392))
+
+        def close_enter_frame():
+            def no_action(event):
+                pass
+            root.bind('<Return>', no_action)
+            enter_frame.destroy()
+
+        back_btn = tkinter.Button(enter_frame, command=close_enter_frame, cursor='hand2', bg=buttons_bg_color, image=back_pic)
+        back_btn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+
+        ip_error_title = tkinter.Label(enter_frame, text='Please enter an ip', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        ip_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(110), width=main_window.calc_width(500))
+        username_error_title = tkinter.Label(enter_frame, text='Please enter a username', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        username_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(215), width=main_window.calc_width(500))
+        ip_error_title.place_forget()
+        username_error_title.place_forget()
+
+        enter_ip_title = tkinter.Label(enter_frame, text='IP:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20', bg='white').place(x=main_window.calc_width(285), y=main_window.calc_height(35))
+        enter_ip = tkinter.Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white', justify='center')
+        enter_ip.place(x=main_window.calc_width(55), y=main_window.calc_height(75), width=main_window.calc_width(500), height=main_window.calc_height(35))
+
+        enter_username_title = tkinter.Label(enter_frame, text='Username:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20', bg='white').place(x=main_window.calc_width(225), y=main_window.calc_height(140))  # (x=225, y=140)
+        enter_username = tkinter.Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white', justify='center')
+        enter_username.place(x=main_window.calc_width(55), y=main_window.calc_height(180), width=main_window.calc_width(500), height=main_window.calc_height(35))
+
+        check_var = tkinter.IntVar(value=1)
+        save_to_acc = tkinter.Checkbutton(enter_frame, cursor='hand2', text="Save this PC's info to your account for future connections", fg='gray20', bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_width(10)), onvalue=1, offvalue=0, variable=check_var)
+        save_to_acc.place(x=main_window.calc_width(105), y=main_window.calc_height(245))
+
+        connect_button = tkinter.Button(enter_frame, text='Connect', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=check_ip)
+        connect_button.place(x=main_window.calc_width(255), y=main_window.calc_height(292), width=main_window.calc_width(100), height=main_window.calc_height(35))
+
+        enter_ip.focus()
+
+    scrollable_frame = tkinter.Frame(canvas, bg='white')
     scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
     scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
 
-    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+    enter_ip_pic = ImageTk.PhotoImage(Image.open('entry.png').resize((main_window.calc_width(55), main_window.calc_height(41)), Image.ANTIALIAS))
+    show_enter_frame_btn = tkinter.Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2', bg=buttons_bg_color, compound=tkinter.BOTTOM, text='Enter an IP', font=('Eras Bold ITC', main_window.calc_width(10)))
+    show_enter_frame_btn.place(x=main_window.calc_width(500), y=main_window.calc_height(10))
+
+    def on_enter(event):
+        event.widget['background'] = 'papaya whip'
+
+    def on_leave(event):
+        event.widget['background'] = buttons_bg_color
+
+    for key, value in ip_dict.items():
+        ip_butns_dict[f'{key}-{value}'] = tkinter.Button(scrollable_frame, bd=0, text=f'{value} - {key}', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(12)), anchor=tkinter.CENTER, fg='gray20', bg=buttons_bg_color)
+        ip_butns_dict[f'{key}-{value}'].pack(anchor=tkinter.CENTER, pady=4)
+        ip_butns_dict[f'{key}-{value}'].bind("<Button-1>", ip_butn_click)
+        ip_butns_dict[f'{key}-{value}'].bind("<Enter>", on_enter)
+        ip_butns_dict[f'{key}-{value}'].bind("<Leave>", on_leave)
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor=tkinter.CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
 
     canvas.configure(yscrollcommand=scrollbar.set)
 
-    for key, value in ip_dict.items():
-        tkinter.Button(scrollable_frame, text=f'{value} - {key}').pack()
-
-
     canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
-    #
+
 
     # frame = tkinter.Frame(ip_frame, bg='white')
     # frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))  # (x=231, y=133, width=610, height=392)
@@ -138,7 +287,7 @@ def show_ip_dict(ip_frame, ip_dict):
     # control_label.place(x=main_window.calc_width(320), y=main_window.calc_height(100))  # (x=320, y=100)
 
     ip_frame.mainloop()
-    return mode
+    return ssh, sftp
 
 def start_login_window(main_frame):
     global email, ip_dict, root
@@ -231,7 +380,7 @@ def start_login_window(main_frame):
                                       bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_width(10)), onvalue=1, offvalue=0, variable=check_var)
     save_to_acc.place(x=main_window.calc_width(105), y=main_window.calc_height(245))  # (x=105, y=245)
 
-    login_button = tkinter.Button(login_frame, text='Login', cursor='arrow', font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+    login_button = tkinter.Button(login_frame, text='Login', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
     login_button.place(x=main_window.calc_width(255), y=main_window.calc_height(292), width=main_window.calc_width(100), height=main_window.calc_height(35))  # (x=255, y=292, width=100, height=35)
 
     register_button = tkinter.Button(login_frame, text="Create a new account", cursor='hand2', bd=0, font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color, command=register)
@@ -493,7 +642,7 @@ def stream(vid_label, vid_frame, video_name):
         vid_label.config(image=frame_image)
         vid_label.image = frame_image
         count += 1
-        print(count)  # find out the number of frames
+        # print(count)  # find out the number of frames
         if video_name == 'mid-animation.mp4' and count == 25:
             vid_frame.destroy()
         elif video_name == 'start-animation.mp4' and count == 20:
@@ -501,14 +650,16 @@ def stream(vid_label, vid_frame, video_name):
         elif video_name == 'end-animation.mp4' and count == 26:
             vid_frame.destroy()
 
-def main(r, a_w, a_h):
+def main(r, a_w, a_h, acnt):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
-    global app_width, app_height
-    # root = tkinter.Tk()
+    global app_width, app_height, account
+
+    account = acnt
     app_width = a_w
     app_height = a_h
     root = r
     root.protocol("WM_DELETE_WINDOW", close_window)
+
     # app = wx.App(False)
     # screen_width, screen_height = wx.GetDisplaySize()
 
@@ -548,7 +699,6 @@ def main(r, a_w, a_h):
     # good - but no need
 
 
-    # good
     main_frame = tkinter.Frame(root)
     main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
@@ -564,7 +714,10 @@ def main(r, a_w, a_h):
     main_frame.mainloop()
 
     print(email)  # DELETE
-    # good
+
+    def acc_signout():
+        root.destroy()
+        main_window.main()
 
 
     # while response == 'forgot' or response == 'login' or response == 'register':
@@ -580,6 +733,9 @@ def main(r, a_w, a_h):
 
     mode = None
     if email != None:
+        account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
+        account.add_separator()
+        account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
         root.title('Remote File Explorer')
         choose_frame = tkinter.Frame(root)
         choose_frame.place(x=0, y=0, width=app_width, height=app_height)
@@ -589,7 +745,7 @@ def main(r, a_w, a_h):
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
         control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
         be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        mode = choose_control(choose_frame, control_pic, be_controlled_pic)
+        mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
         # if email == 'yaniv2':
         #     choose_frame.destroy()
         # choose_frame.mainloop()
@@ -615,8 +771,9 @@ def main(r, a_w, a_h):
     # if email != None and mode != None:
     #     play_video(end_video_name)
 
-    selected_ip = None
-    if mode != None:
+    ssh = None
+    sftp = None
+    if mode == 'control':
         root.title('Remote File Explorer')
         ip_frame = tkinter.Frame(root)
         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
@@ -624,69 +781,69 @@ def main(r, a_w, a_h):
         bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        selected_ip = show_ip_dict(ip_frame, ip_dict)
+        ssh, sftp = choose_ip_dict(ip_frame, ip_dict)
 
-    selected_ip = 'no'  # DELETE
+    # selected_ip = 'no'  # DELETE
 
-    return email, mode, selected_ip, ip_dict
+    return email, mode, ssh, sftp
 
     # start_register_window(root)
     # start_forgot_window(root)
 
 
 # DELETE
-if __name__ == '__main__':
-    app = wx.App(False)
-    screen_width, screen_height = wx.GetDisplaySize()
-    # screen_width = 1000  # 1280  # temp
-    # screen_height = 700  # 720  # temp
-
-    if screen_width / screen_height != (1920 / 1080):
-        screen_height = screen_width / (1920 / 1080)
-
-    if screen_width >= 1070 and screen_height >= 700:
-        screen_width = 1920
-        screen_height = 1080
-
-    app_width = int(screen_width / 1.794)
-    app_height = int(screen_height / 1.542)
-    print(screen_width, screen_height, app_width, app_height)  # temp
-    root = tkinter.Tk()
-    x = int((screen_width - app_width) / 2)
-    y = int((screen_height - app_height) / 2)
-    print(f'x={x}, y={y}')
-    root.geometry(f'{app_width}x{app_height}+{x}+{y}')
-    root.iconbitmap('icon.ico')
-    # root.resizable(False, False)
-    # def resize(event):
-    #     print("New size is: {}x{}".format(event.width, event.height))
-    # root.bind("<Configure>", resize)
-
-    # main(root, app_width, app_height)
-
-    root.title('Remote File Explorer')
-    choose_frame = tkinter.Frame(root)
-    choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-    bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-    bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
-    # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
-    control_pic = ImageTk.PhotoImage(
-        Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
-                                             Image.ANTIALIAS))
-    be_controlled_pic = ImageTk.PhotoImage(
-        Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
-                                                   Image.ANTIALIAS))
-    # mode = choose_control(choose_frame, control_pic, be_controlled_pic)
-    # print(mode)
-
-
-    root.title('Remote File Explorer')
-    ip_frame = tkinter.Frame(root)
-    ip_frame.place(x=0, y=0, width=app_width, height=app_height)
-    bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-    bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
-    # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-    ip_dict = {"10.211.55.4": "root", "192.168.56.1": "yaniv"}
-    print(show_ip_dict(ip_frame, ip_dict))
+# if __name__ == '__main__':
+#     app = wx.App(False)
+#     screen_width, screen_height = wx.GetDisplaySize()
+#     # screen_width = 1000  # 1280  # temp
+#     # screen_height = 700  # 720  # temp
+#
+#     if screen_width / screen_height != (1920 / 1080):
+#         screen_height = screen_width / (1920 / 1080)
+#
+#     if screen_width >= 1070 and screen_height >= 700:
+#         screen_width = 1920
+#         screen_height = 1080
+#
+#     app_width = int(screen_width / 1.794)
+#     app_height = int(screen_height / 1.542)
+#     print(screen_width, screen_height, app_width, app_height)  # temp
+#     root = tkinter.Tk()
+#     x = int((screen_width - app_width) / 2)
+#     y = int((screen_height - app_height) / 2)
+#     print(f'x={x}, y={y}')
+#     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+#     root.iconbitmap('icon.ico')
+#     # root.resizable(False, False)
+#     # def resize(event):
+#     #     print("New size is: {}x{}".format(event.width, event.height))
+#     # root.bind("<Configure>", resize)
+#
+#     # main(root, app_width, app_height)
+#
+#     root.title('Remote File Explorer')
+#     choose_frame = tkinter.Frame(root)
+#     choose_frame.place(x=0, y=0, width=app_width, height=app_height)
+#     bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+#     bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+#     # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+#     # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+#     control_pic = ImageTk.PhotoImage(
+#         Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
+#                                              Image.ANTIALIAS))
+#     be_controlled_pic = ImageTk.PhotoImage(
+#         Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
+#                                                    Image.ANTIALIAS))
+#     # mode = choose_control(choose_frame, control_pic, be_controlled_pic)
+#     # print(mode)
+#
+#
+#     root.title('Remote File Explorer')
+#     ip_frame = tkinter.Frame(root)
+#     ip_frame.place(x=0, y=0, width=app_width, height=app_height)
+#     bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+#     bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+#     # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
+#     # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
+#     ip_dict = {"10.211.55.4": "root", "192.168.56.1": "yaniv"}
+#     print(show_ip_dict(ip_frame, ip_dict))

@@ -3,16 +3,20 @@ import stat
 
 
 def connect_to_ssh(host, username, password):
-    port = 22
+    PORT = 22
     # port = 5555
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     try:
-        ssh.connect(host, port, username, password)
+        ssh.connect(host, PORT, username, password)
         return ssh
     except paramiko.ssh_exception.NoValidConnectionsError:
-        print("Can't connect")
+        return "no connection"
+    except paramiko.ssh_exception.AuthenticationException:
+        return "wrong password"
+    except TimeoutError:
+        return "timeout"
 
 def disconnect_ssh(ssh):
     if ssh:

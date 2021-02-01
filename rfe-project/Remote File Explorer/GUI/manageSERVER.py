@@ -23,17 +23,17 @@ def create_new_user(email, password):
     send_object = json.dumps({'action': 'NEW_USER', 'email': email, 'password': password, 'ip_dict': {}}).encode(FORMAT)
     answr = send_to_server(send_object)
     if answr:
-        update_pc_in_account(email)
+        pc_ip = socket.gethostbyname(socket.gethostname())
+        pc_name = os.getlogin()
+        name_ip_tup = (pc_ip, pc_name)
+        update_pc_in_account(email, name_ip_tup)
     return answr  # True =  user created | False = user not created
 
 def check_if_email_exists(email):
     send_object = json.dumps({'action': 'CHECK_EMAIL', 'email': email}).encode(FORMAT)
     return send_to_server(send_object)  # True =  email exists | False = email doesn't exist
 
-def update_pc_in_account(email):  # name_ip_tup = ('pc_username', 'pc_ip')
-    pc_ip = socket.gethostbyname(socket.gethostname())
-    pc_name = os.getlogin()
-    name_ip_tup = (pc_ip, pc_name)
+def update_pc_in_account(email, name_ip_tup):  # name_ip_tup = ('pc_username', 'pc_ip')
     send_object = json.dumps({'action': 'UPDATE_PC', 'email': email, 'name_ip_tup': name_ip_tup}).encode(FORMAT)
     send_to_server(send_object)  # maybe delete this note and not return anything
     # True =  pc was in account / pc wasn't in account and now is | False = pc wasn't in account but adding hit an error
@@ -43,7 +43,10 @@ def login(email, password, is_update):
     answr = send_to_server(send_object)
     if is_update == 1:
         if answr:
-            update_pc_in_account(email)
+            pc_ip = socket.gethostbyname(socket.gethostname())
+            pc_name = os.getlogin()
+            name_ip_tup = (pc_ip, pc_name)
+            update_pc_in_account(email, name_ip_tup)
     return answr  # True - logged in successfully | False = email doesn't exist / error logging in
 
 def change_password(email, password, new_password):
