@@ -154,6 +154,9 @@ def manage_client_db(conn, addr):
         delete_user = ("DELETE FROM users WHERE email = ? AND password = ?")
         cursor.execute(delete_user, [(email.lower().encode(FORMAT)), (password.encode(FORMAT))])
 
+    elif action == "TEST_SERVER":
+        answr = "SERVER IS UP"
+
     else:
         answr = None
 

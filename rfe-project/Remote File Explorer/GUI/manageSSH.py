@@ -25,20 +25,31 @@ def disconnect_ssh(ssh):
         except:
             pass
 
+# def check_if_path_exists(sftp, path):
+#     try:
+#         chdir(sftp, path)
+#     except FileNotFoundError:
+#         return
+
 def chdir(sftp, path):
     try:
         sftp.chdir(path)
     except FileNotFoundError:
-        cur_path = sftp.getcwd()
-        if path[:2] == cur_path[1:cur_path[1:].find('/') + 1]:
-            path = path[3:]
-            path_list = cur_path.split('/')
-            for _ in range(len(path_list) - 1):
-                sftp.chdir('..')
-            sftp.chdir(path)
-        else:
+        try:
             sftp.chdir(None)
             sftp.chdir(path)
+        except FileNotFoundError:
+            return 'path not found'
+        # cur_path = sftp.getcwd()
+        # if path[:2] == cur_path[1:cur_path[1:].find('/') + 1]:
+        #     path = path[3:]
+        #     path_list = cur_path.split('/')
+        #     for _ in range(len(path_list) - 1):
+        #         sftp.chdir('..')
+        #     sftp.chdir(path)
+        # else:
+        #     sftp.chdir(None)
+        #     sftp.chdir(path)
 
 def run_action(ssh, action):
     stdin, stdout, stderr = ssh.exec_command(action)

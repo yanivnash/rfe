@@ -8,6 +8,9 @@ import re
 from PIL import ImageTk, Image
 import os
 import socket
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 import manageSERVER
 import manageSSH
 from time import sleep
@@ -90,8 +93,8 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     choose_frame.mainloop()
     return mode
 
-def choose_ip_dict(ip_frame, ip_dict):
-    global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email
+def login_to_ssh_client(ip_frame, ip_dict):
+    global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username
     global app_width, app_height
 
     ip_butns_dict = dict()
@@ -110,7 +113,7 @@ def choose_ip_dict(ip_frame, ip_dict):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def ip_butn_click(event):
-        global ssh, sftp, check_var
+        global ssh, sftp, check_var, username
 
         key_list = list(ip_butns_dict.keys())
         val_list = list(ip_butns_dict.values())
@@ -183,12 +186,13 @@ def choose_ip_dict(ip_frame, ip_dict):
 
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
     def create_enter_frame():
-        global check_var
+        global check_var, username
         def return_button(event):
             connect_button.invoke()
         root.bind('<Return>', return_button)
 
         def check_ip():
+            global username
             host = enter_ip.get()
             username = enter_username.get()
             ip_error_title.place_forget()
@@ -287,7 +291,7 @@ def choose_ip_dict(ip_frame, ip_dict):
     # control_label.place(x=main_window.calc_width(320), y=main_window.calc_height(100))  # (x=320, y=100)
 
     ip_frame.mainloop()
-    return ssh, sftp
+    return ssh, sftp, username
 
 def start_login_window(main_frame):
     global email, ip_dict, root
@@ -577,8 +581,29 @@ def start_forgot_window(main_frame):
             email = enter_email.get()
             email_error_title.configure(text='Email Sent! Check your inbox', fg='green')
             email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(205), width=main_window.calc_width(500))  # (x=55, y=205, width=500)
+
+            sender_email = 'rfe.noreply@gmail.com'  # Your email
+            password = 'RFE123456789'  # Your email account password
+            send_to_email = email  # Who you are sending the message to
+            message = f'This is my message to {send_to_email} from {sender_email}'
+
+            msg = MIMEMultipart()
+            msg['From'] = 'Remote File Explorer'
+            msg['To'] = email
+            msg['Subject'] = 'Reset your password'
+
+            # Attach the message to the MIMEMultipart object
+            msg.attach(MIMEText(message, 'plain'))
+
+            server = smtplib.SMTP('smtp.gmail.com', 587)
+            server.starttls()
+            server.login(sender_email, password)
+            text = msg.as_string()  # You now need to convert the MIMEMultipart object to a string to send
+            server.sendmail(sender_email, send_to_email, text)
+            server.quit()
+
             # sleep(2)
-            login()
+            # login()
 
             # send reset email
             # main_frame.destroy()
@@ -589,6 +614,134 @@ def start_forgot_window(main_frame):
         reset_frame.destroy()
         play_video(mid_video_name)
         start_login_window(main_frame)
+
+    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window.calc_width(46), main_window.calc_height(35)), Image.ANTIALIAS))
+
+    def new_pass_code():
+        def close_code_frame():
+            enter_code_frame.destroy()
+        enter_code_frame = tkinter.Frame(main_frame, bg='white')
+        enter_code_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133),
+                               width=main_window.calc_width(610), height=main_window.calc_height(392))
+        back_bttn = tkinter.Button(enter_code_frame, image=back_pic, cursor='hand2',
+                                   font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                                   command=close_code_frame)
+        back_bttn.place(x=main_window.calc_width(5), y=main_window.calc_height(5))
+
+        def show_hide_pass1():
+            if enter_password.cget('show') == '':
+                enter_password.configure(show='•')
+                show_hide_button1.configure(image=show_icon)
+            else:
+                enter_password.configure(show='')
+                show_hide_button1.configure(image=hide_icon)
+
+        def show_hide_pass2():
+            if re_enter_password.cget('show') == '':
+                re_enter_password.configure(show='•')
+                show_hide_button2.configure(image=show_icon)
+            else:
+                re_enter_password.configure(show='')
+                show_hide_button2.configure(image=hide_icon)
+
+        def key_entered(key):
+            password1 = enter_password.get()
+            password2 = re_enter_password.get()
+            if len(password1) > len(password2):
+                password2 = re_enter_password.get() + key.char
+            else:
+                password1 = enter_password.get() + key.char
+            print(f'pass1: {password1}\npass2: {password2}\n')
+            re_pass_error_title.place_forget()
+            if password1 != password2:
+                re_pass_error_title.configure(text="The passwords don't match")
+                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(320),
+                                          width=main_window.calc_width(500))
+
+        email_error_title = tkinter.Label(enter_code_frame, text='Please enter your email',
+                                          font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(130),
+                                width=main_window.calc_width(500))  # (x=55, y=85, width=500)
+        pass_error_title = tkinter.Label(enter_code_frame, text='Please enter a password',
+                                         font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(225),
+                               width=main_window.calc_width(500))  # (x=55, y=180, width=500)
+        re_pass_error_title = tkinter.Label(enter_code_frame, text='Please Retype the password',
+                                            font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(320),
+                                  width=main_window.calc_width(500))  # (x=55, y=275, width=500)
+        email_error_title.place_forget()
+        pass_error_title.place_forget()
+        re_pass_error_title.place_forget()
+
+        reset_code_title = tkinter.Label(enter_code_frame, text='Reset Code:',
+                                         font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
+                                         bg='white').place(x=main_window.calc_width(215),
+                                                           y=main_window.calc_height(5))
+        enter_reset_code = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
+                                         fg='gray20',
+                                         bg='white', justify='center')
+        enter_reset_code.place(x=main_window.calc_width(55), y=main_window.calc_height(50),
+                               width=main_window.calc_width(500),
+                               height=main_window.calc_height(35))
+
+        email_title = tkinter.Label(enter_code_frame, text='Email:',
+                                    font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
+                                    bg='white').place(x=main_window.calc_width(255),
+                                                      y=main_window.calc_height(85))  # (x=255, y=10)
+        enter_email = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+                                    bg='white', justify='center')
+        enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(125),
+                          width=main_window.calc_width(500),
+                          height=main_window.calc_height(35))
+
+        password_title = tkinter.Label(enter_code_frame, text='Password:',
+                                       font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
+                                       bg='white').place(x=main_window.calc_width(225),
+                                                         y=main_window.calc_height(165))  # (x=225, y=105)
+        enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+                                       bg='white', justify='center', show="•")
+        enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(205),
+                             width=main_window.calc_width(500),
+                             height=main_window.calc_height(35))  # (x=55, y=145, width=500, height=35)
+
+        enter_password.bind("<Key>", key_entered)
+
+        show_hide_button1 = tkinter.Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
+                                           command=show_hide_pass1)
+        show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(205),
+                                width=main_window.calc_width(35),
+                                height=main_window.calc_height(35))  # (x=555, y=145, width=35, height=35)
+
+        re_password_title = tkinter.Label(enter_code_frame, text='Retype Password:',
+                                          font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
+                                          bg='white').place(x=main_window.calc_width(180),
+                                                            y=main_window.calc_height(245))  # (x=180, y=200)
+        re_enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
+                                          fg='gray20', bg='white', justify='center', show="•")
+        re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(285),
+                                width=main_window.calc_width(500),
+                                height=main_window.calc_height(35))  # (x=55, y=240, width=500, height=35)
+
+        re_enter_password.bind("<Key>", key_entered)
+
+        show_hide_button2 = tkinter.Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
+                                           command=show_hide_pass2)
+        show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(285),
+                                width=main_window.calc_width(35), height=main_window.calc_height(35))
+
+        def reset_pass():
+            # create a new table in the DB and check if the code exists and if it matches with the email entered here
+            # then check if the passwords match (maybe check if they are the same as the existing one)
+            # finally, change the password in the DB to the new one and send confirmation email
+            pass
+
+        reset_pass_bttn = tkinter.Button(enter_code_frame, text='Reset Password', cursor='hand2',
+                                         font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+                                         bg=buttons_bg_color, command=reset_pass)
+        reset_pass_bttn.place(x=main_window.calc_width(218), y=main_window.calc_height(347),
+                              width=main_window.calc_width(174), height=main_window.calc_height(35))
+        enter_reset_code.focus()
 
     reset_frame = tkinter.Frame(main_frame, bg='white')
     reset_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))  # (x=231, y=133, width=610, height=392)
@@ -604,8 +757,12 @@ def start_forgot_window(main_frame):
     enter_email = tkinter.Entry(reset_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white', justify='center')
     enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(170), width=main_window.calc_width(500), height=main_window.calc_height(35))  # (x=55, y=170, width=500, height=35)
 
+    email_title = tkinter.Label(reset_frame, text='already got an email?', font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg='white').place(x=main_window.calc_width(120), y=main_window.calc_height(15))
+    enter_reset_code_bttn = tkinter.Button(reset_frame, text='Enter reset code', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color, command=new_pass_code)
+    enter_reset_code_bttn.place(x=main_window.calc_width(315), y=main_window.calc_height(10), width=main_window.calc_width(150), height=main_window.calc_height(35))  # (x=235, y=270, width=140, height=35)
+
     send_email_button = tkinter.Button(reset_frame, text='Send Email', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
-    send_email_button.place(x=main_window.calc_width(235), y=main_window.calc_height(270), width=main_window.calc_width(140), height=main_window.calc_height(35))  # (x=235, y=270, width=140, height=35)
+    send_email_button.place(x=main_window.calc_width(235), y=main_window.calc_height(270), width=main_window.calc_width(140), height=main_window.calc_height(35))
 
     login_button = tkinter.Button(reset_frame, text="Login to your account", cursor='hand2', bd=0, font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color, command=login)
     # login_button.place(x=228, y=350)
@@ -650,14 +807,30 @@ def stream(vid_label, vid_frame, video_name):
         elif video_name == 'end-animation.mp4' and count == 26:
             vid_frame.destroy()
 
-def main(r, a_w, a_h, acnt):
+def server_status(main_frame):
+    status = manageSERVER.get_server_status()
+    print(status)
+    if status != 'SERVER IS UP':
+        error_frame = tkinter.Frame(main_frame, bg='white')
+        error_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))
+        error_label = tkinter.Label(error_frame, text='error', bg='white', font=('Arial', main_window.calc_width(18), 'bold'))
+        if status == 'SERVER IS DOWN':
+            error_label.configure(text='The servers are currently DOWN!\nPlease try again later.')
+            # error_label.place(x=main_window.calc_width(225), y=main_window.calc_height(140))
+        elif status == 'ERROR':
+            error_label.configure(text='There was an error connecting to the servers!\nPlease try again later.')
+            # error_label.place(x=main_window.calc_width(225), y=main_window.calc_height(140))
+        error_label.place(width=main_window.calc_width(610), x=main_window.calc_width(0), y=main_window.calc_height(160))
+        error_frame.mainloop()
+
+def main(root1, app_width1, app_height1, account1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
     global app_width, app_height, account
 
-    account = acnt
-    app_width = a_w
-    app_height = a_h
-    root = r
+    root = root1
+    account = account1
+    app_width = app_width1
+    app_height = app_height1
     root.protocol("WM_DELETE_WINDOW", close_window)
 
     # app = wx.App(False)
@@ -707,6 +880,9 @@ def main(r, a_w, a_h, acnt):
     bg_image = tkinter.Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
     show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png').resize((main_window.calc_width(30), main_window.calc_height(30)), Image.ANTIALIAS))
     hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png').resize((main_window.calc_width(30), main_window.calc_height(30)), Image.ANTIALIAS))
+
+    print(server_status(main_frame))
+
     play_video(start_video_name)
     # email = start_login_window(main_frame)
 
@@ -714,10 +890,6 @@ def main(r, a_w, a_h, acnt):
     main_frame.mainloop()
 
     print(email)  # DELETE
-
-    def acc_signout():
-        root.destroy()
-        main_window.main()
 
 
     # while response == 'forgot' or response == 'login' or response == 'register':
@@ -731,9 +903,17 @@ def main(r, a_w, a_h, acnt):
 
     # email = 'yaniv'  # test
 
+    def acc_signout():
+        root.destroy()
+        main_window.main()
+
+    def settings_popup():
+        pass
+
     mode = None
     if email != None:
         account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
+        account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2', activeforeground='black')
         account.add_separator()
         account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
         root.title('Remote File Explorer')
@@ -773,7 +953,8 @@ def main(r, a_w, a_h, acnt):
 
     ssh = None
     sftp = None
-    if mode == 'control':
+    username = None
+    if mode == 'control' and email != None:
         root.title('Remote File Explorer')
         ip_frame = tkinter.Frame(root)
         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
@@ -781,11 +962,13 @@ def main(r, a_w, a_h, acnt):
         bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        ssh, sftp = choose_ip_dict(ip_frame, ip_dict)
+        ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
     # selected_ip = 'no'  # DELETE
-
-    return email, mode, ssh, sftp
+    if email != None and mode != None and ssh != None:
+        back_frame = tkinter.Frame(root)
+        back_frame.place(x=0, y=0, width=app_width, height=app_height)
+    return email, mode, ssh, sftp, username
 
     # start_register_window(root)
     # start_forgot_window(root)

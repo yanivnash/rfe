@@ -16,8 +16,10 @@ def send_to_server(send_object):
         answr = client.recv(MSG_LEN).decode(FORMAT)
         client.close()
         return json.loads(answr)  # None = action not found
-    except ConnectionRefusedError:
+    except TimeoutError:
         return 'SERVER IS DOWN'
+    except ConnectionRefusedError:
+        return 'ERROR'
 
 def create_new_user(email, password):
     send_object = json.dumps({'action': 'NEW_USER', 'email': email, 'password': password, 'ip_dict': {}}).encode(FORMAT)
@@ -60,6 +62,10 @@ def get_ip_dict(email):
 def delete_account(email, password):
     send_object = json.dumps({'action': 'DELETE_USER', 'email': email, 'password': password}).encode(FORMAT)
     return send_to_server(send_object)  # True = account deleted | False = account wasn't deleted
+
+def get_server_status():
+    send_object = json.dumps({'action': 'TEST_SERVER'}).encode(FORMAT)
+    return send_to_server(send_object)
 
 # def get_icons_dict():
 #     send_object = json.dumps({'action': 'GET_ICONS'}).encode(FORMAT)

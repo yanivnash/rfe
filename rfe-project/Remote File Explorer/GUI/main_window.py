@@ -44,8 +44,8 @@ ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 # cur_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\\apple')
 # cur_path = r'C:\Users\yaniv\Desktop\כיתה יב\10 יחידות מחשבים\cyber project'
 # cur_path = r'D:\Program Files\obs-studio\screen records'
-cur_path = r'C:\Users\yaniv\Desktop\Remote File Explorer'
-
+# cur_path = r'C:\Users\yaniv\Desktop\Remote File Explorer'
+cur_path = 'C:\\'
 
 # MAYBE DELETE
 # def resize(event):
@@ -101,7 +101,7 @@ def create_bttn(frame):
         elif item in files_list:
             # if 'item' is a file
             end_index = item.rfind('.')
-            file_type = item[end_index:]# + '.png'
+            file_type = item[end_index:].lower()# + '.png'
 
             if len(item) > 30:
                 btn_text = item[0:30] + '...' + file_type
@@ -119,14 +119,14 @@ def create_bttn(frame):
             icon = icons_dict[file_type + '.png']
         except KeyError:
             icon = icons_dict['.none.png']
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = tkinter.Button(frame, bg="gray", wraplength=100, text=btn_text, compound=tkinter.TOP, justify=tkinter.CENTER, image=icon, height=100, width=100)
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=tkinter.N + tkinter.S + tkinter.E + tkinter.W, padx=10, pady=10)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = tkinter.Button(frame, bg="gray", wraplength=100, text=btn_text, compound=tkinter.TOP, justify=tkinter.CENTER, image=icon, height=120, width=120)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=tkinter.N + tkinter.S + tkinter.E + tkinter.W, padx=9, pady=9)
         # bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-1>", left_click)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-2>", right_click)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
         clm += 1
-        if clm == 8:
+        if clm == 7:
             clm = 0
             rw += 1
 
@@ -154,8 +154,8 @@ def double_click(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
-
     temp = cur_path + '\\' + item_name
+    print(temp)
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if item_type == 'dir':
         cur_path = temp
@@ -164,8 +164,8 @@ def double_click(event):
         update_frame(items_list)
     elif item_type == 'file':
         # not working - only png works
-        # manageSSH.run_action(ssh, f'"{temp}"')
-        pass
+        manageSSH.run_action(ssh, f'"{temp}"')
+        # pass
 
     elif item_type == 'item not found':
         print(f'{item_name} - not found')
@@ -203,16 +203,25 @@ def DELE():
 #         update_frame(items_list)
 
 def up_button():
-    global items_list, cur_path, frame
-    # manageSSH.run_action(ssh, r'cd..')
-    # cur_path = sftp.getcwd()
-    cur_path = cur_path[:cur_path.rfind('\\')]
-    root.title(cur_path)
-    # if os.path.isdir(cur_path):
-    #     os.chdir(cur_path)
-    manageSSH.chdir(sftp, cur_path)
+    global cur_path
+    manageSSH.chdir(sftp, '..')
+    cur_path = sftp.getcwd()[1:].replace('/', '\\')
+    print(f'up:{cur_path}')
     items_list = sftp.listdir()
     update_frame(items_list)
+    # manageSSH.run_action(ssh, r'cd..')
+    # cur_path = sftp.getcwd()
+
+    # if len(cur_path) <= 3:
+    #     pass
+    # else:
+    #     cur_path = cur_path[:cur_path.rfind('\\')]
+    #     root.title(cur_path)  # TEMP
+    #     # if os.path.isdir(cur_path):
+    #     #     os.chdir(cur_path)
+    #     manageSSH.chdir(sftp, cur_path)
+    #     items_list = sftp.listdir()
+    #     update_frame(items_list)
 
 def forward_button():
     # wrapper2.update() # not working - maybe wont use update()
@@ -233,7 +242,13 @@ def refresh_button():
     update_frame(items_list)
 
 def drives_box_change(event):
-    print(event.widget.get())
+    global cur_path
+    selected_drive = event.widget.get()
+    print(selected_drive)
+    cur_path = selected_drive
+    manageSSH.chdir(sftp, cur_path)
+    items_list = sftp.listdir()
+    update_frame(items_list)
 
 def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect & Close', message='Are you sure you want to close the window and disconnect?')
@@ -295,7 +310,7 @@ def update_frame(items_list):
     create_bttn(frame)
 
 def create_frame(items_list):#back_img, forw_img, ref_img):
-    global frame, wrapper1, wrapper2, count
+    global frame, wrapper1, wrapper2, count, drives_list
 
     count = 0
     def mouse_wheel(event):
@@ -353,8 +368,13 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
     for i in range(len(drives_list)):
         drives_list[i] += '\\'
-    drivers_combobox = ttk.Combobox(menu_window, values=drives_list)
+    drivers_combobox = ttk.Combobox(menu_window, values=drives_list, state='readonly')
     default_value = cur_path[0:3]
+    try:
+        drivers_combobox.current(drives_list.index(default_value))
+    except ValueError:
+        default_value = cur_path[0:2] + '\\'
+        drivers_combobox.current(drives_list.index(default_value))
     drivers_combobox.current(drives_list.index(default_value))
     drivers_combobox.bind("<<ComboboxSelected>>", drives_box_change)
     drivers_combobox.grid(column=2, row=1)
@@ -383,7 +403,7 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
         tkinter.Grid.columnconfigure(wrapper1, x, weight=1)
 
 def main():
-    global root, frame, ssh, sftp
+    global cur_path, root, frame, ssh, sftp
 
     print(screen_width, screen_height, app_width, app_height)  # temp
 
@@ -415,7 +435,7 @@ def main():
 
     # root.bind("<Configure>", resize)
 
-    email, mode, ssh, sftp = LoginRegister.main(root, app_width, app_height, account)
+    email, mode, ssh, sftp, username = LoginRegister.main(root, app_width, app_height, account)
     print('main_window.py')
     print(email)  # DELETE
     print(mode)
@@ -439,8 +459,11 @@ def main():
         # ssh = manageSSH.connect_to_ssh(host, username, password)
         # sftp = ssh.open_sftp()
 
+        system_drive = os.getenv("SystemDrive")
 
-
+        cur_path = rf'{system_drive}\Users\{username}\Desktop'
+        print(cur_path)  # TEMP
+        # cur_path = r'%userprofile%\Desktop'
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         # items_list = ['new', 'parallels crack', '20200111_162640.jpg', 'apple watch.txt', 'iphone 12 pro.png', 'iphone.txt', 'macbook.txt', 'macos crack.txt']
@@ -449,6 +472,34 @@ def main():
         create_frame(items_list)
         # items_list = sort_files_list(items_list)
         create_bttn(frame)
+
+        def go_to_path():
+            global cur_path
+            new_path = simpledialog.askstring('Enter a path', 'Enter a valid path to go to:')
+            print(new_path)
+            while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
+                new_path = new_path[1:]
+                print(new_path)  # TEMP
+            if new_path == '' or new_path == None:
+                pass
+            new_path = new_path[0].upper() + new_path[1:]
+            print(f'upper: {cur_path}')
+            answr = manageSSH.chdir(sftp, new_path)
+            if answr == 'path not found':
+                tkinter.messagebox.showerror(title="The specified path doesn't exist", message=f"{new_path}\ndoesn't exist. Please try a different one")
+            else:
+                cur_path = new_path
+                print(f'new path:{cur_path}')  # TEMP
+                items_list = sftp.listdir()
+                update_frame(items_list)
+
+        go_to = tkinter.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label='Go to...', menu=go_to)
+        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        go_to.add_separator()
+        go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2', activeforeground='black')
 
         end_video_name = 'end-animation.mp4'
         LoginRegister.play_video(end_video_name)
