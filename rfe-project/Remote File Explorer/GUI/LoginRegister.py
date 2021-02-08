@@ -823,6 +823,83 @@ def server_status(main_frame):
         error_label.place(width=main_window.calc_width(610), x=main_window.calc_width(0), y=main_window.calc_height(160))
         error_frame.mainloop()
 
+def choose_mode_window(email):
+    def acc_signout():
+        discon_msg_box = tkinter.messagebox.askquestion(title='Sign Out',
+                                                        message='Are you sure you want to sign out of your account?')
+        if discon_msg_box == 'yes':
+            root.destroy()
+            main_window.main()
+
+    def settings_popup():
+        pass
+
+    mode = None
+    if email != None:
+        account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
+        account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2',
+                            activeforeground='black')
+        account.add_separator()
+        account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2',
+                            activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
+        root.title('Remote File Explorer')
+        choose_frame = tkinter.Frame(root)
+        choose_frame.place(x=0, y=0, width=app_width, height=app_height)
+        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+        control_pic = ImageTk.PhotoImage(
+            Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
+                                                 Image.ANTIALIAS))
+        be_controlled_pic = ImageTk.PhotoImage(
+            Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
+                                                       Image.ANTIALIAS))
+        mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
+        # if email == 'yaniv2':
+        #     choose_frame.destroy()
+        # choose_frame.mainloop()
+
+    # if email != None:
+    #     root = tkinter.Tk()
+    #     root.protocol("WM_DELETE_WINDOW", close_window)
+    #     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    #     root.geometry(f'1070x700+{x}+{y}')
+    #     root.iconbitmap('icon.ico')
+    #     root.resizable(False, False)
+    #     bg = tkinter.PhotoImage(file='background.png')
+    #     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    #     # mode = choose_is_control(root)
+    #     frame = tkinter.Frame(root, bg='black')
+    #     frame.place(x=229, y=132, width=610, height=392)
+    #     if email == 'yaniv2':
+    #         frame.destroy()
+    #     frame.mainloop()
+
+    print(mode)
+    # root.mainloop()
+    # if email != None and mode != None:
+    #     play_video(end_video_name)
+
+    ssh = None
+    sftp = None
+    username = None
+    if mode == 'control' and email != None:
+        root.title('Remote File Explorer')
+        ip_frame = tkinter.Frame(root)
+        ip_frame.place(x=0, y=0, width=app_width, height=app_height)
+        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
+        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
+        ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
+
+    if email != None and mode != None and ssh != None:
+        back_frame = tkinter.Frame(root)
+        back_frame.place(x=0, y=0, width=app_width, height=app_height)
+
+    return email, mode, ssh, sftp, username
+
 def main(root1, app_width1, app_height1, account1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
     global app_width, app_height, account
@@ -903,75 +980,76 @@ def main(root1, app_width1, app_height1, account1):
 
     # email = 'yaniv'  # test
 
-    def acc_signout():
-        root.destroy()
-        main_window.main()
+    # def choose_mode_window(email):
+    #     def acc_signout():
+    #         discon_msg_box = tkinter.messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
+    #         if discon_msg_box == 'yes':
+    #             root.destroy()
+    #             main_window.main()
+    #
+    #     def settings_popup():
+    #         pass
+    #
+    #     mode = None
+    #     if email != None:
+    #         account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
+    #         account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2', activeforeground='black')
+    #         account.add_separator()
+    #         account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
+    #         root.title('Remote File Explorer')
+    #         choose_frame = tkinter.Frame(root)
+    #         choose_frame.place(x=0, y=0, width=app_width, height=app_height)
+    #         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+    #         bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    #         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+    #         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+    #         control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
+    #         be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
+    #         mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
+    #         # if email == 'yaniv2':
+    #         #     choose_frame.destroy()
+    #         # choose_frame.mainloop()
+    #
+    #     # if email != None:
+    #     #     root = tkinter.Tk()
+    #     #     root.protocol("WM_DELETE_WINDOW", close_window)
+    #     #     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+    #     #     root.geometry(f'1070x700+{x}+{y}')
+    #     #     root.iconbitmap('icon.ico')
+    #     #     root.resizable(False, False)
+    #     #     bg = tkinter.PhotoImage(file='background.png')
+    #     #     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    #     #     # mode = choose_is_control(root)
+    #     #     frame = tkinter.Frame(root, bg='black')
+    #     #     frame.place(x=229, y=132, width=610, height=392)
+    #     #     if email == 'yaniv2':
+    #     #         frame.destroy()
+    #     #     frame.mainloop()
+    #
+    #     print(mode)
+    #     # root.mainloop()
+    #     # if email != None and mode != None:
+    #     #     play_video(end_video_name)
+    #
+    #     ssh = None
+    #     sftp = None
+    #     username = None
+    #     if mode == 'control' and email != None:
+    #         root.title('Remote File Explorer')
+    #         ip_frame = tkinter.Frame(root)
+    #         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
+    #         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+    #         bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+    #         # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
+    #         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
+    #         ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
-    def settings_popup():
-        pass
+    return choose_mode_window(email)
 
-    mode = None
-    if email != None:
-        account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
-        account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2', activeforeground='black')
-        account.add_separator()
-        account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
-        root.title('Remote File Explorer')
-        choose_frame = tkinter.Frame(root)
-        choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-        bg_image = tkinter.Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
-        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
-        control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
-        be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
-        # if email == 'yaniv2':
-        #     choose_frame.destroy()
-        # choose_frame.mainloop()
-
-    # if email != None:
-    #     root = tkinter.Tk()
-    #     root.protocol("WM_DELETE_WINDOW", close_window)
-    #     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
-    #     root.geometry(f'1070x700+{x}+{y}')
-    #     root.iconbitmap('icon.ico')
-    #     root.resizable(False, False)
-    #     bg = tkinter.PhotoImage(file='background.png')
-    #     bg_image = tkinter.Label(root, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    #     # mode = choose_is_control(root)
-    #     frame = tkinter.Frame(root, bg='black')
-    #     frame.place(x=229, y=132, width=610, height=392)
-    #     if email == 'yaniv2':
-    #         frame.destroy()
-    #     frame.mainloop()
-
-    print(mode)
-    # root.mainloop()
-    # if email != None and mode != None:
-    #     play_video(end_video_name)
-
-    ssh = None
-    sftp = None
-    username = None
-    if mode == 'control' and email != None:
-        root.title('Remote File Explorer')
-        ip_frame = tkinter.Frame(root)
-        ip_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-        bg_image = tkinter.Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)), Image.ANTIALIAS))
-        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
-        ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
-
-    # selected_ip = 'no'  # DELETE
-    if email != None and mode != None and ssh != None:
-        back_frame = tkinter.Frame(root)
-        back_frame.place(x=0, y=0, width=app_width, height=app_height)
-    return email, mode, ssh, sftp, username
-
-    # start_register_window(root)
-    # start_forgot_window(root)
+    # if email != None and mode != None and ssh != None:
+    #     back_frame = tkinter.Frame(root)
+    #     back_frame.place(x=0, y=0, width=app_width, height=app_height)
+    # return email, mode, ssh, sftp, username
 
 
 # DELETE

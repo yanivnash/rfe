@@ -10,15 +10,41 @@ import paramiko
 ssh = manageSSH.connect_to_ssh('192.168.1.20', 'yaniv', 'Yanivn911911')
 sftp = ssh.open_sftp()
 
-answr = str(manageSSH.run_action(ssh, 'wmic logicaldisk get caption').read())
-drives_list = answr[answr.find('Caption') + 9:answr.rfind(r'       \r\r\n\r\r\n')].split(r'       \r\r\n')
-drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
-for i in range(len(drives_list)):
-    drives_list[i] += '\\'
-print(drives_list)
+# from stat import S_ISDIR, S_ISREG
+#
+# def tree_items(sftp, remotedir):
+#     tree_list = list()
+#     for item in sftp.listdir_attr(remotedir):
+#         remotepath = remotedir + '\\' + item.filename
+#         mode = item.st_mode
+#         if S_ISDIR(mode):
+#             tree_items(sftp, remotepath)
+#             tree_list.append(remotepath)
+#             print(remotepath)
+#         elif S_ISREG(mode):
+#             tree_list.append(remotepath)
+#             print(remotepath)
+#     return tree_list
+#
+# print(tree_items(sftp, r"C:\Users\yaniv\Desktop\Remote File Explorer"))
 
-import os
-print(os.getenv("SystemDrive"))
+
+# import warnings
+# warnings.filterwarnings("ignore")
+# print(a)
+
+
+manageSSH.chdir(sftp, r"C:\Users\yaniv\Desktop\Remote File Explorer")
+sftp.mkdir(r"testing")
+
+
+# warnings.filterwarnings("ignore")
+# warnings.warn("NameError")
+
+
+# print(sftp.listdir_attr(r"C:\Users\yaniv\Desktop\Remote File Explorer"))
+# print(sftp.walktree(r"C:\Users\yaniv\Desktop\Remote File Explorer"))
+
 # stdin, stdout, stderr = ssh.exec_command(r"C:\Users\yaniv\Desktop\Remote File Explorer\pic.png")
 #
 # print(stdin)

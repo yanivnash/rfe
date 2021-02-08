@@ -63,11 +63,14 @@ def calc_width(size):
         return 0
     else:
         return int(app_width / (1070 / size))
+
+
 def calc_height(size):
     if size == 0:
         return 0
     else:
         return int(app_height / (700 / size))
+
 
 def get_icons_dict():
     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')  # change to get from the server instead of local
@@ -83,6 +86,7 @@ def get_icons_dict():
 #             items_list.insert(i, items_list.pop(items_list.index(item)))
 #             i += 1
 #     return items_list
+
 
 def create_bttn(frame):
     global icons_dict, bttns_dict, sftp
@@ -146,6 +150,7 @@ def create_bttn(frame):
         #         rw += 1
         #     i += 1
 
+
 def double_click(event):
     event.widget.configure(bg="light blue")  # DEL
     global items_list, cur_path, frame, bttns_dict
@@ -176,15 +181,10 @@ def double_click(event):
 #     # DELETE THIS FUNC - NO NEED
 #     event.widget.configure(bg="green")
 
+
 def right_click(event):
     event.widget.configure(bg="blue")
 
-def dscon_bttn():  # add disconnecting from the machine (SSH)
-    discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect',message='Are you sure you want to disconnect?')
-    if discon_msg_box == 'yes':
-        manageSSH.disconnect_ssh(ssh)
-        root.destroy()
-        main()
 
 def DELE():
     # DELETE THIS FUNC AND BUTTON
@@ -202,10 +202,13 @@ def DELE():
 #         items_list = os.listdir(cur_path)
 #         update_frame(items_list)
 
+
 def up_button():
     global cur_path
     manageSSH.chdir(sftp, '..')
     cur_path = sftp.getcwd()[1:].replace('/', '\\')
+    while cur_path.endswith('\\'):
+        cur_path = cur_path[:len(cur_path) - 1]
     print(f'up:{cur_path}')
     items_list = sftp.listdir()
     update_frame(items_list)
@@ -223,6 +226,7 @@ def up_button():
     #     items_list = sftp.listdir()
     #     update_frame(items_list)
 
+
 def forward_button():
     # wrapper2.update() # not working - maybe wont use update()
     # save the current folder when back is pressed then go back to that folder when forward is clicked
@@ -233,6 +237,7 @@ def forward_button():
     # entry_in_button.insert(tkinter.END, 'New folder')
     # entry_in_button.pack()
 
+
 def refresh_button():
     print(cur_path) # temp - DEL later
     # sftp.chdir(cur_path)
@@ -240,6 +245,7 @@ def refresh_button():
     items_list = sftp.listdir()
     # items_list = os.listdir(cur_path)
     update_frame(items_list)
+
 
 def drives_box_change(event):
     global cur_path
@@ -250,11 +256,13 @@ def drives_box_change(event):
     items_list = sftp.listdir()
     update_frame(items_list)
 
+
 def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect & Close', message='Are you sure you want to close the window and disconnect?')
     if discon_msg_box == 'yes':
         manageSSH.disconnect_ssh(ssh)
         root.destroy()  # add disconnecting form the machine (SSH)
+
 
 def copy_path_button(event):
     # import time
@@ -265,7 +273,10 @@ def copy_path_button(event):
     # time.sleep(1)
     # event.widget.configure(text='Copy Path2')
 
+
+import warnings
 def new_dir_button():
+    warnings.filterwarnings("ignore")
     # Get the name of the folder with entry
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
@@ -293,12 +304,15 @@ def new_dir_button():
         elif new_folder_name.endswith('.') or new_folder_name.endswith(' '):
             new_folder_name = new_folder_name[:-1]
             sftp.mkdir(new_folder_name)
+            print(new_folder_name)  #####
             items_list = sftp.listdir()
             update_frame(items_list)
         else:
             sftp.mkdir(new_folder_name)
+            print(new_folder_name)  #####
             items_list = sftp.listdir()
             update_frame(items_list)
+
 
 def update_frame(items_list):
     # global back_img, forw_img, ref_img
@@ -385,12 +399,25 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     ref_btn = tkinter.Button(menu_window, image=icons_dict['refresh.png'], command=refresh_button)
     ref_btn.grid(column=4, row=1)
 
-    ds_btn = tkinter.Button(menu_window, text='Disconnect', command=dscon_bttn)
-    ds_btn.grid(column=5, row=1, sticky=tkinter.E, padx=50, columnspan=4)
+    def search():
+        tree_items_list = manageSSH.tree_items(sftp, cur_path)
+        search_key = search_bar_entry.get()
+        for item in tree_items_list:
+            if search_key.contains(item[item.rfind('\\'):]):
+                items_list.append(item)
+        update_frame(items_list)
+
+    search_bar_entry = tkinter.Entry(menu_window, text='Search')
+    search_bar_entry.grid(column=5, row=1, sticky=tkinter.E)
+    search_btn = tkinter.Button(menu_window, text='GO', command=search)
+    search_btn.grid(column=6, row=1, sticky=tkinter.E)
+
+    # ds_btn = tkinter.Button(menu_window, text='Disconnect', command=dscon_bttn)
+    # ds_btn.grid(column=5, row=1, sticky=tkinter.E, padx=50, columnspan=4)
 
     # DEL
-    DEL = tkinter.Button(menu_window, text='DELETE', command=DELE)
-    DEL.grid(column=6, row=1, sticky=tkinter.E, padx=25, columnspan=5)
+    # DEL = tkinter.Button(menu_window, text='DELETE', command=DELE)
+    # DEL.grid(column=6, row=1, sticky=tkinter.E, padx=25, columnspan=5)
     # DEL
 
     for x in range(10):
@@ -442,6 +469,7 @@ def main():
     print(ssh)
     print(sftp)
     if email != None and mode != None and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+        global cur_path
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -477,29 +505,88 @@ def main():
             global cur_path
             new_path = simpledialog.askstring('Enter a path', 'Enter a valid path to go to:')
             print(new_path)
-            while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
-                new_path = new_path[1:]
-                print(new_path)  # TEMP
             if new_path == '' or new_path == None:
                 pass
-            new_path = new_path[0].upper() + new_path[1:]
-            print(f'upper: {cur_path}')
-            answr = manageSSH.chdir(sftp, new_path)
-            if answr == 'path not found':
-                tkinter.messagebox.showerror(title="The specified path doesn't exist", message=f"{new_path}\ndoesn't exist. Please try a different one")
             else:
-                cur_path = new_path
-                print(f'new path:{cur_path}')  # TEMP
-                items_list = sftp.listdir()
-                update_frame(items_list)
+                while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
+                    new_path = new_path[1:]
+                    print(new_path)  # TEMP
+                new_path = new_path[0].upper() + new_path[1:]
+                print(f'upper: {cur_path}')
+                answr = manageSSH.chdir(sftp, new_path)
+                if answr == 'path not found':
+                    tkinter.messagebox.showerror(title="The specified path doesn't exist", message=f"{new_path}\ndoesn't exist. Please try a different one")
+                else:
+                    cur_path = new_path
+                    print(f'new path:{cur_path}')  # TEMP
+                    items_list = sftp.listdir()
+                    update_frame(items_list)
+
+        def acc_signout():
+            discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect & Sign Out', message='Are you sure you want to disconnect and sign out of your account?')
+            if discon_msg_box == 'yes':
+                manageSSH.disconnect_ssh(ssh)
+                root.destroy()
+                main()
+
+        account.delete('Sign Out')
+        account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')
+
+        def go_to_desktop():
+            global cur_path
+            cur_path = rf'{system_drive}\Users\{username}\Desktop'
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
+
+        def go_to_documents():
+            global cur_path
+            cur_path = rf'{system_drive}\Users\{username}\Documents'
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
+
+        def go_to_downloads():
+            global cur_path
+            cur_path = rf'{system_drive}\Users\{username}\Downloads'
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
+
+        def go_to_pictures():
+            global cur_path
+            cur_path = rf'{system_drive}\Users\{username}\Pictures'
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
 
         go_to = tkinter.Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Go to...', menu=go_to)
-        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
-        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
-        go_to.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2', activeforeground='black')
         go_to.add_separator()
         go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2', activeforeground='black')
+
+        file_transfer = tkinter.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label='File Transfer', menu=file_transfer)
+        file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+
+        def disconnect_func():  # add disconnecting from the machine (SSH)
+            discon_msg_box = tkinter.messagebox.askquestion(title='Disconnect', message='Are you sure you want to disconnect?')
+            if discon_msg_box == 'yes':
+                manageSSH.disconnect_ssh(ssh)
+                menubar.delete('Account')
+                menubar.delete('Go to...')
+                menubar.delete('Disconnect')
+                account = tkinter.Menu(menubar, tearoff=0)
+                menubar.add_cascade(label='Account', menu=account)
+                LoginRegister.choose_mode_window(email)
+
+        disconnect = tkinter.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label='Disconnect', menu=disconnect)
+        disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2', activeforeground='black')
 
         end_video_name = 'end-animation.mp4'
         LoginRegister.play_video(end_video_name)
