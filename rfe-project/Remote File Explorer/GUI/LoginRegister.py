@@ -8,9 +8,11 @@ import re
 from PIL import ImageTk, Image
 import os
 import socket
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
+
+# import smtplib
+# from email.mime.text import MIMEText
+# from email.mime.multipart import MIMEMultipart
+
 import manageSERVER
 import manageSSH
 from time import sleep
@@ -317,7 +319,7 @@ def start_login_window(main_frame):
             if enter_password.get() == '':
                 pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(215), width=main_window.calc_width(500))  # (x=55, y=215, width=500)
             # break
-        elif manageSERVER.check_if_email_exists(enter_email.get()) == False:  # check if email doesn't exist in the DB
+        elif not manageSERVER.check_if_email_exists(enter_email.get()):  # check if email doesn't exist in the DB
             email_error_title.configure(text="This email address doesn't have an account")
             email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(110), width=main_window.calc_width(500))  # (x=55, y=110, width=500)
             # break
@@ -579,35 +581,12 @@ def start_forgot_window(main_frame):
             # break
         else:  # email exists
             email = enter_email.get()
-            email_error_title.configure(text='Email Sent! Check your inbox', fg='green')
-            email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(205), width=main_window.calc_width(500))  # (x=55, y=205, width=500)
-
-            sender_email = 'rfe.noreply@gmail.com'  # Your email
-            password = 'RFE123456789'  # Your email account password
-            send_to_email = email  # Who you are sending the message to
-            message = f'This is my message to {send_to_email} from {sender_email}'
-
-            msg = MIMEMultipart()
-            msg['From'] = 'Remote File Explorer'
-            msg['To'] = email
-            msg['Subject'] = 'Reset your password'
-
-            # Attach the message to the MIMEMultipart object
-            msg.attach(MIMEText(message, 'plain'))
-
-            server = smtplib.SMTP('smtp.gmail.com', 587)
-            server.starttls()
-            server.login(sender_email, password)
-            text = msg.as_string()  # You now need to convert the MIMEMultipart object to a string to send
-            server.sendmail(sender_email, send_to_email, text)
-            server.quit()
-
-            # sleep(2)
-            # login()
-
-            # send reset email
-            # main_frame.destroy()
-            # break
+            if manageSERVER.generate_and_send_reset_code(email):
+                email_error_title.configure(text='Email Sent!\nCheck your inbox and get back here with the reset code to reset you password', fg='green')
+                email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+            else:
+                email_error_title.configure(text='There was an error!\nPlease try again', fg='red')
+                email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225), width=main_window.calc_width(610), anchor=tkinter.CENTER)
 
     def login():
         main_title.destroy()
@@ -655,35 +634,28 @@ def start_forgot_window(main_frame):
             re_pass_error_title.place_forget()
             if password1 != password2:
                 re_pass_error_title.configure(text="The passwords don't match")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(320),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(320), width=main_window.calc_width(610), anchor=tkinter.CENTER)
 
-        email_error_title = tkinter.Label(enter_code_frame, text='Please enter your email',
-                                          font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-        email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(130),
-                                width=main_window.calc_width(500))  # (x=55, y=85, width=500)
-        pass_error_title = tkinter.Label(enter_code_frame, text='Please enter a password',
-                                         font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-        pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(225),
-                               width=main_window.calc_width(500))  # (x=55, y=180, width=500)
-        re_pass_error_title = tkinter.Label(enter_code_frame, text='Please Retype the password',
-                                            font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-        re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(320),
-                                  width=main_window.calc_width(500))  # (x=55, y=275, width=500)
+        reset_code_error_title = tkinter.Label(enter_code_frame, text='Please enter the code you received in the email', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+        email_error_title = tkinter.Label(enter_code_frame, text='Please enter your email', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+        pass_error_title = tkinter.Label(enter_code_frame, text='Please enter a password', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+        re_pass_error_title = tkinter.Label(enter_code_frame, text='Please Retype the password', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+        re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(320), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+        reset_code_error_title.place_forget()
         email_error_title.place_forget()
         pass_error_title.place_forget()
         re_pass_error_title.place_forget()
 
         reset_code_title = tkinter.Label(enter_code_frame, text='Reset Code:',
                                          font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-                                         bg='white').place(x=main_window.calc_width(215),
-                                                           y=main_window.calc_height(5))
+                                         bg='white').place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
         enter_reset_code = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
                                          fg='gray20',
                                          bg='white', justify='center')
-        enter_reset_code.place(x=main_window.calc_width(55), y=main_window.calc_height(50),
-                               width=main_window.calc_width(500),
-                               height=main_window.calc_height(35))
+        enter_reset_code.place(x=main_window.calc_width(305), y=main_window.calc_height(60), width=main_window.calc_width(300),height=main_window.calc_height(35), anchor=tkinter.CENTER)
 
         email_title = tkinter.Label(enter_code_frame, text='Email:',
                                     font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
@@ -695,9 +667,9 @@ def start_forgot_window(main_frame):
                           width=main_window.calc_width(500),
                           height=main_window.calc_height(35))
 
-        password_title = tkinter.Label(enter_code_frame, text='Password:',
+        password_title = tkinter.Label(enter_code_frame, text='New Password:',
                                        font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-                                       bg='white').place(x=main_window.calc_width(225),
+                                       bg='white').place(x=main_window.calc_width(190),
                                                          y=main_window.calc_height(165))  # (x=225, y=105)
         enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
                                        bg='white', justify='center', show="•")
@@ -713,9 +685,9 @@ def start_forgot_window(main_frame):
                                 width=main_window.calc_width(35),
                                 height=main_window.calc_height(35))  # (x=555, y=145, width=35, height=35)
 
-        re_password_title = tkinter.Label(enter_code_frame, text='Retype Password:',
+        re_password_title = tkinter.Label(enter_code_frame, text='Retype New Password:',
                                           font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-                                          bg='white').place(x=main_window.calc_width(180),
+                                          bg='white').place(x=main_window.calc_width(140),
                                                             y=main_window.calc_height(245))  # (x=180, y=200)
         re_enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
                                           fg='gray20', bg='white', justify='center', show="•")
@@ -731,15 +703,45 @@ def start_forgot_window(main_frame):
                                 width=main_window.calc_width(35), height=main_window.calc_height(35))
 
         def reset_pass():
-            # create a new table in the DB and check if the code exists and if it matches with the email entered here
-            # then check if the passwords match (maybe check if they are the same as the existing one)
-            # finally, change the password in the DB to the new one and send confirmation email
-            pass
+            if enter_reset_code.get() == '' or enter_email.get() == '' or enter_password.get() == '' or re_enter_password.get() == '' or not email_regex(enter_email.get()):
+                if enter_reset_code.get() == '':
+                    reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+
+                if enter_email.get() == '':
+                    email_error_title.configure(text='Please enter your email')
+                    email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)  # (x=55, y=85, width=500)
+
+                if enter_password.get() == '':
+                    pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(245), width=main_window.calc_width(610), anchor=tkinter.CENTER)  # (x=55, y=180, width=500)
+
+                if re_enter_password.get() == '':
+                    re_pass_error_title.configure(text='Please Retype the password')
+                    re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(320), width=main_window.calc_width(610), anchor=tkinter.CENTER)  # (x=55, y=275, width=500)
+
+                if not email_regex(enter_email.get()) and enter_email.get() != '':  # check if email is invalid
+                    email_error_title.configure(text='Please enter a valid email address')
+                    email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85), width=main_window.calc_width(500))  # (x=55, y=85, width=500)
+                # break
+            elif enter_password.get() != re_enter_password.get():  # check if the two passwords aren't the same
+                re_pass_error_title.configure(text="The passwords don't match")
+                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))  # (x=55, y=275, width=500)
+                # break
+            elif not manageSERVER.check_if_email_exists(enter_email.get()):  # check if email doesn't exist
+                email_error_title.configure(text='This email address already has an account')
+                email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85), width=main_window.calc_width(500))  # (x=55, y=85, width=500)
+                # break
+            else:
+                email = enter_email.get()
+                reset_code = enter_reset_code.get()
+                new_password = enter_password.get()
+                if not manageSERVER.reset_password(email, reset_code, new_password):
+                    re_pass_error_title.configure(text="Some Information is incorrect! Please make sure the code and your email are correct and try again")
+                    re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
 
         reset_pass_bttn = tkinter.Button(enter_code_frame, text='Reset Password', cursor='hand2',
                                          font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
                                          bg=buttons_bg_color, command=reset_pass)
-        reset_pass_bttn.place(x=main_window.calc_width(218), y=main_window.calc_height(347),
+        reset_pass_bttn.place(x=main_window.calc_width(218), y=main_window.calc_height(352),
                               width=main_window.calc_width(174), height=main_window.calc_height(35))
         enter_reset_code.focus()
 

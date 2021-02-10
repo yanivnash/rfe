@@ -124,3 +124,23 @@ if answr:
 # # print(type(load))
 #
 # db.commit()
+
+
+
+
+
+
+
+
+
+
+
+############################
+reset_code_error_title = tkinter.Label(enter_code_frame, text='Please enter the code you received in the email', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+email_error_title = tkinter.Label(enter_code_frame, text='Please enter your email', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(130), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+pass_error_title = tkinter.Label(enter_code_frame, text='Please enter a password', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+re_pass_error_title = tkinter.Label(enter_code_frame, text='Please Retype the password', font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(320), width=main_window.calc_width(610), anchor=tkinter.CENTER)
