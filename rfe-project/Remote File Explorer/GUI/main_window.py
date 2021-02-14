@@ -338,7 +338,7 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
         else:
             pass
 
-    wrapper1 = tkinter.LabelFrame(root, height=10)
+    wrapper1 = tkinter.LabelFrame(root, height=10, bg='yellow')
     wrapper2 = tkinter.LabelFrame(root)
 
     mycanvas = tkinter.Canvas(wrapper2)
