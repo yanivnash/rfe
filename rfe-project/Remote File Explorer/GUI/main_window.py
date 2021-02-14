@@ -407,7 +407,17 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
                 items_list.append(item)
         update_frame(items_list)
 
-    search_bar_entry = tkinter.Entry(menu_window, text='Search')
+    def entry_click(event):
+        search_bar_entry.delete(0, 'end')
+        search_bar_entry.bind("<FocusOut>", entry_lost)
+
+    def entry_lost(event):
+        search_bar_entry.insert(0, 'Search')
+        search_bar_entry.bind("<FocusIn>", entry_click)
+
+    search_bar_entry = tkinter.Entry(menu_window, text='Search', font=(calc_width(20)))
+    search_bar_entry.insert(0, 'Search')
+    search_bar_entry.bind("<FocusIn>", entry_click)
     search_bar_entry.grid(column=5, row=1, sticky=tkinter.E)
     search_btn = tkinter.Button(menu_window, text='GO', command=search)
     search_btn.grid(column=6, row=1, sticky=tkinter.E)

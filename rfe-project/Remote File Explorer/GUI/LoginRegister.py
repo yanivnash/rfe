@@ -446,12 +446,21 @@ def start_register_window(main_frame):
             email = enter_email.get()
             password = enter_password.get()
             # ip_dict = dict()  # maybe add a tic box as well
-            manageSERVER.create_new_user(email, password)
-            ip_dict = manageSERVER.get_ip_dict(email)
-            # is_control = choose_is_control(root, register_frame)
-            register_frame.destroy()
-            main_frame.quit()
-            # break
+            new_user_answr = manageSERVER.create_new_user(email, password)
+            print(new_user_answr)
+            if new_user_answr:
+                ip_dict = manageSERVER.get_ip_dict(email)
+                # is_control = choose_is_control(root, register_frame)
+                register_frame.destroy()
+                main_frame.quit()
+                # break
+            elif not new_user_answr:
+                re_pass_error_title.configure(text="An error occurred, account wasn't created. Please try again later")
+                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
+            elif new_user_answr == 'ERROR':
+                re_pass_error_title.configure(text="The account was created, but we were unable to send a confirmation email to this address")
+                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
+
 
     def login():
         main_title.destroy()
@@ -644,7 +653,7 @@ def start_forgot_window(main_frame):
             re_pass_error_title.place_forget()
             if password1 != password2:
                 re_pass_error_title.configure(text="The passwords don't match")
-                re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(320), width=main_window.calc_width(610), anchor=tkinter.CENTER)
+                re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338), width=main_window.calc_width(610), anchor=tkinter.CENTER)
 
         reset_code_title = tkinter.Label(enter_code_frame, text='Reset Code:',
                                          font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
@@ -660,16 +669,16 @@ def start_forgot_window(main_frame):
                                                       y=main_window.calc_height(85))  # (x=255, y=10)
         enter_email = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
                                     bg='white', justify='center')
-        enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(125),
+        enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(122),
                           width=main_window.calc_width(500),
                           height=main_window.calc_height(35))
 
         password_title = tkinter.Label(enter_code_frame, text='New Password:',
                                        font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-                                       bg='white').place(x=main_window.calc_width(190), y=main_window.calc_height(165), width=main_window.calc_width(300))
+                                       bg='white').place(x=main_window.calc_width(165), y=main_window.calc_height(167), width=main_window.calc_width(300))
         enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
                                        bg='white', justify='center', show="•")
-        enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(205),
+        enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(204),
                              width=main_window.calc_width(500),
                              height=main_window.calc_height(35))  # (x=55, y=145, width=500, height=35)
 
@@ -677,17 +686,17 @@ def start_forgot_window(main_frame):
 
         show_hide_button1 = tkinter.Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                            command=show_hide_pass1)
-        show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(205),
+        show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(204),
                                 width=main_window.calc_width(35),
                                 height=main_window.calc_height(35))  # (x=555, y=145, width=35, height=35)
 
         re_password_title = tkinter.Label(enter_code_frame, text='Retype New Password:',
                                           font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
                                           bg='white').place(x=main_window.calc_width(140),
-                                                            y=main_window.calc_height(245))  # (x=180, y=200)
+                                                            y=main_window.calc_height(254))  # (x=180, y=200)
         re_enter_password = tkinter.Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
                                           fg='gray20', bg='white', justify='center', show="•")
-        re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(288),
+        re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(291),
                                 width=main_window.calc_width(500),
                                 height=main_window.calc_height(35))  # (x=55, y=240, width=500, height=35)
 
@@ -695,7 +704,7 @@ def start_forgot_window(main_frame):
 
         show_hide_button2 = tkinter.Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                            command=show_hide_pass2)
-        show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(288),
+        show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(291),
                                 width=main_window.calc_width(35), height=main_window.calc_height(35))
 
 
@@ -713,14 +722,14 @@ def start_forgot_window(main_frame):
             if reset_pass_bttn['text'] == 'Reset Password':
                 if enter_reset_code.get() == '' or enter_email.get() == '' or enter_password.get() == '' or re_enter_password.get() == '':
                     if enter_reset_code.get() == '':
-                        reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(83), width=main_window.calc_width(610), height=main_window.calc_height(12), anchor=tkinter.CENTER)
+                        reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(83), width=main_window.calc_width(610), height=main_window.calc_height(16), anchor=tkinter.CENTER)
 
                     if enter_email.get() == '':
                         email_error_title.configure(text='Please enter your email')
-                        email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(167), width=main_window.calc_width(610), height=main_window.calc_height(12), anchor=tkinter.CENTER)
+                        email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(167), width=main_window.calc_width(610), height=main_window.calc_height(16), anchor=tkinter.CENTER)
 
                     if enter_password.get() == '':
-                        pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(245), width=main_window.calc_width(610), anchor=tkinter.CENTER)  # (x=55, y=180, width=500)
+                        pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(252), width=main_window.calc_width(610), anchor=tkinter.CENTER)  # (x=55, y=180, width=500)
 
                     if re_enter_password.get() == '':
                         re_pass_error_title.configure(text='Please Retype the password')
@@ -742,6 +751,11 @@ def start_forgot_window(main_frame):
                         re_pass_error_title.configure(text='Some Information is incorrect! Please make sure the code and your email are correct and try again', fg='red')
                         re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338), width=main_window.calc_width(610), anchor=tkinter.CENTER)
                     else:
+                        enter_reset_code.configure(text='')
+                        enter_email.configure(text='')
+                        enter_password.configure(text='')
+                        re_enter_password.configure(text='')
+
                         re_pass_error_title.configure(text='Your password was reset successfully!', fg='green')
                         re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338), width=main_window.calc_width(610), anchor=tkinter.CENTER)
                         reset_pass_bttn.configure(text='Go to Log in')

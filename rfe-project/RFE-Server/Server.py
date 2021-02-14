@@ -102,8 +102,12 @@ def manage_client_db(conn, addr):
             server.starttls()
             server.login(sender_email, password)
             text = msg.as_string()
-            server.sendmail(sender_email, send_to_email, text)
-            server.quit()
+            try:
+                server.sendmail(sender_email, send_to_email, text)
+            except smtplib.SMTPRecipientsRefused:
+                answr = 'ERROR'
+            finally:
+                server.quit()
 
         except sqlite3.IntegrityError:
             answr = False
@@ -200,8 +204,12 @@ def manage_client_db(conn, addr):
                 server.starttls()
                 server.login(sender_email, password)
                 text = msg.as_string()
-                server.sendmail(sender_email, send_to_email, text)
-                server.quit()
+                try:
+                    server.sendmail(sender_email, send_to_email, text)
+                except smtplib.SMTPRecipientsRefused:
+                    answr = 'ERROR'
+                finally:
+                    server.quit()
 
             else:
                 answr = False
@@ -231,6 +239,9 @@ def manage_client_db(conn, addr):
         answr = cursor.fetchall()
         if answr:
             answr = True
+
+            delete_user = ("DELETE FROM users WHERE email = ? AND password = ?")
+            cursor.execute(delete_user, [(email.lower().encode(FORMAT)), (password.encode(FORMAT))])
 
             sender_email = 'rfe.noreply@gmail.com'  # sending email
             password = 'RFE123456789'  # sending email's password
@@ -265,13 +276,15 @@ def manage_client_db(conn, addr):
             server.starttls()
             server.login(sender_email, password)
             text = msg.as_string()
-            server.sendmail(sender_email, send_to_email, text)
-            server.quit()
+            try:
+                server.sendmail(sender_email, send_to_email, text)
+            except smtplib.SMTPRecipientsRefused:
+                answr = 'ERROR'
+            finally:
+                server.quit()
 
         else:
             answr = False
-        delete_user = ("DELETE FROM users WHERE email = ? AND password = ?")
-        cursor.execute(delete_user, [(email.lower().encode(FORMAT)), (password.encode(FORMAT))])
 
     elif action == "TEST_SERVER":
         answr = "SERVER IS UP"
@@ -323,8 +336,12 @@ def manage_client_db(conn, addr):
             server.starttls()
             server.login(sender_email, password)
             text = msg.as_string()
-            server.sendmail(sender_email, send_to_email, text)
-            server.quit()
+            try:
+                server.sendmail(sender_email, send_to_email, text)
+            except smtplib.SMTPRecipientsRefused:
+                answr = 'ERROR'
+            finally:
+                server.quit()
 
         else:
             answr = False
@@ -376,8 +393,12 @@ def manage_client_db(conn, addr):
             server.starttls()
             server.login(sender_email, password)
             text = msg.as_string()
-            server.sendmail(sender_email, send_to_email, text)
-            server.quit()
+            try:
+                server.sendmail(sender_email, send_to_email, text)
+            except smtplib.SMTPRecipientsRefused:
+                answr = 'ERROR'
+            finally:
+                server.quit()
         else:
             answr = False
 
