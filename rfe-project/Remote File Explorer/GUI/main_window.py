@@ -15,6 +15,22 @@ import wx  # get screen resolution
 
 # global cur_path, ROOT_PROJ_DIR, bttns_dict, icons_dict
 
+system_drive = os.getenv("SystemDrive")
+
+
+# from fontTools.ttLib import TTFont
+# font = TTFont('ERASBD.TTF')
+# font.save(rf'{system_drive}\Users\{username}\AppData\Local\Microsoft\Windows\Fonts')#\ERASBD.TTF')
+# print(rf'{system_drive}\Users\{username}\AppData\Local\Microsoft\Windows\Fonts')
+# print(rf'{system_drive}\Windows\Fonts')
+# font.save(rf'{system_drive}\Windows\Fonts')
+# print(os.path.expanduser('~') + '\Desktop\Fonts\ERASBD.TTF')
+# font.save(os.path.expanduser('~') + '\Desktop\Fonts\ERASBD.TTF', reorderTables=True)
+
+# from PIL import ImageFont
+# font = ImageFont.load('ERASBD.TTF')
+
+
 MENU_BAR_HEIGHT = 20
 
 app = wx.App(False)
@@ -326,10 +342,14 @@ def update_frame(items_list):
 def create_frame(items_list):#back_img, forw_img, ref_img):
     global frame, wrapper1, wrapper2, count, drives_list
 
+    def f_refresh(event):
+        refresh_button()
+    root.bind('<F5>', f_refresh)
+
     count = 0
     def mouse_wheel(event):
         global count
-        if len(items_list) > 32:
+        if len(items_list) > 21:
             if event.num == 5 or event.delta == -120:
                 count -= 1
             if event.num == 4 or event.delta == 120:
@@ -409,15 +429,16 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
-        search_bar_entry.bind("<FocusOut>", entry_lost)
+        search_bar_entry.bind('<FocusOut>', entry_lost)
 
     def entry_lost(event):
         search_bar_entry.insert(0, 'Search')
-        search_bar_entry.bind("<FocusIn>", entry_click)
+        search_bar_entry.bind('<FocusIn>', entry_click)
 
     search_bar_entry = tkinter.Entry(menu_window, text='Search', font=(calc_width(20)))
+    search_bar_entry.delete(0, 'end')
     search_bar_entry.insert(0, 'Search')
-    search_bar_entry.bind("<FocusIn>", entry_click)
+    search_bar_entry.bind('<FocusIn>', entry_click)
     search_bar_entry.grid(column=5, row=1, sticky=tkinter.E)
     search_btn = tkinter.Button(menu_window, text='GO', command=search)
     search_btn.grid(column=6, row=1, sticky=tkinter.E)
@@ -497,7 +518,7 @@ def main():
         # ssh = manageSSH.connect_to_ssh(host, username, password)
         # sftp = ssh.open_sftp()
 
-        system_drive = os.getenv("SystemDrive")
+        # system_drive = os.getenv("SystemDrive")
 
         cur_path = rf'{system_drive}\Users\{username}\Desktop'
         print(cur_path)  # TEMP
