@@ -1,23 +1,39 @@
-import tkinter as tk
+# import ctypes, sys, os
+# command = 'net start sshd'
+# def is_admin():
+#     try:
+#         return ctypes.windll.shell32.IsUserAnAdmin()
+#     except:
+#         return False
+#
+# if is_admin():
+#     os.system(command)
+#     # Code of your program here
+# else:
+#     # Re-run the program with admin rights
+#     ctypes.windll.shell32.ShellExecuteW(None, "runas", sys.executable, " ".join(sys.argv), None, 1)
+#     os.system(command)
 
-def entry_click(event):
-    entry.delete(0, 'end')
-    print("FocusIn")
-    entry.bind("<FocusOut>", entry_lost)
 
-def entry_lost(event):
-    entry.insert(0, 'Search')
-    print("FocusOut")
-    entry.bind("<FocusIn>", entry_click)
 
-root = tk.Tk()
-entry = tk.Entry(root)
-entry.insert(0, 'Search')
-entry.pack(fill="x")
-tk.Button(root).pack()
-entry1 = tk.Entry(root)
-entry1.pack(fill="x")
+import win32com.shell.shell as shell
+import pywintypes
+# commands = 'net start sshd'
+# shell.ShellExecuteEx(lpVerb='runas', lpFile='cmd.exe', lpParameters='/c '+commands)
 
-entry.bind("<FocusIn>", entry_click)
+# command = 'Remove-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0'
+# c = 'Start-Service sshd'
+on_cmnd = """
+Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+Start-Service sshd
+"""
 
-root.mainloop()
+off_cmnd = """
+Stop-Service sshd
+"""
+try:
+    # print(shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c '+on_cmnd))
+    print(shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c '+off_cmnd))
+except pywintypes.error:
+    print('Please approve the process')
