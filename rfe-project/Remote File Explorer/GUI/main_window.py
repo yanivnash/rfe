@@ -487,7 +487,7 @@ def main():
     def copy_name():
         pyperclip.copy(SELF_NAME)
     pc_info.add_command(label=f'IP: {SELF_IP}', command=copy_ip, activebackground='steelblue2', activeforeground='black')
-    pc_info.add_command(label=f'Name: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
+    pc_info.add_command(label=f'Userame: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
     root.config(menu=menubar)
     root.resizable(False, False)
 
@@ -499,7 +499,7 @@ def main():
     print(mode)
     print(ssh)
     print(sftp)
-    if email != None and mode != None and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+    if email != None and mode != 'control' and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
         global cur_path
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)

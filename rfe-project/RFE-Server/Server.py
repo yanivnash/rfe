@@ -105,7 +105,7 @@ def manage_client_db(conn, addr):
             try:
                 server.sendmail(sender_email, send_to_email, text)
             except smtplib.SMTPRecipientsRefused:
-                answr = 'ERROR'
+                answr = 'EMAIL NOT SENT'
             finally:
                 server.quit()
 
@@ -250,7 +250,7 @@ def manage_client_db(conn, addr):
             messageHTML = f"""
                         <body style="text-align:center; background-color:#e9eed6;">
                         <h1><span style="color: #496dd0">Hey, {email}</span></h1>
-                        <h1>Your account was successfully deleted!!</h1>
+                        <h1>Your account was successfully deleted!</h1>
                         <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
                         <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                         </body>

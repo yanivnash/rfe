@@ -8,6 +8,10 @@ import re
 from PIL import ImageTk, Image
 import os
 import socket
+import win32con
+import win32service
+import win32com.shell.shell as shell
+import pywintypes
 
 # import smtplib
 # from email.mime.text import MIMEText
@@ -19,6 +23,8 @@ from time import sleep
 import main_window
 
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+SELF_NAME = os.getlogin()
+SELF_IP = socket.gethostbyname(socket.gethostname())
 
 # app = wx.App(False)
 # screen_width, screen_height = wx.GetDisplaySize()
@@ -51,12 +57,14 @@ end_video_name = 'end-animation.mp4'
 # def calc_height(size):
 #     return int(app_height / (700 / size))
 
+
 def email_regex(email):
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
     if re.match(regex, email):
         return True
     else:
         return False
+
 
 def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     global mode, root
@@ -94,6 +102,7 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
 
     choose_frame.mainloop()
     return mode
+
 
 def login_to_ssh_client(ip_frame, ip_dict):
     global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username
@@ -143,9 +152,9 @@ def login_to_ssh_client(ip_frame, ip_dict):
             if ssh == "wrong password":
                 tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct and try again")
             elif ssh == "no connection":
-                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure that the computer is connected to the internet and try again")
+                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
             elif ssh == "timeout":
-                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct that the computer is connected to the internet and try again")
+                tkinter.messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
             else:
                 sftp = ssh.open_sftp()
                 if check_var.get() == 1:
@@ -295,6 +304,79 @@ def login_to_ssh_client(ip_frame, ip_dict):
     ip_frame.mainloop()
     return ssh, sftp, username
 
+
+def set_be_controlled(be_controlled_frame):
+    def check_sshd_service():
+        resume = 0
+        accessSCM = win32con.GENERIC_READ
+        accessSrv = win32service.SC_MANAGER_ALL_ACCESS
+
+        # Open Service Control Manager
+        hscm = win32service.OpenSCManager(None, None, accessSCM)
+
+        # Enumerate Service Control Manager DB
+        typeFilter = win32service.SERVICE_WIN32
+        stateFilter = win32service.SERVICE_STATE_ALL
+
+        statuses = win32service.EnumServicesStatus(hscm, typeFilter, stateFilter)
+        for (short_name, desc, status) in statuses:
+            if short_name == 'sshd':
+                if status == (16, 4, 1, 0, 0, 0, 0):
+                    return 'ON'
+                elif status == (16, 1, 0, 0, 0, 0, 0):
+                    return 'OFF'
+                print(f'short name:{short_name}, desc:{desc}, status:{status}')
+        return 'NOT INSTALLED'
+
+
+    def run_power_shell(cmnd):
+        try:
+            shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + cmnd)
+            return 'DONE'
+        except pywintypes.error:
+            return 'REJECTED'
+
+    install_and_on_cmnd = """
+    Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+    Start-Service sshd
+    """
+
+    on_cmnd = """
+    Start-Service sshd
+    """
+
+    off_cmnd = """
+    Stop-Service sshd
+    """
+
+    sshd_status = check_sshd_service()
+    main_title = tkinter.Label(be_controlled_frame, text='Be Controlled:', font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_width(350), y=main_window.calc_height(25))
+
+    frame = tkinter.Frame(be_controlled_frame, bg='white')
+    frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))
+    refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\refresh.png'))
+
+    refresh_bttn = tkinter.Button(frame, text='Recheck\nConnection', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'), compound=tkinter.TOP, justify=tkinter.CENTER, image=refresh_pic, bg=buttons_bg_color)
+    refresh_bttn.place(x=10, y=10)
+    subtitle = tkinter.Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white')
+    if sshd_status == 'ON':
+        subtitle.configure(text=f"This computer is ready to be connected to,\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
+        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+        email_bttn = tkinter.Button()
+    elif sshd_status == 'OFF':
+        subtitle.configure(text=f"This computer needs to have the SSH service running for other computers to connect to it,\nTo turn the service on please click the button bellow and approve the window that will popup:")
+        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+        if sshd_status == 'NOT INSTALLED':
+            start_button = tkinter.Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), command=)
+        else:
+            start_button = tkinter.Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), command=)
+
+
+
+    be_controlled_frame.mainloop()
+
+
 def start_login_window(main_frame):
     global email, ip_dict, root
     email = None
@@ -405,6 +487,7 @@ def start_login_window(main_frame):
 
     enter_email.focus()
 
+
 def start_register_window(main_frame):
     global email, ip_dict, root
     email = None
@@ -448,7 +531,14 @@ def start_register_window(main_frame):
             # ip_dict = dict()  # maybe add a tic box as well
             new_user_answr = manageSERVER.create_new_user(email, password)
             print(new_user_answr)
+            if new_user_answr == 'EMAIL NOT SENT':
+                # re_pass_error_title.configure(text="The account was created, but we were unable to send a confirmation email to this address")
+                # re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
+                error_label = tkinter.Label(root, text="The account was created, but we were unable to send a confirmation email to this address")
+                error_label.place(x=10, y=10)
             if new_user_answr:
+                error_label = tkinter.Label(root, text="Account created successfully")
+                error_label.place(x=10, y=10)
                 ip_dict = manageSERVER.get_ip_dict(email)
                 # is_control = choose_is_control(root, register_frame)
                 register_frame.destroy()
@@ -456,9 +546,6 @@ def start_register_window(main_frame):
                 # break
             elif not new_user_answr:
                 re_pass_error_title.configure(text="An error occurred, account wasn't created. Please try again later")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
-            elif new_user_answr == 'ERROR':
-                re_pass_error_title.configure(text="The account was created, but we were unable to send a confirmation email to this address")
                 re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275), width=main_window.calc_width(500))
 
 
@@ -566,6 +653,7 @@ def start_register_window(main_frame):
     login_button.place(x=main_window.calc_width(227), y=main_window.calc_height(350))  # (x=227, y=350)
 
     enter_email.focus()
+
 
 def start_forgot_window(main_frame):
     global email, root, reset_frame
@@ -803,10 +891,12 @@ def start_forgot_window(main_frame):
 
     enter_email.focus()
 
+
 def close_window():
     discon_msg_box = tkinter.messagebox.askquestion(title='Exit the app', message='Are you sure you want to exit the app?')
     if discon_msg_box == 'yes':
         root.destroy()
+
 
 def play_video(video_name):
     global video, app_width, app_height, count
@@ -836,6 +926,7 @@ def stream(vid_label, vid_frame, video_name):
         elif video_name == 'end-animation.mp4' and count == 26:
             vid_frame.destroy()
 
+
 def server_status(main_frame):
     status = manageSERVER.get_server_status()
     print(status)
@@ -851,6 +942,7 @@ def server_status(main_frame):
             # error_label.place(x=main_window.calc_width(225), y=main_window.calc_height(140))
         error_label.place(x=main_window.calc_width(305), y=main_window.calc_height(170), width=main_window.calc_width(610), anchor=tkinter.CENTER)
         error_frame.mainloop()
+
 
 def choose_mode_window(email):
     def acc_signout():
@@ -923,11 +1015,20 @@ def choose_mode_window(email):
         # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)), Image.ANTIALIAS))
         ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
+    elif mode == 'be_controlled' and email != None:
+        root.title('Remote File Explorer')
+        be_controlled_frame = tkinter.Frame(root)
+        be_controlled_frame.place(x=0, y=0, width=app_width, height=app_height)
+        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg_image = tkinter.Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+        set_be_controlled(be_controlled_frame)
+
     if email != None and mode != None and ssh != None:
         back_frame = tkinter.Frame(root)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username
+
 
 def main(root1, app_width1, app_height1, account1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
