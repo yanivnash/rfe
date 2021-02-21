@@ -306,6 +306,18 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
 
 def set_be_controlled(be_controlled_frame):
+    def close_window():
+        sshd_status = check_sshd_service()
+        if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED':
+            close_msg_box = tkinter.messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
+            if close_msg_box == 'yes':
+                root.destroy()
+        elif sshd_status == 'ON':
+            close_msg_box = tkinter.messagebox.askquestion(title='Stop Service & Close', message='Are you sure you want to close the window and Stop the Service?\n(this will make your computer not available for others to connect)')
+            if close_msg_box == 'yes':
+                if run_power_shell(off_cmnd) == 'DONE':
+                    root.destroy()
+    root.protocol("WM_DELETE_WINDOW", close_window)
     def check_sshd_service():
         resume = 0
         accessSCM = win32con.GENERIC_READ
@@ -325,16 +337,79 @@ def set_be_controlled(be_controlled_frame):
                     return 'ON'
                 elif status == (16, 1, 0, 0, 0, 0, 0):
                     return 'OFF'
-                print(f'short name:{short_name}, desc:{desc}, status:{status}')
+                # print(f'short name:{short_name}, desc:{desc}, status:{status}')
         return 'NOT INSTALLED'
 
+    def recheck_sshd():
+        print('refresh')
+        frame.destroy()
+        set_be_controlled(be_controlled_frame)
 
+    import time
     def run_power_shell(cmnd):
-        try:
-            shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + cmnd)
-            return 'DONE'
-        except pywintypes.error:
-            return 'REJECTED'
+        if cmnd.__contains__("Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0"):
+            def start():
+                for x in range(200):
+                    p_bar['value'] += 0.1
+                    root.update_idletasks()
+                    time.sleep(0.01)
+                for x in range(4):
+                    root.update_idletasks()
+                    sshd_status = check_sshd_service()
+                    print(sshd_status)
+                    if sshd_status == 'NOT INSTALLED':
+                        time.sleep(2)
+                        for x in range(200):
+                            p_bar['value'] += 0.1
+                            root.update_idletasks()
+                            time.sleep(0.01)
+                    else:
+                        p_bar['value'] = 100
+                        recheck_sshd()
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + cmnd)
+                loading_label = tkinter.Label(frame, text='Installing SSH Service...', font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                loading_label.place(x=0, y=0, width=610, height=392)
+                p_bar = ttk.Progressbar(loading_label, orient=tkinter.HORIZONTAL, length=400, mode='determinate')
+                p_bar.pack(pady=100)
+                root.update_idletasks()
+                # loading_label.after(1000, start)
+                start()
+                sshd_status = check_sshd_service()
+                if sshd_status == 'NOT INSTALLED':
+                    print('2')
+                    # loading_label = tkinter.Label(frame, text='Installing service...')
+                    loading_label.place(x=0, y=0, width=610, height=392)
+                    # p_bar = ttk.Progressbar(loading_label, orient=tkinter.HORIZONTAL, length=400, mode='determinate')
+                    p_bar.pack(pady=100)
+                    start()
+                else:
+                    recheck_sshd()
+
+                return 'DONE'
+            except pywintypes.error:
+                tkinter.messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
+        elif cmnd.__contains__("Start-Service sshd"):
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + cmnd)
+                loading_label = tkinter.Label(frame, text='Starting SSH Service...', font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                loading_label.place(x=0, y=0, width=610, height=392)
+                loading_label.after(5000, recheck_sshd)
+                return 'DONE'
+            except pywintypes.error:
+                tkinter.messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
+        elif cmnd.__contains__("Stop-Service sshd"):
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + cmnd)
+                loading_label = tkinter.Label(frame, text='Stopping SSH Service...', font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                loading_label.place(x=0, y=0, width=610, height=392)
+                loading_label.after(5000, recheck_sshd)
+                return 'DONE'
+            except pywintypes.error:
+                tkinter.messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Stopped without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
 
     install_and_on_cmnd = """
     Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
@@ -350,27 +425,47 @@ def set_be_controlled(be_controlled_frame):
     """
 
     sshd_status = check_sshd_service()
+    print(sshd_status)  # TEMP
     main_title = tkinter.Label(be_controlled_frame, text='Be Controlled:', font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window.calc_width(350), y=main_window.calc_height(25))
 
     frame = tkinter.Frame(be_controlled_frame, bg='white')
     frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))
-    refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\refresh.png'))
+    refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\refresh.png').resize((main_window.calc_width(50), main_window.calc_height(54)), Image.ANTIALIAS))
 
-    refresh_bttn = tkinter.Button(frame, text='Recheck\nConnection', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'), compound=tkinter.TOP, justify=tkinter.CENTER, image=refresh_pic, bg=buttons_bg_color)
+    refresh_bttn = tkinter.Button(frame, text='Recheck\nConnection', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'), command=recheck_sshd, compound=tkinter.TOP, justify=tkinter.CENTER, image=refresh_pic, bg=buttons_bg_color)
     refresh_bttn.place(x=10, y=10)
     subtitle = tkinter.Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white')
+    v_mark_pic = ImageTk.PhotoImage(Image.open('v.png').resize((main_window.calc_width(70), main_window.calc_height(70)), Image.ANTIALIAS))
+    x_mark_pic = ImageTk.PhotoImage(Image.open('x.png').resize((main_window.calc_width(70), main_window.calc_height(70)), Image.ANTIALIAS))
+    mark_label = tkinter.Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), compound=tkinter.LEFT, justify=tkinter.CENTER, bg='white', padx=20)
     if sshd_status == 'ON':
-        subtitle.configure(text=f"This computer is ready to be connected to,\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
+        mark_label.configure(text='SSH Service is ON', image=v_mark_pic, fg='green')
+        mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
+        subtitle.configure(text=f"This computer is ready to be connected to,\n\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
         subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
-        email_bttn = tkinter.Button()
+        # email_bttn = tkinter.Button(frame, text='Email this info to someone', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color)#, command=)
+        # email_bttn.place(x=150, y=285)
+        off_bttn = tkinter.Button(frame, text='Stop SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), bg='brown1', command=lambda: run_power_shell(off_cmnd))  # 'firebrick1/2 / red/red2
+        off_bttn.place(x=200, y=310)
+        # off_bttn.place(x=200, y=340)  # place like that if email button is placed
+
     elif sshd_status == 'OFF':
-        subtitle.configure(text=f"This computer needs to have the SSH service running for other computers to connect to it,\nTo turn the service on please click the button bellow and approve the window that will popup:")
+        start_button = tkinter.Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue', command=lambda: run_power_shell(on_cmnd))
+        start_button.place(x=200, y=300)
+        mark_label.configure(text='SSH Service is OFF', image=x_mark_pic, fg='red')
+        mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
+        subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'), text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo turn the service on please click the button bellow\nand approve the window that will popup:")
         subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
-        if sshd_status == 'NOT INSTALLED':
-            start_button = tkinter.Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), command=)
-        else:
-            start_button = tkinter.Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), command=)
+
+    elif sshd_status == 'NOT INSTALLED':
+        start_button = tkinter.Button(frame, text='Install & Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue', command=lambda: run_power_shell(install_and_on_cmnd))
+        start_button.place(x=160, y=300)
+        mark_label.configure(text='SSH Service is\nNOT INSTALLED', image=x_mark_pic, fg='red')
+        mark_label.place(x=main_window.calc_width(130), y=main_window.calc_height(10))
+        subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'), text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo install the service and turn it on\nplease click the button bellow\nand approve the window that will popup:")
+        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+
 
 
 
