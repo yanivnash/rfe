@@ -316,7 +316,7 @@ def set_be_controlled(be_controlled_frame):
         elif sshd_status == 'ON':
             close_msg_box = messagebox.askquestion(title='Stop Service & Close', message='Are you sure you want to close the window and Stop the Service?\n(this will make your computer not available for others to connect)')
             if close_msg_box == 'yes':
-                if run_power_shell(off_cmnd) == 'DONE':
+                if run_power_shell('off_cmnd') == 'DONE':
                     root.destroy()
     root.protocol("WM_DELETE_WINDOW", close_window)
 
