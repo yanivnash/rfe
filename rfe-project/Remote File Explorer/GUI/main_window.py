@@ -494,7 +494,7 @@ def main():
     # root.bind("<Configure>", resize)
 
     email, mode, ssh, sftp, username = LoginRegister.main(root, app_width, app_height, account)
-    print('main_window.py')
+    print('main_window2.py')
     print(email)  # DELETE
     print(mode)
     print(ssh)
@@ -650,7 +650,7 @@ if __name__ == '__main__':
 #     # root.bind("<Configure>", resize)
 #
 #     email, mode, ssh, sftp = LoginRegister.main(root, app_width, app_height)
-#     print('main_window.py')
+#     print('main_window2.py')
 #     print(email)  # DELETE
 #     print(mode)
 #     print(ssh)
