@@ -27,6 +27,7 @@ ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 SELF_NAME = os.getlogin()
 SELF_IP = socket.gethostbyname(socket.gethostname())
 
+
 # app = wx.App(False)
 # screen_width, screen_height = wx.GetDisplaySize()
 # screen_width = 1000#1280  # temp
@@ -452,8 +453,18 @@ def set_be_controlled(be_controlled_frame):
 
     sshd_status = check_sshd_service()
     print(sshd_status)  # TEMP
+    print(email)  # TEMP
     main_title = Label(be_controlled_frame, text='Be Controlled:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window2.calc_width(350), y=main_window2.calc_height(25))
+
+    def go_back():
+        sshd_status = check_sshd_service()
+    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(46), main_window2.calc_height(35)), Image.ANTIALIAS))
+
+    back_bttn = Button(be_controlled_frame, image=back_pic, cursor='hand2',
+                       font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                       command=close_code_frame)
+    back_bttn.place(x=main_window2.calc_width(5), y=main_window2.calc_height(5))
 
     frame = Frame(be_controlled_frame, bg='white')
     frame.place(x=main_window2.calc_width(231), y=main_window2.calc_height(133), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
