@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="added an OOP folder">
+    <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/LoginRegister2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/LoginRegister2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/main_window2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/main_window2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,8 +122,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.Server" />
         <item itemvalue="Python.main_window2" />
+        <item itemvalue="Python.Server" />
         <item itemvalue="Python.LoginRegister2" />
         <item itemvalue="Python.be_controlled" />
       </list>
@@ -165,7 +166,14 @@
       <option name="project" value="LOCAL" />
       <updated>1614111548510</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update">
+      <created>1614216764042</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614216764042</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -183,6 +191,7 @@
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="added an OOP folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="added an OOP folder" />
+    <MESSAGE value="update" />
+    <option name="LAST_COMMIT_MESSAGE" value="update" />
   </component>
 </project>

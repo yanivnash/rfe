@@ -307,6 +307,23 @@ def login_to_ssh_client(ip_frame, ip_dict):
     return ssh, sftp, username
 
 
+def check_sshd_service():
+    SERVICE_NAME = 'sshd'
+    service = None
+    try:
+        service = psutil.win_service_get(SERVICE_NAME)
+        service = service.as_dict()
+    except Exception:
+        pass
+
+    if service:
+        if service and service['status'] == 'running':
+            return 'ON'
+        else:
+            return 'OFF'
+    else:
+        return 'NOT INSTALLED'
+
 def set_be_controlled(be_controlled_frame):
     def close_window():
         sshd_status = check_sshd_service()
@@ -320,23 +337,6 @@ def set_be_controlled(be_controlled_frame):
                 if run_power_shell('off_cmnd') == 'DONE':
                     root.destroy()
     root.protocol("WM_DELETE_WINDOW", close_window)
-
-    def check_sshd_service():
-        SERVICE_NAME = 'sshd'
-        service = None
-        try:
-            service = psutil.win_service_get(SERVICE_NAME)
-            service = service.as_dict()
-        except Exception:
-            pass
-
-        if service:
-            if service and service['status'] == 'running':
-                return 'ON'
-            else:
-                return 'OFF'
-        else:
-            return 'NOT INSTALLED'
 
     def recheck_sshd():
         print('refresh')
@@ -459,12 +459,18 @@ def set_be_controlled(be_controlled_frame):
 
     def go_back():
         sshd_status = check_sshd_service()
-    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(46), main_window2.calc_height(35)), Image.ANTIALIAS))
+        if sshd_status == 'ON':
+            messagebox.showinfo(title='SSH Service',
+                                 message='Please note that the SSH Service is still ON.\nTo stop it please go back and stop it or use the "SSH Service" tab on the top of the screen')
+            choose_mode_window(email)
+        else:
+            choose_mode_window(email)
+    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
 
     back_bttn = Button(be_controlled_frame, image=back_pic, cursor='hand2',
                        font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
-                       command=close_code_frame)
-    back_bttn.place(x=main_window2.calc_width(5), y=main_window2.calc_height(5))
+                       command=go_back)
+    back_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
 
     frame = Frame(be_controlled_frame, bg='white')
     frame.place(x=main_window2.calc_width(231), y=main_window2.calc_height(133), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
@@ -1089,6 +1095,14 @@ def choose_mode_window(email):
 
     mode = None
     if email != None:
+        try:
+            account.delete(email)
+            account.delete('Account Settings')
+            account.delete('Sign Out')
+            account.delete(0)
+        except:
+            print('error')  # TEMP
+            pass
         account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
         account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2',
                             activeforeground='black')
@@ -1162,14 +1176,15 @@ def choose_mode_window(email):
     return email, mode, ssh, sftp, username
 
 
-def main(root1, app_width1, app_height1, account1):
+def main(root1, app_width1, app_height1, account1, ssh_service1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
-    global app_width, app_height, account
+    global app_width, app_height, account, ssh_service
 
     root = root1
-    account = account1
     app_width = app_width1
     app_height = app_height1
+    account = account1
+    ssh_service = ssh_service1
     root.protocol("WM_DELETE_WINDOW", close_window)
 
     # app = wx.App(False)

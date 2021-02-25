@@ -488,12 +488,15 @@ def main():
         pyperclip.copy(SELF_NAME)
     pc_info.add_command(label=f'IP: {SELF_IP}', command=copy_ip, activebackground='steelblue2', activeforeground='black')
     pc_info.add_command(label=f'Userame: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
+    ssh_service = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label='SSH Service', menu=ssh_service)
+
     root.config(menu=menubar)
     root.resizable(False, False)
 
     # root.bind("<Configure>", resize)
 
-    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account)
+    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account, ssh_service)
     print('main_window2.py')
     print(email)  # DELETE
     print(mode)
