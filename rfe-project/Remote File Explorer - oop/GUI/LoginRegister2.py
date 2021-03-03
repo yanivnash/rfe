@@ -112,8 +112,8 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
     ip_butns_dict = dict()
 
-    main_title = Label(ip_frame, text='Choose an IP address to connect to:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window2.calc_width(95), y=main_window2.calc_height(25))
+    main_title = Label(ip_frame, text='Choose a computer to connect to:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window2.calc_width(120), y=main_window2.calc_height(25))
 
     frame = Frame(ip_frame, bg='white')
     frame.place(x=main_window2.calc_width(231), y=main_window2.calc_height(133), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
@@ -197,9 +197,21 @@ def login_to_ssh_client(ip_frame, ip_dict):
     #
     # canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
 
+    def go_back():
+        return choose_mode_window(email)
+
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
+    back_bttn = Button(ip_frame, image=back_pic, cursor='hand2',
+                       font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                       command=go_back)
+    back_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
+
     def create_enter_frame():
         global check_var, username
+
+        main_title.configure(text="Enter a computer's info to connect to:")
+        main_title.place(x=main_window2.calc_width(85), y=main_window2.calc_height(25))
+
         def return_button(event):
             connect_button.invoke()
         root.bind('<Return>', return_button)
@@ -225,6 +237,8 @@ def login_to_ssh_client(ip_frame, ip_dict):
         enter_frame.place(x=main_window2.calc_width(0), y=main_window2.calc_height(0), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
 
         def close_enter_frame():
+            main_title.configure(text='Choose a computer to connect to:')
+            main_title.place(x=main_window2.calc_width(120), y=main_window2.calc_height(25))
             def no_action(event):
                 pass
             root.bind('<Return>', no_action)
@@ -461,11 +475,15 @@ def set_be_controlled(be_controlled_frame):
         sshd_status = check_sshd_service()
         if sshd_status == 'ON':
             messagebox.showinfo(title='SSH Service',
-                                 message='Please note that the SSH Service is still ON.\nTo stop it please go back and stop it or use the "SSH Service" tab on the top of the screen')
+                                 message='Please note that the SSH Service is still ON.\nTo stop it please go back and stop it')
             choose_mode_window(email)
+            # be_controlled_frame.destroy()
         else:
             choose_mode_window(email)
-    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
+            # be_controlled_frame.destroy()
+
+    # back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
+    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
 
     back_bttn = Button(be_controlled_frame, image=back_pic, cursor='hand2',
                        font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
@@ -476,7 +494,7 @@ def set_be_controlled(be_controlled_frame):
     frame.place(x=main_window2.calc_width(231), y=main_window2.calc_height(133), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
     refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\refresh.png').resize((main_window2.calc_width(50), main_window2.calc_height(54)), Image.ANTIALIAS))
 
-    refresh_bttn = Button(frame, text='Recheck\nConnection', font=('Eras Bold ITC', main_window2.calc_width(10), 'bold'), command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
+    refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window2.calc_width(10), 'bold'), command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
     refresh_bttn.place(x=10, y=10)
     subtitle = Label(frame, font=('Eras Bold ITC', main_window2.calc_width(18), 'bold'), fg='gray20', bg='white')
     v_mark_pic = ImageTk.PhotoImage(Image.open('v.png').resize((main_window2.calc_width(70), main_window2.calc_height(70)), Image.ANTIALIAS))
@@ -1084,8 +1102,7 @@ def server_status(main_frame):
 
 def choose_mode_window(email):
     def acc_signout():
-        discon_msg_box = messagebox.askquestion(title='Sign Out',
-                                                        message='Are you sure you want to sign out of your account?')
+        discon_msg_box = messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
         if discon_msg_box == 'yes':
             root.destroy()
             main_window2.main()
@@ -1169,22 +1186,22 @@ def choose_mode_window(email):
         bg_image = Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         set_be_controlled(be_controlled_frame)
 
-    if email != None and mode != None and ssh != None:
-        back_frame = Frame(root)
-        back_frame.place(x=0, y=0, width=app_width, height=app_height)
+    # if email != None and mode != None and ssh != None:
+    #     back_frame = Frame(root, bg='green')
+    #     back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username
 
 
-def main(root1, app_width1, app_height1, account1, ssh_service1):
+def main(root1, app_width1, app_height1, account1, ssh_service_menu1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
-    global app_width, app_height, account, ssh_service
+    global app_width, app_height, account, ssh_service_menu
 
     root = root1
     app_width = app_width1
     app_height = app_height1
     account = account1
-    ssh_service = ssh_service1
+    ssh_service_menu = ssh_service_menu1
     root.protocol("WM_DELETE_WINDOW", close_window)
 
     # app = wx.App(False)

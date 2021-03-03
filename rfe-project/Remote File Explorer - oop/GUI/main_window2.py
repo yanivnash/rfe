@@ -488,21 +488,30 @@ def main():
         pyperclip.copy(SELF_NAME)
     pc_info.add_command(label=f'IP: {SELF_IP}', command=copy_ip, activebackground='steelblue2', activeforeground='black')
     pc_info.add_command(label=f'Userame: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
-    ssh_service = Menu(menubar, tearoff=0)
-    menubar.add_cascade(label='SSH Service', menu=ssh_service)
 
+    def recheck_ssh_menubar():
+        print('checked')
+        ssh_service_menu.entryconfigure(1, label=LoginRegister2.check_sshd_service())
+
+    ssh_service_menu = Menu(menubar, tearoff=0)
+    menubar.add_cascade(label='SSH Service', menu=ssh_service_menu)
+    ssh_service_menu.add_command(label='The SSH Service is:', command=None, state='disabled', activebackground='grey90')
+    ssh_service_menu.add_command(label=LoginRegister2.check_sshd_service(), command=None, state='disabled', activebackground='grey90')
+    ssh_service_menu.add_separator()
+    ssh_service_menu.add_command(label='Recheck Service', command=recheck_ssh_menubar, activebackground='steelblue2', activeforeground='black')
     root.config(menu=menubar)
     root.resizable(False, False)
 
     # root.bind("<Configure>", resize)
 
-    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account, ssh_service)
+    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account, ssh_service_menu)
     print('main_window2.py')
     print(email)  # DELETE
     print(mode)
     print(ssh)
     print(sftp)
-    if email != None and mode != 'control' and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+    if email != None and mode == 'control' and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+        print('ok')
         global cur_path
         # end_video_name = 'end-animation.mp4'
         # LoginRegister.play_video(end_video_name)
