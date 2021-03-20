@@ -78,11 +78,13 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     def control_bttn():
         global mode
         mode = 'control'
-        choose_frame.quit()
+        choose_frame.quit()  # works
+        # login_to_ssh_client(choose_frame, ip_dict)  # doesnt work
     def be_controlled_bttn():
         global mode
         mode = 'be_controlled'
-        choose_frame.quit()
+        choose_frame.quit()  # works
+        # set_be_controlled(choose_frame)  # doesnt work
     # main_title = Label(choose_frame, text='Remote File Explorer', font=('Eras Bold ITC', 35, 'bold'), fg='gray20', bg=label_bg_color)
     main_title = Label(choose_frame, text='Choose an action for this PC:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window2.calc_width(180), y=main_window2.calc_height(25))  # (x=270, y=25)
@@ -198,7 +200,18 @@ def login_to_ssh_client(ip_frame, ip_dict):
     # canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
 
     def go_back():
-        return choose_mode_window(email)
+        # can work
+        # print('back')
+        # frame.destroy()
+        # can work
+
+        # return choose_mode_window(email)  # doesnt work
+
+        # works
+        manageSSH.disconnect_ssh(ssh)
+        root.destroy()
+        main_window2.main()
+        # works
 
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
     back_bttn = Button(ip_frame, image=back_pic, cursor='hand2',
@@ -354,7 +367,7 @@ def set_be_controlled(be_controlled_frame):
 
     def recheck_sshd():
         print('refresh')
-        frame.destroy()
+        # frame.destroy()
         set_be_controlled(be_controlled_frame)
 
     import time
@@ -472,15 +485,18 @@ def set_be_controlled(be_controlled_frame):
     main_title.place(x=main_window2.calc_width(350), y=main_window2.calc_height(25))
 
     def go_back():
-        sshd_status = check_sshd_service()
-        if sshd_status == 'ON':
-            messagebox.showinfo(title='SSH Service',
-                                 message='Please note that the SSH Service is still ON.\nTo stop it please go back and stop it')
-            choose_mode_window(email)
-            # be_controlled_frame.destroy()
-        else:
-            choose_mode_window(email)
-            # be_controlled_frame.destroy()
+        frame.destroy()
+
+    # def go_back():  # works
+    #     sshd_status = check_sshd_service()
+    #     if sshd_status == 'ON':
+    #         messagebox.showinfo(title='SSH Service',
+    #                              message='Please note that the SSH Service is still ON.\nTo stop it please go back and stop it')
+    #         return choose_mode_window(email)
+    #         # be_controlled_frame.destroy()
+    #     else:
+    #         return choose_mode_window(email)
+    #         # be_controlled_frame.destroy()
 
     # back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
@@ -508,12 +524,12 @@ def set_be_controlled(be_controlled_frame):
         # email_bttn = Button(frame, text='Email this info to someone', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color)#, command=)
         # email_bttn.place(x=150, y=285)
         off_bttn = Button(frame, text='Stop SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), bg='brown1', command=lambda: run_power_shell('off_cmnd'))  # 'firebrick1/2 / red/red2
-        off_bttn.place(x=200, y=310)
+        off_bttn.place(x=main_window2.calc_width(200), y=main_window2.calc_height(310))
         # off_bttn.place(x=200, y=340)  # place like that if email button is placed
 
     elif sshd_status == 'OFF':
         start_button = Button(frame, text='Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), bg='dodger blue', command=lambda: run_power_shell('on_cmnd'))
-        start_button.place(x=200, y=300)
+        start_button.place(x=main_window2.calc_width(200), y=main_window2.calc_height(300))
         mark_label.configure(text='SSH Service is OFF', image=x_mark_pic, fg='red')
         mark_label.place(x=main_window2.calc_width(110), y=main_window2.calc_height(10))
         subtitle.configure(font=('Eras Bold ITC', main_window2.calc_width(14), 'bold'), text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo turn the service on please click the button bellow\nand approve the window that will popup:")
@@ -521,7 +537,7 @@ def set_be_controlled(be_controlled_frame):
 
     elif sshd_status == 'NOT INSTALLED':
         start_button = Button(frame, text='Install & Start SSH Service', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), bg='dodger blue', command=lambda: run_power_shell('install_and_on_cmnd'))
-        start_button.place(x=160, y=300)
+        start_button.place(x=main_window2.calc_width(160), y=main_window2.calc_height(300))
         mark_label.configure(text='SSH Service is\nNOT INSTALLED', image=x_mark_pic, fg='red')
         mark_label.place(x=main_window2.calc_width(130), y=main_window2.calc_height(10))
         subtitle.configure(font=('Eras Bold ITC', main_window2.calc_width(14), 'bold'), text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo install the service and turn it on\nplease click the button bellow\nand approve the window that will popup:")
@@ -1118,7 +1134,6 @@ def choose_mode_window(email):
             account.delete('Sign Out')
             account.delete(0)
         except:
-            print('error')  # TEMP
             pass
         account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
         account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2',
@@ -1186,9 +1201,9 @@ def choose_mode_window(email):
         bg_image = Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
         set_be_controlled(be_controlled_frame)
 
-    # if email != None and mode != None and ssh != None:
-    #     back_frame = Frame(root, bg='green')
-    #     back_frame.place(x=0, y=0, width=app_width, height=app_height)
+    if email != None and mode != None and ssh != None:
+        back_frame = Frame(root, bg=label_bg_color)
+        back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username
 

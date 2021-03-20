@@ -15,8 +15,10 @@ import wx  # get screen resolution
 
 # global cur_path, ROOT_PROJ_DIR, bttns_dict, icons_dict
 
-system_drive = os.getenv("SystemDrive")
+frame_bg_color = '#e9eed6'
+buttons_bg_color = '#d9dcc7'
 
+system_drive = os.getenv("SystemDrive")
 
 # from fontTools.ttLib import TTFont
 # font = TTFont('ERASBD.TTF')
@@ -105,10 +107,18 @@ def get_icons_dict():
 
 
 def create_bttn(frame):
-    global icons_dict, bttns_dict, sftp
+    global icons_dict, bttns_dict, sftp, right_click_file_menu, right_click_dir_menu
     clm = 0
     rw = 2
     # os.chdir(r'D:\PycharmProjects\School\Remote File Explorer\GUI\files icons')
+
+    def test():
+        pass
+
+    right_click_file_menu = Menu(root, tearoff=False)
+    right_click_dir_menu = Menu(root, tearoff=False)
+    right_click_file_menu.add_command(label='File Test', command=test)
+    right_click_dir_menu.add_command(label='Dir Test', command=test)
 
     dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
     items_list = dirs_list + files_list
@@ -142,7 +152,7 @@ def create_bttn(frame):
         bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text, compound=TOP, justify=CENTER, image=icon, height=120, width=120)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9, pady=9)
         # bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-1>", left_click)
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-2>", right_click)
+        # bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-2>", right_click)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
         clm += 1
@@ -199,7 +209,17 @@ def double_click(event):
 
 
 def right_click(event):
-    event.widget.configure(bg="blue")
+    # global right_click_file_menu, right_click_dir_menu
+    event.widget.configure(bg="blue")  # TEMP
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    item_name = item_name[0:item_name.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+    if item_type == 'dir':
+        right_click_dir_menu.tk_popup(event.x_root, event.y_root)
+    elif item_type == 'file':
+        right_click_file_menu.tk_popup(event.x_root, event.y_root)
 
 
 def DELE():
@@ -358,10 +378,10 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
         else:
             pass
 
-    wrapper1 = LabelFrame(root, height=10, bg='yellow')
+    wrapper1 = LabelFrame(root, height=10, bg='white')
     wrapper2 = LabelFrame(root)
 
-    mycanvas = Canvas(wrapper2)
+    mycanvas = Canvas(wrapper2, bg='white')
     mycanvas.pack(side=LEFT, fill='both', expand='yes')
 
     yscrollbar = ttk.Scrollbar(wrapper2, orient='vertical', command=mycanvas.yview)
@@ -374,7 +394,7 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     mycanvas.bind('<Configure>', lambda e: mycanvas.configure(scrollregion=mycanvas.bbox('all')))
     mycanvas.bind_all("<MouseWheel>", mouse_wheel)
 
-    frame = Frame(mycanvas)
+    frame = Frame(mycanvas, bg='white')
     mycanvas.create_window((0, 0), window=frame, anchor='nw')
 
     wrapper1.pack(fill='both', expand='no', padx=10, pady=10)
@@ -385,16 +405,16 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     Grid.rowconfigure(wrapper1, 0, weight=1)
     # good
 
-    menu_window = wrapper1 # f1
+    menu_window = wrapper1 # f1  # TEMP
 
-    cur_path_label = Label(menu_window, text=cur_path, wraplength=450)
+    cur_path_label = Label(menu_window, text=cur_path, wraplength=450, bg='white')
     cur_path_label.grid(column=3, row=0, sticky=W + E)
 
-    copy_btn = Button(menu_window, text='Copy Path')
+    copy_btn = Button(menu_window, text='Copy Path', bg=buttons_bg_color)
     copy_btn.bind("<Button-1>", copy_path_button)
     copy_btn.grid(column=4, row=0, sticky=W)# + E)
 
-    up_btn = Button(menu_window, image=icons_dict['up.png'], command=up_button)
+    up_btn = Button(menu_window, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
 
     answr = str(manageSSH.run_action(ssh, 'wmic logicaldisk get caption').read())
@@ -402,46 +422,63 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
     for i in range(len(drives_list)):
         drives_list[i] += '\\'
-    drivers_combobox = ttk.Combobox(menu_window, values=drives_list, state='readonly')
+    drives_combobox = ttk.Combobox(menu_window, values=drives_list, state='readonly')
     default_value = cur_path[0:3]
     try:
-        drivers_combobox.current(drives_list.index(default_value))
+        drives_combobox.current(drives_list.index(default_value))
     except ValueError:
         default_value = cur_path[0:2] + '\\'
-        drivers_combobox.current(drives_list.index(default_value))
-    drivers_combobox.current(drives_list.index(default_value))
-    drivers_combobox.bind("<<ComboboxSelected>>", drives_box_change)
-    drivers_combobox.grid(column=2, row=1)
+        drives_combobox.current(drives_list.index(default_value))
+    drives_combobox.current(drives_list.index(default_value))
+    drives_combobox.bind("<<ComboboxSelected>>", drives_box_change)
+    drives_combobox.grid(column=2, row=1)
 
-    new_dir_btn = Button(menu_window, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'], command=new_dir_button)
+    drive_label = Label(menu_window, text='Drive Select:', bg='white')
+    drive_label.grid(column=2, row=0)
+
+    new_dir_btn = Button(menu_window, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'], bg=buttons_bg_color, command=new_dir_button)
     new_dir_btn.grid(column=3, row=1)
 
-    ref_btn = Button(menu_window, image=icons_dict['refresh.png'], command=refresh_button)
+    ref_btn = Button(menu_window, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
     ref_btn.grid(column=4, row=1)
 
     def search():
-        tree_items_list = manageSSH.tree_items(sftp, cur_path)
-        search_key = search_bar_entry.get()
-        for item in tree_items_list:
-            if search_key.contains(item[item.rfind('\\'):]):
-                items_list.append(item)
+        temp_list = list()
+        # search_key = search_bar_entry.get()
+        search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
+        items_list = manageSSH.tree_items(sftp, cur_path, temp_list, search_key)
+
+        # for item in tree_items_list:
+        #     if item.contains(search_key):
+        #         items_list.append(item)
+        #     # if search_key.contains(item[item.rfind('\\'):]):
+        #     #     items_list.append(item)
+
+        print(items_list)
         update_frame(items_list)
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
+        def search2(event):
+            search()
+        root.bind('<Return>', search2)
         search_bar_entry.bind('<FocusOut>', entry_lost)
 
     def entry_lost(event):
         search_bar_entry.insert(0, 'Search')
+        def no_action(event):
+            pass
+        root.bind('<Return>', no_action)
         search_bar_entry.bind('<FocusIn>', entry_click)
 
     search_bar_entry = Entry(menu_window, text='Search', font=(calc_width(20)))
     search_bar_entry.delete(0, 'end')
     search_bar_entry.insert(0, 'Search')
     search_bar_entry.bind('<FocusIn>', entry_click)
-    search_bar_entry.grid(column=5, row=1, sticky=E)
-    search_btn = Button(menu_window, text='GO', command=search)
-    search_btn.grid(column=6, row=1, sticky=E)
+    search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
+    # search_pic = ImageTk.PhotoImage(Image.open('icons/search.png').resize((calc_width(50), calc_height(50)), Image.ANTIALIAS))
+    search_btn = Button(menu_window, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
+    search_btn.grid(column=5, row=1, sticky=E)
 
     # ds_btn = Button(menu_window, text='Disconnect', command=dscon_bttn)
     # ds_btn.grid(column=5, row=1, sticky=E, padx=50, columnspan=4)
@@ -462,6 +499,7 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 
 def main():
     global cur_path, root, frame, ssh, sftp
+    global x, y, username, account, menubar, email
 
     print(screen_width, screen_height, app_width, app_height)  # temp
 
@@ -510,7 +548,8 @@ def main():
     print(mode)
     print(ssh)
     print(sftp)
-    if email != None and mode == 'control' and ssh != None and sftp != None:  # (ADD) and chosen_ip != None:
+    if email != None and ssh != None and sftp != None:  # and mode == 'control'
+        print('if')
         print('ok')
         global cur_path
         # end_video_name = 'end-animation.mp4'
@@ -558,7 +597,8 @@ def main():
                 print(f'upper: {cur_path}')
                 answr = manageSSH.chdir(sftp, new_path)
                 if answr == 'path not found':
-                    messagebox.showerror(title="The specified path doesn't exist", message=f"{new_path}\ndoesn't exist. Please try a different one")
+                    messagebox.showerror(title="The specified path doesn't exist",
+                                         message=f"{new_path}\ndoesn't exist. Please try a different one")
                 else:
                     cur_path = new_path
                     print(f'new path:{cur_path}')  # TEMP
@@ -566,14 +606,16 @@ def main():
                     update_frame(items_list)
 
         def acc_signout():
-            discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out', message='Are you sure you want to disconnect and sign out of your account?')
+            discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out',
+                                                    message='Are you sure you want to disconnect and sign out of your account?')
             if discon_msg_box == 'yes':
                 manageSSH.disconnect_ssh(ssh)
                 root.destroy()
                 main()
 
         account.delete('Sign Out')
-        account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')
+        account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2',
+                            activeforeground='black')
 
         def go_to_desktop():
             global cur_path
@@ -605,16 +647,22 @@ def main():
 
         go_to = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Go to...', menu=go_to)
-        go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2', activeforeground='black')
-        go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2', activeforeground='black')
-        go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2', activeforeground='black')
-        go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2',
+                          activeforeground='black')
+        go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2',
+                          activeforeground='black')
+        go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2',
+                          activeforeground='black')
+        go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2',
+                          activeforeground='black')
         go_to.add_separator()
-        go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2', activeforeground='black')
+        go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2',
+                          activeforeground='black')
 
         file_transfer = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='File Transfer', menu=file_transfer)
-        file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2',
+                                  activeforeground='black')
 
         def disconnect_func():  # add disconnecting from the machine (SSH)
             discon_msg_box = messagebox.askquestion(title='Disconnect', message='Are you sure you want to disconnect?')
@@ -629,19 +677,138 @@ def main():
 
         disconnect = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Disconnect', menu=disconnect)
-        disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2', activeforeground='black')
+        disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2',
+                               activeforeground='black')
 
         end_video_name = 'end-animation.mp4'
         LoginRegister2.play_video(end_video_name)
 
-        # #IN THE FUNC
-        # for x in range(10):
-        #     Grid.columnconfigure(frame, x, weight=1)
-        #
-        # for y in range(5):
-        #     Grid.rowconfigure(frame, y, weight=1)
-
         root.mainloop()
+
+        # print('ok')
+        # global cur_path
+        # # end_video_name = 'end-animation.mp4'
+        # # LoginRegister.play_video(end_video_name)
+        # root.protocol("WM_DELETE_WINDOW", close_window)
+        # root.geometry(f'{app_width}x{app_height}+{x}+{y}')
+        # # root.minsize(width=1070, height=700)
+        #
+        # # root.resizable(False, False)
+        #
+        # root.title('Remote File Explorer')
+        # # root.iconbitmap('icon.ico')
+        #
+        # # host = "192.168.56.1"
+        # # username = "yaniv-pc\yaniv"
+        # # # password = input('Enter your password: ')  # DELETE
+        # # ssh = manageSSH.connect_to_ssh(host, username, password)
+        # # sftp = ssh.open_sftp()
+        #
+        # # system_drive = os.getenv("SystemDrive")
+        #
+        # cur_path = rf'{system_drive}\Users\{username}\Desktop'
+        # print(cur_path)  # TEMP
+        # # cur_path = r'%userprofile%\Desktop'
+        # manageSSH.chdir(sftp, cur_path)
+        # items_list = sftp.listdir()
+        # # items_list = ['new', 'parallels crack', '20200111_162640.jpg', 'apple watch.txt', 'iphone 12 pro.png', 'iphone.txt', 'macbook.txt', 'macos crack.txt']
+        # icons_dict = get_icons_dict()
+        # # icons_dict = manageSERVER.get_icons_dict()
+        # create_frame(items_list)
+        # # items_list = sort_files_list(items_list)
+        # create_bttn(frame)
+        #
+        # def go_to_path():
+        #     global cur_path
+        #     new_path = simpledialog.askstring('Enter a path', 'Enter a valid path to go to:')
+        #     print(new_path)
+        #     if new_path == '' or new_path == None:
+        #         pass
+        #     else:
+        #         while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
+        #             new_path = new_path[1:]
+        #             print(new_path)  # TEMP
+        #         new_path = new_path[0].upper() + new_path[1:]
+        #         print(f'upper: {cur_path}')
+        #         answr = manageSSH.chdir(sftp, new_path)
+        #         if answr == 'path not found':
+        #             messagebox.showerror(title="The specified path doesn't exist", message=f"{new_path}\ndoesn't exist. Please try a different one")
+        #         else:
+        #             cur_path = new_path
+        #             print(f'new path:{cur_path}')  # TEMP
+        #             items_list = sftp.listdir()
+        #             update_frame(items_list)
+        #
+        # def acc_signout():
+        #     discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out', message='Are you sure you want to disconnect and sign out of your account?')
+        #     if discon_msg_box == 'yes':
+        #         manageSSH.disconnect_ssh(ssh)
+        #         root.destroy()
+        #         main()
+        #
+        # account.delete('Sign Out')
+        # account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')
+        #
+        # def go_to_desktop():
+        #     global cur_path
+        #     cur_path = rf'{system_drive}\Users\{username}\Desktop'
+        #     manageSSH.chdir(sftp, cur_path)
+        #     items_list = sftp.listdir()
+        #     update_frame(items_list)
+        #
+        # def go_to_documents():
+        #     global cur_path
+        #     cur_path = rf'{system_drive}\Users\{username}\Documents'
+        #     manageSSH.chdir(sftp, cur_path)
+        #     items_list = sftp.listdir()
+        #     update_frame(items_list)
+        #
+        # def go_to_downloads():
+        #     global cur_path
+        #     cur_path = rf'{system_drive}\Users\{username}\Downloads'
+        #     manageSSH.chdir(sftp, cur_path)
+        #     items_list = sftp.listdir()
+        #     update_frame(items_list)
+        #
+        # def go_to_pictures():
+        #     global cur_path
+        #     cur_path = rf'{system_drive}\Users\{username}\Pictures'
+        #     manageSSH.chdir(sftp, cur_path)
+        #     items_list = sftp.listdir()
+        #     update_frame(items_list)
+        #
+        # go_to = Menu(menubar, tearoff=0)
+        # menubar.add_cascade(label='Go to...', menu=go_to)
+        # go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2', activeforeground='black')
+        # go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2', activeforeground='black')
+        # go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2', activeforeground='black')
+        # go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2', activeforeground='black')
+        # go_to.add_separator()
+        # go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2', activeforeground='black')
+        #
+        # file_transfer = Menu(menubar, tearoff=0)
+        # menubar.add_cascade(label='File Transfer', menu=file_transfer)
+        # file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2', activeforeground='black')
+        #
+        # def disconnect_func():  # add disconnecting from the machine (SSH)
+        #     discon_msg_box = messagebox.askquestion(title='Disconnect', message='Are you sure you want to disconnect?')
+        #     if discon_msg_box == 'yes':
+        #         manageSSH.disconnect_ssh(ssh)
+        #         menubar.delete('Account')
+        #         menubar.delete('Go to...')
+        #         menubar.delete('Disconnect')
+        #         account = Menu(menubar, tearoff=0)
+        #         menubar.add_cascade(label='Account', menu=account)
+        #         LoginRegister2.choose_mode_window(email)
+        #
+        # disconnect = Menu(menubar, tearoff=0)
+        # menubar.add_cascade(label='Disconnect', menu=disconnect)
+        # disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2', activeforeground='black')
+        #
+        # end_video_name = 'end-animation.mp4'
+        # LoginRegister2.play_video(end_video_name)
+        #
+        # root.mainloop()
 
 if __name__ == '__main__':
     main()
