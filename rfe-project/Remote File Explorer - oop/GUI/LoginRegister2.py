@@ -200,6 +200,8 @@ def login_to_ssh_client(ip_frame, ip_dict):
     # canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
 
     def go_back():
+        main(root, app_width, app_height, account, ssh_service_menu, email)
+
         # can work
         # print('back')
         # frame.destroy()
@@ -207,11 +209,11 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
         # return choose_mode_window(email)  # doesnt work
 
-        # works
-        manageSSH.disconnect_ssh(ssh)
-        root.destroy()
-        main_window2.main()
-        # works
+        # # works
+        # manageSSH.disconnect_ssh(ssh)
+        # root.destroy()
+        # main_window2.main()
+        # # works
 
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
     back_bttn = Button(ip_frame, image=back_pic, cursor='hand2',
@@ -456,6 +458,7 @@ def set_be_controlled(be_controlled_frame):
             except pywintypes.error:
                 messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Installed & Started without Admin access,\nPlease click 'Yes' in the popup window")
                 return 'REJECTED'
+            loading_label.destroy()  #
         elif cmnd == 'on_cmnd':
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + on_cmnd)
@@ -466,6 +469,7 @@ def set_be_controlled(be_controlled_frame):
             except pywintypes.error:
                 messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
                 return 'REJECTED'
+            loading_label.destroy()  #
         elif cmnd == 'off_cmnd':
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + off_cmnd)
@@ -476,6 +480,7 @@ def set_be_controlled(be_controlled_frame):
             except pywintypes.error:
                 messagebox.showerror(title='Access Denied', message=f"The SSH Service can't be Stopped without Admin access,\nPlease click 'Yes' in the popup window")
                 return 'REJECTED'
+            loading_label.destroy()  #
 
 
     sshd_status = check_sshd_service()
@@ -1126,6 +1131,7 @@ def choose_mode_window(email):
     def settings_popup():
         pass
 
+    print(f'email: {email}')
     mode = None
     if email != None:
         try:
@@ -1155,6 +1161,7 @@ def choose_mode_window(email):
             Image.open('be-controlled-pic.png').resize((main_window2.calc_width(200), main_window2.calc_height(160)),
                                                        Image.ANTIALIAS))
         mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
+        choose_frame.destroy()
         # if email == 'yaniv2':
         #     choose_frame.destroy()
         # choose_frame.mainloop()
@@ -1174,6 +1181,7 @@ def choose_mode_window(email):
     #     if email == 'yaniv2':
     #         frame.destroy()
     #     frame.mainloop()
+
 
     print(mode)
     # root.mainloop()
@@ -1202,13 +1210,13 @@ def choose_mode_window(email):
         set_be_controlled(be_controlled_frame)
 
     if email != None and mode != None and ssh != None:
-        back_frame = Frame(root, bg=label_bg_color)
+        back_frame = Frame(root, bg='yellow')#label_bg_color)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username
 
 
-def main(root1, app_width1, app_height1, account1, ssh_service_menu1):
+def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
     global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
     global app_width, app_height, account, ssh_service_menu
 
@@ -1216,6 +1224,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1):
     app_width = app_width1
     app_height = app_height1
     account = account1
+    email = email1
     ssh_service_menu = ssh_service_menu1
     root.protocol("WM_DELETE_WINDOW", close_window)
 
@@ -1257,23 +1266,24 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1):
     # root.resizable(False, False)
     # good - but no need
 
+    if email == None:
 
-    main_frame = Frame(root)
-    main_frame.place(x=0, y=0, width=app_width, height=app_height)
+        main_frame = Frame(root)
+        main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
-    # bg = PhotoImage(file='background.png')
-    bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-    bg_image = Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-    show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png').resize((main_window2.calc_width(30), main_window2.calc_height(30)), Image.ANTIALIAS))
-    hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png').resize((main_window2.calc_width(30), main_window2.calc_height(30)), Image.ANTIALIAS))
+        # bg = PhotoImage(file='background.png')
+        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg_image = Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+        show_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/show.png').resize((main_window2.calc_width(30), main_window2.calc_height(30)), Image.ANTIALIAS))
+        hide_icon = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/hide.png').resize((main_window2.calc_width(30), main_window2.calc_height(30)), Image.ANTIALIAS))
 
-    print(server_status(main_frame))
+        print(server_status(main_frame))
 
-    play_video(start_video_name)
-    # email = start_login_window(main_frame)
+        play_video(start_video_name)
+        # email = start_login_window(main_frame)
 
-    start_login_window(main_frame)
-    main_frame.mainloop()
+        start_login_window(main_frame)
+        main_frame.mainloop()
 
     print(email)  # DELETE
 

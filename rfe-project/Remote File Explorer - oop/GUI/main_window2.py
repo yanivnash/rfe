@@ -115,10 +115,10 @@ def create_bttn(frame):
     def test():
         pass
 
-    right_click_file_menu = Menu(root, tearoff=False)
     right_click_dir_menu = Menu(root, tearoff=False)
-    right_click_file_menu.add_command(label='File Test', command=test)
-    right_click_dir_menu.add_command(label='Dir Test', command=test)
+    right_click_file_menu = Menu(root, tearoff=False)
+    # right_click_dir_menu.add_command(label='Dir Test', command=test)
+    # right_click_file_menu.add_command(label='File Test', command=test)
 
     dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
     items_list = dirs_list + files_list
@@ -210,16 +210,78 @@ def double_click(event):
 
 def right_click(event):
     # global right_click_file_menu, right_click_dir_menu
-    event.widget.configure(bg="blue")  # TEMP
+    # event.widget.configure(bg="blue")  # TEMP
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if item_type == 'dir':
+        if right_click_dir_menu.entrycget(0, 'label') == '':
+            right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
+            right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
+            right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
         right_click_dir_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
+        if right_click_file_menu.entrycget(0, 'label') == '':
+            right_click_file_menu.add_command(label='Open File', command=lambda: double_click(event))
+            right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
+            right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
+
+
+def rename_item1(event):
+    path = r"C:\Users\yaniv\Desktop\RFE - TEst"
+    old_path = path + '\\' + 'file2.docx'
+    new_path = path + '\\' + 'file3.docx'
+    sftp.rename(old_path, new_path)
+    refresh_button()
+
+
+def rename_item(event):
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    item_name = item_name[0:item_name.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+    old_path = cur_path + '\\' + item_name
+
+    # if item_type == 'dir':
+    file_type = ''
+    if item_type == 'file':
+        dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
+        items_list = dirs_list + files_list
+        for item in items_list:
+            if item in files_list:
+                end_index = item.rfind('.')
+                file_type = item[end_index:]
+                break
+
+    new_name = simpledialog.askstring('Rename', f'Enter a new name for "{item_name}":') + file_type
+    new_name = check_new_name(new_name, 'Rename', item_type)
+
+    if new_name != False:
+        new_path = cur_path + '\\' + new_name
+        print(f'new name: {new_name}')
+        print(f'old path: {old_path}')
+        print(f'new path: {new_path}')
+        sftp.rename(old_path, new_path)
+        refresh_button()
+
+    # refresh_button()
+
+
+def remove_item(event):
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    item_name = item_name[0:item_name.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+    item_path = cur_path + '\\' + item_name
+    if item_type == 'dir':
+        sftp.rmdir(item_path)
+    elif item_type == 'file':
+        sftp.remove(item_path)
 
 
 def DELE():
@@ -245,7 +307,7 @@ def up_button():
     cur_path = sftp.getcwd()[1:].replace('/', '\\')
     while cur_path.endswith('\\'):
         cur_path = cur_path[:len(cur_path) - 1]
-    print(f'up:{cur_path}')
+    print(f'up: {cur_path}')
     items_list = sftp.listdir()
     update_frame(items_list)
     # manageSSH.run_action(ssh, r'cd..')
@@ -310,44 +372,104 @@ def copy_path_button(event):
     # event.widget.configure(text='Copy Path2')
 
 
-import warnings
-def new_dir_button():
-    warnings.filterwarnings("ignore")
-    # Get the name of the folder with entry
+def check_new_name(new_name, input_title, type):
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
     lower_items_list = list()
     for item in items_list:
         lower_items_list.append(item.lower())
 
-    invalid_names_list = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9']
+    invalid_names_list = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8',
+                          'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9']
+
+    # new_name = simpledialog.askstring(input_title, 'Enter a name for the folder:')
+    if type == 'dir':
+        while True:
+            # new_folder_name = simpledialog.askstring('input string', 'please enter your name')
+            if new_name == None or new_name == '':
+                # break
+                return False
+
+            elif new_name.lower() in lower_items_list:
+                new_name = simpledialog.askstring(input_title, 'This name is already taken, Try again:')
+
+            elif new_name in invalid_names_list or new_name.__contains__('..'):
+                new_name = simpledialog.askstring(input_title, 'This name is invalid, Try again:')
+
+            elif not re.match(r"^[^\\/:*?\"<>|]+$", new_name):
+                new_name = simpledialog.askstring(input_title, """The name can't contain: \/:*?"<>| Try again:""")
+
+            elif new_name.endswith('.') or new_name.endswith(' '):
+                new_name = new_name[:-1]
+                # sftp.mkdir(new_folder_name)
+                # print(new_folder_name)  #####
+                # items_list = sftp.listdir()
+                # update_frame(items_list)
+            else:
+                return new_name
+
+    elif type == 'file':
+        while True:
+            # new_folder_name = simpledialog.askstring('input string', 'please enter your name')
+            if new_name == None or new_name == '':
+                # break
+                return False
+
+            elif new_name.lower() in lower_items_list:
+                new_name = simpledialog.askstring(input_title, 'This name is already taken, Try again:')
+
+            elif new_name in invalid_names_list:
+                new_name = simpledialog.askstring(input_title, 'This name is invalid, Try again:')
+
+            elif not re.match(r"^[^\\/:*?\"<>|]+$", new_name):
+                new_name = simpledialog.askstring(input_title, """The name can't contain: \/:*?"<>| Try again:""")
+            else:
+                return new_name
+
+
+def new_dir_button():
+    # maybe: get the name of the folder with an entry
+
+    # manageSSH.chdir(sftp, cur_path)
+    # items_list = sftp.listdir()
+    # lower_items_list = list()
+    # for item in items_list:
+    #     lower_items_list.append(item.lower())
+    #
+    # invalid_names_list = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8', 'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9']
 
     new_folder_name = simpledialog.askstring('New folder', 'Enter a name for the folder:')
-    while True:
-        # new_folder_name = simpledialog.askstring('input string', 'please enter your name')
-        if new_folder_name == None or new_folder_name == '':
-            break
-
-        elif new_folder_name.lower() in lower_items_list:
-            new_folder_name = simpledialog.askstring('New folder', 'This name is already taken, Try again:')
-
-        elif new_folder_name in invalid_names_list or new_folder_name.__contains__('..'):
-            new_folder_name = simpledialog.askstring('New folder', 'This name is invalid, Try again:')
-
-        elif not re.match(r"^[^\\/:*?\"<>|]+$", new_folder_name):
-            new_folder_name = simpledialog.askstring('New folder', """The name can't contain: \/:*?"<>| Try again:""")
-
-        elif new_folder_name.endswith('.') or new_folder_name.endswith(' '):
-            new_folder_name = new_folder_name[:-1]
-            sftp.mkdir(new_folder_name)
-            print(new_folder_name)  #####
-            items_list = sftp.listdir()
-            update_frame(items_list)
-        else:
-            sftp.mkdir(new_folder_name)
-            print(new_folder_name)  #####
-            items_list = sftp.listdir()
-            update_frame(items_list)
+    new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir')
+    if new_folder_name != False:
+        sftp.mkdir(new_folder_name)
+        print(new_folder_name)  #####
+        items_list = sftp.listdir()
+        update_frame(items_list)
+    # while True:
+    #     # new_folder_name = simpledialog.askstring('input string', 'please enter your name')
+    #     if new_folder_name == None or new_folder_name == '':
+    #         break
+    #
+    #     elif new_folder_name.lower() in lower_items_list:
+    #         new_folder_name = simpledialog.askstring('New folder', 'This name is already taken, Try again:')
+    #
+    #     elif new_folder_name in invalid_names_list or new_folder_name.__contains__('..'):
+    #         new_folder_name = simpledialog.askstring('New folder', 'This name is invalid, Try again:')
+    #
+    #     elif not re.match(r"^[^\\/:*?\"<>|]+$", new_folder_name):
+    #         new_folder_name = simpledialog.askstring('New folder', """The name can't contain: \/:*?"<>| Try again:""")
+    #
+    #     elif new_folder_name.endswith('.') or new_folder_name.endswith(' '):
+    #         new_folder_name = new_folder_name[:-1]
+    #         sftp.mkdir(new_folder_name)
+    #         print(new_folder_name)  #####
+    #         items_list = sftp.listdir()
+    #         update_frame(items_list)
+    #     else:
+    #         sftp.mkdir(new_folder_name)
+    #         print(new_folder_name)  #####
+    #         items_list = sftp.listdir()
+    #         update_frame(items_list)
 
 
 def update_frame(items_list):
@@ -542,7 +664,7 @@ def main():
 
     # root.bind("<Configure>", resize)
 
-    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account, ssh_service_menu)
+    email, mode, ssh, sftp, username = LoginRegister2.main(root, app_width, app_height, account, ssh_service_menu, None)
     print('main_window2.py')
     print(email)  # DELETE
     print(mode)
