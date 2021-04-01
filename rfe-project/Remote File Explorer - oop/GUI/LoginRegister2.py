@@ -1210,7 +1210,7 @@ def choose_mode_window(email):
         set_be_controlled(be_controlled_frame)
 
     if email != None and mode != None and ssh != None:
-        back_frame = Frame(root, bg='yellow')#label_bg_color)
+        back_frame = Frame(root, bg=label_bg_color)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username

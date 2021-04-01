@@ -120,7 +120,7 @@ def create_bttn(frame):
     # right_click_dir_menu.add_command(label='Dir Test', command=test)
     # right_click_file_menu.add_command(label='File Test', command=test)
 
-    dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
+    dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)  # works - but not generic
     items_list = dirs_list + files_list
     for item in items_list:
         btn_text = item
@@ -194,8 +194,13 @@ def double_click(event):
         items_list = sftp.listdir()
         update_frame(items_list)
     elif item_type == 'file':
-        # not working - only png works
-        manageSSH.run_action(ssh, f'"{temp}"')
+
+        # stdin, stdout, stderr = ssh.exec_command(
+        #     "powershell Start-Process python -ArgumentList \"C:\Users\yaniv\Desktop\RFE - TEst\New Microsoft Word Document.docx\",\"-param1\", \"param1\",\"-param2\",\"param2\" -Verb \"runAs\" -Wait")
+        # print(stdin, stdout, stderr)
+
+        manageSSH.run_action(ssh, f'"{temp}"')#(ssh, f'start "{temp}"')  # only png works
+
         # pass
 
     elif item_type == 'item not found':
@@ -230,12 +235,12 @@ def right_click(event):
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
 
 
-def rename_item1(event):
-    path = r"C:\Users\yaniv\Desktop\RFE - TEst"
-    old_path = path + '\\' + 'file2.docx'
-    new_path = path + '\\' + 'file3.docx'
-    sftp.rename(old_path, new_path)
-    refresh_button()
+# def rename_item1(event):
+#     path = r"C:\Users\yaniv\Desktop\RFE - TEst"
+#     old_path = path + '\\' + 'file2.docx'
+#     new_path = path + '\\' + 'file3.docx'
+#     sftp.rename(old_path, new_path)
+#     refresh_button()
 
 
 def rename_item(event):
@@ -265,7 +270,8 @@ def rename_item(event):
         print(f'new name: {new_name}')
         print(f'old path: {old_path}')
         print(f'new path: {new_path}')
-        sftp.rename(old_path, new_path)
+        sftp2 = ssh.open_sftp()
+        sftp2.rename(old_path, new_path)
         refresh_button()
 
     # refresh_button()
@@ -279,9 +285,17 @@ def remove_item(event):
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     item_path = cur_path + '\\' + item_name
     if item_type == 'dir':
-        sftp.rmdir(item_path)
+        dlt_msg_box = messagebox.askquestion(title='Delete', message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
+        if dlt_msg_box == 'yes':
+            sftp2 = ssh.open_sftp()
+            sftp2.rmdir(item_path)
+            refresh_button()
     elif item_type == 'file':
-        sftp.remove(item_path)
+        dlt_msg_box = messagebox.askquestion(title='Delete', message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
+        if dlt_msg_box == 'yes':
+            sftp2 = ssh.open_sftp()
+            sftp2.remove(item_path)
+            refresh_button()
 
 
 def DELE():
@@ -566,9 +580,10 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
 
     def search():
         temp_list = list()
-        # search_key = search_bar_entry.get()
-        search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
-        items_list = manageSSH.tree_items(sftp, cur_path, temp_list, search_key)
+        search_key = search_bar_entry.get()
+        # search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
+        sftp2 = ssh.open_sftp()
+        items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key)
 
         # for item in tree_items_list:
         #     if item.contains(search_key):
