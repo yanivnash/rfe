@@ -58,6 +58,8 @@ icons_dict = dict()
 
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
+is_searching = False
+
 # cur_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop')
 # cur_path = os.path.join(os.path.join(os.environ['USERPROFILE']), 'Desktop\\apple')
 # cur_path = r'C:\Users\yaniv\Desktop\כיתה יב\10 יחידות מחשבים\cyber project'
@@ -112,11 +114,10 @@ def create_bttn(frame):
     rw = 2
     # os.chdir(r'D:\PycharmProjects\School\Remote File Explorer\GUI\files icons')
 
-    def test():
-        pass
 
-    right_click_dir_menu = Menu(root, tearoff=False)
-    right_click_file_menu = Menu(root, tearoff=False)
+    # right_click_dir_menu = Menu(root, tearoff=False)
+    # right_click_file_menu = Menu(root, tearoff=False)
+
     # right_click_dir_menu.add_command(label='Dir Test', command=test)
     # right_click_file_menu.add_command(label='File Test', command=test)
 
@@ -199,7 +200,18 @@ def double_click(event):
         #     "powershell Start-Process python -ArgumentList \"C:\Users\yaniv\Desktop\RFE - TEst\New Microsoft Word Document.docx\",\"-param1\", \"param1\",\"-param2\",\"param2\" -Verb \"runAs\" -Wait")
         # print(stdin, stdout, stderr)
 
-        manageSSH.run_action(ssh, f'"{temp}"')#(ssh, f'start "{temp}"')  # only png works
+        open_file_path = ROOT_PROJ_DIR + r'\openfile.bat'
+        print([open_file_path])
+        sftp2 = ssh.open_sftp()
+        f = sftp2.open(open_file_path, 'w')
+        f.write(f'"{temp}"')
+        f.close()
+
+        # manageSSH.run_action(ssh, f'"{ROOT_PROJ_DIR}\openfile.bat"')#(ssh, f'"{temp}"')  # only png works
+        stdin, stdout, stderr = ssh.exec_command(f'"{ROOT_PROJ_DIR}\openfile.bat"')
+        print(f'stdin: {stdin}')
+        print(f'stdout: {stdout.read()}')
+        print(f'stderror: {stderr.read()}')
 
         # pass
 
@@ -221,17 +233,21 @@ def right_click(event):
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+
+    right_click_dir_menu = Menu(root, tearoff=False)
+    right_click_file_menu = Menu(root, tearoff=False)
+
     if item_type == 'dir':
-        if right_click_dir_menu.entrycget(0, 'label') == '':
-            right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
-            right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
-            right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
+        # if right_click_dir_menu.entrycget(0, 'label') == '':
+        right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
+        right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
+        right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
         right_click_dir_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
-        if right_click_file_menu.entrycget(0, 'label') == '':
-            right_click_file_menu.add_command(label='Open File', command=lambda: double_click(event))
-            right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
-            right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
+        # if right_click_file_menu.entrycget(0, 'label') == '':
+        right_click_file_menu.add_command(label='Open File', command=lambda: double_click(event))
+        right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
+        right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
 
 
@@ -262,17 +278,20 @@ def rename_item(event):
                 file_type = item[end_index:]
                 break
 
-    new_name = simpledialog.askstring('Rename', f'Enter a new name for "{item_name}":') + file_type
-    new_name = check_new_name(new_name, 'Rename', item_type)
+    new_name = simpledialog.askstring('Rename', f'Enter a new name for "{item_name}":')
+    if new_name != None and new_name != '':
+        new_name += file_type
+        # if new_name.lower() != item_name.lower():
+        new_name = check_new_name(new_name, 'Rename', item_type)
 
-    if new_name != False:
-        new_path = cur_path + '\\' + new_name
-        print(f'new name: {new_name}')
-        print(f'old path: {old_path}')
-        print(f'new path: {new_path}')
-        sftp2 = ssh.open_sftp()
-        sftp2.rename(old_path, new_path)
-        refresh_button()
+        if new_name != False:
+            new_path = cur_path + '\\' + new_name
+            print(f'new name: {new_name}')
+            print(f'old path: {old_path}')
+            print(f'new path: {new_path}')
+            sftp2 = ssh.open_sftp()
+            sftp2.rename(old_path, new_path)
+            refresh_button()
 
     # refresh_button()
 
@@ -351,6 +370,8 @@ def forward_button():
 
 
 def refresh_button():
+    global is_searching
+    is_searching = False
     print(cur_path) # temp - DEL later
     # sftp.chdir(cur_path)
     manageSSH.chdir(sftp, cur_path)
@@ -495,8 +516,123 @@ def update_frame(items_list):
     create_frame(items_list)#back_img, forw_img, ref_img)
     create_bttn(frame)
 
+
+def create_search_bttn(frame, items_list):
+    global icons_dict, bttns_dict, sftp, right_click_dir_search_menu, right_click_file_search_menu
+    clm = 0
+    rw = 2
+
+    right_click_dir_search_menu = Menu(frame, tearoff=False)
+    right_click_file_search_menu = Menu(frame, tearoff=False)
+
+    dirs_list = list()
+    files_list = list()
+    for item in items_list:
+        end_index = item.rfind('\\')
+        item_name = item[end_index + 1:]
+        item_path = item[:end_index]
+        sftp2 = ssh.open_sftp()
+        item_type = manageSSH.check_if_item_is_dir(sftp2, item_path, item_name)
+        print(f'item_path: {item_path}')
+        print(f'item_name: {item_name}')
+        print(f'item_type: {item_type}')
+        if item_type == 'dir':
+            dirs_list.append(item_path + '\\' + item_name)
+        elif item_type == 'file':
+            files_list.append(item_path + '\\' + item_name)
+    print(f'dirs_list: {dirs_list}')
+    print(f'files_list: {files_list}')
+    for item in items_list:
+        end_index = item.rfind('\\')
+        item_name = item[end_index + 1:]
+        btn_text = item_name
+        if item in dirs_list:
+            file_type = '.dir_folder'
+            if len(item_name) > 30:
+                btn_text = btn_text[0:30] + '...'
+        elif item in files_list:
+            # if 'item' is a file
+            end_index = item_name.rfind('.')
+            file_type = item_name[end_index:].lower()
+
+            if len(item_name) > 30:
+                btn_text = btn_text[0:30] + '...' + file_type
+        else:
+            file_type = '.none'
+        try:
+            icon = icons_dict[file_type + '.png']
+        except KeyError:
+            icon = icons_dict['.none.png']
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
+                                                                    compound=TOP, justify=CENTER, image=icon,
+                                                                    height=120, width=120)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
+                                                                pady=9)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click_search)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click_search)
+        clm += 1
+        if clm == 7:
+            clm = 0
+            rw += 1
+
+
+def double_click_search(event):
+    event.widget.configure(bg="light blue")  # DEL
+    global items_list, cur_path, frame, bttns_dict, is_searching
+
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    full_path = key_list[val_list.index(event.widget)]
+    full_path = full_path[0:full_path.find('_btn_')]
+    end_index = full_path.rfind('\\')
+    item_name = full_path[end_index + 1:]
+    item_path = full_path[:full_path.rfind('\\')]
+    temp = item_path + '\\' + item_name
+    print(temp)
+    item_type = manageSSH.check_if_item_is_dir(sftp, item_path, item_name)
+    if item_type == 'dir':
+        is_searching = False
+        cur_path = temp
+        manageSSH.chdir(sftp, cur_path)
+        items_list = sftp.listdir()
+        update_frame(items_list)
+    elif item_type == 'file':
+        is_searching = False
+        cur_path = item_path
+        manageSSH.chdir(sftp, cur_path)
+        items_list = sftp.listdir()
+        update_frame(items_list)
+
+    elif item_type == 'item not found':
+        print(f'{item_name} - not found')
+    else:
+        pass
+
+
+def right_click_search(event):
+    # global right_click_file_menu, right_click_dir_menu
+    # event.widget.configure(bg="blue")  # TEMP
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_path = key_list[val_list.index(event.widget)]
+    item_path = item_path[0:item_path.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_path)
+    if item_type == 'dir':
+        if right_click_dir_search_menu.entrycget(0, 'label') == '':
+            right_click_dir_search_menu.add_command(label='Open Folder', command=lambda: double_click(event))
+            right_click_dir_search_menu.add_command(label='Copy Folder Path', command=lambda: pyperclip.copy(item_path))
+        right_click_dir_search_menu.tk_popup(event.x_root, event.y_root)
+    elif item_type == 'file':
+        end_index = item_path.rfind('\\')
+        item_location_path = item_path[:end_index]
+        if right_click_file_search_menu.entrycget(0, 'label') == '':
+            right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click(event))
+            right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
+        right_click_file_search_menu.tk_popup(event.x_root, event.y_root)
+
+
 def create_frame(items_list):#back_img, forw_img, ref_img):
-    global frame, wrapper1, wrapper2, count, drives_list
+    global frame, wrapper1, wrapper2, count, drives_list, is_searching
 
     def f_refresh(event):
         refresh_button()
@@ -579,20 +715,25 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     ref_btn.grid(column=4, row=1)
 
     def search():
+        global is_searching
+        root.config(cursor='exchange')
+        is_searching = True
         temp_list = list()
         search_key = search_bar_entry.get()
-        # search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
-        sftp2 = ssh.open_sftp()
-        items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key)
-
-        # for item in tree_items_list:
-        #     if item.contains(search_key):
-        #         items_list.append(item)
-        #     # if search_key.contains(item[item.rfind('\\'):]):
-        #     #     items_list.append(item)
-
-        print(items_list)
-        update_frame(items_list)
+        if search_key != '':
+            # search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
+            sftp2 = ssh.open_sftp()
+            items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key)
+            root.config(cursor='arrow')
+            print(items_list)
+            if items_list == []:
+                messagebox.showinfo(title='Not Found', message="Couldn't find any files or folders with this Search Key in the current path!")
+            else:
+                wrapper1.destroy()
+                wrapper2.destroy()
+                frame.destroy()
+                create_frame(items_list)
+                create_search_bttn(frame, items_list)
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
@@ -607,15 +748,19 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
             pass
         root.bind('<Return>', no_action)
         search_bar_entry.bind('<FocusIn>', entry_click)
-
-    search_bar_entry = Entry(menu_window, text='Search', font=(calc_width(20)))
-    search_bar_entry.delete(0, 'end')
-    search_bar_entry.insert(0, 'Search')
-    search_bar_entry.bind('<FocusIn>', entry_click)
-    search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
-    # search_pic = ImageTk.PhotoImage(Image.open('icons/search.png').resize((calc_width(50), calc_height(50)), Image.ANTIALIAS))
-    search_btn = Button(menu_window, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
-    search_btn.grid(column=5, row=1, sticky=E)
+    
+    if is_searching:
+        stop_search_btn = Button(menu_window, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
+        stop_search_btn.grid(column=5, row=1, sticky=E)
+    else:
+        search_bar_entry = Entry(menu_window, text='Search', font=(calc_width(20)))
+        search_bar_entry.delete(0, 'end')
+        search_bar_entry.insert(0, 'Search')
+        search_bar_entry.bind('<FocusIn>', entry_click)
+        search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
+        # search_pic = ImageTk.PhotoImage(Image.open('icons/search.png').resize((calc_width(50), calc_height(50)), Image.ANTIALIAS))
+        search_btn = Button(menu_window, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
+        search_btn.grid(column=5, row=1, sticky=E)
 
     # ds_btn = Button(menu_window, text='Disconnect', command=dscon_bttn)
     # ds_btn.grid(column=5, row=1, sticky=E, padx=50, columnspan=4)

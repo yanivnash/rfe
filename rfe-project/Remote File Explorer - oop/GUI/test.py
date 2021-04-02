@@ -3,25 +3,33 @@ host = "192.168.1.20"
 username = 'yaniv'
 password = 'Yanivn911911'  # DELETE
 ssh = manageSSH.connect_to_ssh(host, username, password)
-print('ok0')
 sftp = ssh.open_sftp()
 
+ROOT_PROJ_DIR = r'C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI'
 
-print('ok1')
+temp = r'C:\Users\yaniv\Desktop\CoronaCertificate - 210041646.pdf'
+# f = sftp.open(r'C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI\openfile.bat', 'w')
+# # f.write('test')
+# f.write(f'"{temp}"')
+#
+# # manageSSH.run_action(ssh, f'"{ROOT_PROJ_DIR}\openfile.bat"')
+#
+# stdin, stdout, stderr = ssh.exec_command(f'"{ROOT_PROJ_DIR}\openfile.bat"')
 
-cur_path = r'C:\Users\yaniv\Desktop'
-tree_list = list()
-# search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'
-search_key = 'WhatsApp Video'
-list1 = manageSSH.tree_items(sftp, cur_path, tree_list, search_key)
+open_file_path = ROOT_PROJ_DIR + r'\openfile.bat'
+print([open_file_path])
+sftp2 = ssh.open_sftp()
+f = sftp2.open(open_file_path, 'w')
+# f.write(f'"{temp}"')
+f.write('test')
 
-print('ok2')
+manageSSH.run_action(ssh, f'"{ROOT_PROJ_DIR}\openfile.bat"')
 
-print(list1)
-print(len(list1))
-
-
-# cur_path = r"C:\Users\yaniv\Desktop\RFE - TEst"
-# old_path = cur_path + '\\' + 'test5'
-# new_path = cur_path + '\\' + 'test4'
-# sftp.rename(old_path, new_path)
+# # stdin, stdout, stderr = ssh.exec_command(r'powershell -InputFormat none -OutputFormat Text start "C:\Users\yaniv\Desktop\All My Sons Project.docx"')
+# # stdin, stdout, stderr = ssh.exec_command(r'powershell -InputFormat none -OutputFormat Text ipconfig')
+# stdin, stdout, stderr = ssh.exec_command(r'"C:\Users\yaniv\Desktop\All My Sons Project.docx"')
+#
+#
+print(f'stdin: {stdin}')
+print(f'stdout: {stdout.read()}')
+print(f'stderror: {stderr.read()}')
