@@ -212,7 +212,7 @@ def double_click(event):
         print(f'stdin: {stdin}')
         print(f'stdout: {stdout.read()}')
         print(f'stderror: {stderr.read()}')
-
+        'open file here'
         # pass
 
     elif item_type == 'item not found':
@@ -632,7 +632,7 @@ def right_click_search(event):
 
 
 def create_frame(items_list):#back_img, forw_img, ref_img):
-    global frame, wrapper1, wrapper2, count, drives_list, is_searching
+    global frame, wrapper1, wrapper2, count, drives_list, is_searching, cur_path_label
 
     def f_refresh(event):
         refresh_button()
@@ -677,16 +677,16 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     Grid.rowconfigure(wrapper1, 0, weight=1)
     # good
 
-    menu_window = wrapper1 # f1  # TEMP
+    # menu_window = wrapper1 # f1  # TEMP
 
-    cur_path_label = Label(menu_window, text=cur_path, wraplength=450, bg='white')
+    cur_path_label = Label(wrapper1, text=cur_path, wraplength=450, bg='white')
     cur_path_label.grid(column=3, row=0, sticky=W + E)
 
-    copy_btn = Button(menu_window, text='Copy Path', bg=buttons_bg_color)
+    copy_btn = Button(wrapper1, text='Copy Path', bg=buttons_bg_color)
     copy_btn.bind("<Button-1>", copy_path_button)
     copy_btn.grid(column=4, row=0, sticky=W)# + E)
 
-    up_btn = Button(menu_window, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
+    up_btn = Button(wrapper1, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
 
     answr = str(manageSSH.run_action(ssh, 'wmic logicaldisk get caption').read())
@@ -694,7 +694,7 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
     for i in range(len(drives_list)):
         drives_list[i] += '\\'
-    drives_combobox = ttk.Combobox(menu_window, values=drives_list, state='readonly')
+    drives_combobox = ttk.Combobox(wrapper1, values=drives_list, state='readonly')
     default_value = cur_path[0:3]
     try:
         drives_combobox.current(drives_list.index(default_value))
@@ -705,23 +705,26 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     drives_combobox.bind("<<ComboboxSelected>>", drives_box_change)
     drives_combobox.grid(column=2, row=1)
 
-    drive_label = Label(menu_window, text='Drive Select:', bg='white')
+    drive_label = Label(wrapper1, text='Drive Select:', bg='white')
     drive_label.grid(column=2, row=0)
 
-    new_dir_btn = Button(menu_window, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'], bg=buttons_bg_color, command=new_dir_button)
+    new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'], bg=buttons_bg_color, command=new_dir_button)
     new_dir_btn.grid(column=3, row=1)
 
-    ref_btn = Button(menu_window, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
+    ref_btn = Button(wrapper1, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
     ref_btn.grid(column=4, row=1)
+
+    # searching_label = Label(wrapper1)#, text='Searching for "" in ""')
+    # searching_label.grid(column=3, row=2, sticky=E)
 
     def search():
         global is_searching
+        root.bind('<Return>', no_action)
         root.config(cursor='exchange')
         is_searching = True
         temp_list = list()
         search_key = search_bar_entry.get()
         if search_key != '':
-            # search_key = 'WhatsApp Video 2021-03-15 at 14.45.08.mp4'  # TEMP
             sftp2 = ssh.open_sftp()
             items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key)
             root.config(cursor='arrow')
@@ -733,6 +736,15 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
                 wrapper2.destroy()
                 frame.destroy()
                 create_frame(items_list)
+                # searching_label = Label(wrapper1, text=f'Searching for "{search_key}" in "{cur_path}"')
+                # searching_label.grid(column=3, row=2)
+
+                # cur_path_label.grid_forget()
+                # searching_label = Label(wrapper1, text=f'Searching for "{search_key}" in "{cur_path}"', wraplength=450, bg='white')
+                # searching_label.grid(column=3, row=0, sticky=W + E)
+
+                cur_path_label.configure(text=f'Searching for "{search_key}" in "{cur_path}"')
+
                 create_search_bttn(frame, items_list)
 
     def entry_click(event):
@@ -742,24 +754,25 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
         root.bind('<Return>', search2)
         search_bar_entry.bind('<FocusOut>', entry_lost)
 
+    def no_action(event):
+        pass
+
     def entry_lost(event):
         search_bar_entry.insert(0, 'Search')
-        def no_action(event):
-            pass
         root.bind('<Return>', no_action)
         search_bar_entry.bind('<FocusIn>', entry_click)
     
     if is_searching:
-        stop_search_btn = Button(menu_window, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
+        stop_search_btn = Button(wrapper1, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
         stop_search_btn.grid(column=5, row=1, sticky=E)
     else:
-        search_bar_entry = Entry(menu_window, text='Search', font=(calc_width(20)))
+        search_bar_entry = Entry(wrapper1, text='Search', font=(calc_width(20)))
         search_bar_entry.delete(0, 'end')
         search_bar_entry.insert(0, 'Search')
         search_bar_entry.bind('<FocusIn>', entry_click)
         search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
         # search_pic = ImageTk.PhotoImage(Image.open('icons/search.png').resize((calc_width(50), calc_height(50)), Image.ANTIALIAS))
-        search_btn = Button(menu_window, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
+        search_btn = Button(wrapper1, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
         search_btn.grid(column=5, row=1, sticky=E)
 
     # ds_btn = Button(menu_window, text='Disconnect', command=dscon_bttn)
