@@ -1,7 +1,7 @@
 import manageSSH
 host = "192.168.1.20"
 username = 'yaniv'
-password = 'Yanivn911911'  # DELETE
+password = input('Enter Password: ')
 ssh = manageSSH.connect_to_ssh(host, username, password)
 sftp = ssh.open_sftp()
 
