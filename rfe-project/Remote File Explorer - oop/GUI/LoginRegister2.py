@@ -108,6 +108,33 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     return mode
 
 
+def get_network_ip_list(SELF_IP):
+    ipconfig = os.popen('ipconfig').read()
+    ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
+    if 'Subnet Mask' in ipconfig:
+        subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
+
+        count = subnet_mask.count('255')
+        masked_ip = SELF_IP
+        for _ in range(4 - count):
+            masked_ip = masked_ip[:masked_ip.rfind('.')]
+        print(masked_ip)
+
+        arp = os.popen('arp -a').read()
+        arp = arp[arp.find(f'Interface: {SELF_IP}'):]
+        while arp.count('Interface:') > 1:
+            arp = arp[:arp.rfind('Interface:')]
+
+        arp = arp.split()
+        network_ips = list()
+        for item in arp:
+            if item.startswith(masked_ip):
+                network_ips.append(item)
+        return network_ips
+    else:
+        return 'error'
+
+
 def login_to_ssh_client(ip_frame, ip_dict):
     global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username
     global app_width, app_height
@@ -287,7 +314,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         enter_ip.focus()
 
     scrollable_frame = Frame(canvas, bg='white')
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
     scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
 
     enter_ip_pic = ImageTk.PhotoImage(Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)), Image.ANTIALIAS))
@@ -307,12 +334,18 @@ def login_to_ssh_client(ip_frame, ip_dict):
         ip_butns_dict[f'{key}-{value}'].bind("<Enter>", on_enter)
         ip_butns_dict[f'{key}-{value}'].bind("<Leave>", on_leave)
 
-    canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window2.calc_width(610), height=main_window2.calc_height(392))
+    for i in range(50):  # TEMP
+        Label(scrollable_frame, text=i + 1).pack()
+
+    canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window2.calc_width(610))#, height=main_window2.calc_height(392))
 
     canvas.configure(yscrollcommand=scrollbar.set)
 
+    canvas.yview_moveto('0.0')  # check scroll
+
     canvas.pack(side="left", fill="both", expand=True)
     scrollbar.pack(side="right", fill="y")
+    canvas.yview_moveto('0.0')
 
 
     # frame = Frame(ip_frame, bg='white')

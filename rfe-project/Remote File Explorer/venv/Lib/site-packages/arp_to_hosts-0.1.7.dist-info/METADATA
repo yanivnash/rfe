@@ -1,0 +1,28 @@
+Metadata-Version: 2.1
+Name: arp-to-hosts
+Version: 0.1.7
+Summary: arp-scan to /etc/hosts
+Home-page: https://github.com/obradovic/arp-to-hosts
+Author: Zo Obradovic
+Author-email: ping@obradovic.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >3.6.0
+Description-Content-Type: text/markdown
+Requires-Dist: delegator.py
+Requires-Dist: python-hosts (>=1.0.0)
+Requires-Dist: validators (>=0.18.0)
+
+[![Coverage Status](https://coveralls.io/repos/github/obradovic/arp-to-hosts/badge.svg?branch=master)](https://coveralls.io/github/obradovic/arp-to-hosts?branch=master)
+[![Build Status](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fobradovic%2Farp-to-hosts%2Fbadge&style=flat)](https://actions-badge.atrox.dev/obradovic/arp-to-hosts/goto)
+
+Does an ARP scan to get IPs to known names, then writes those names with their current IP to /etc/hosts
+
+Requires `arp-scan` to be installed: https://github.com/royhills/arp-scan
+
+Better docs, screencasts, etc all TBD
+
+

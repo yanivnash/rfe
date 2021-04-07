@@ -1,0 +1,3 @@
+[console_scripts]
+arp-to-hosts = arp_to_hosts.arp_to_hosts:main
+

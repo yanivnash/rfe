@@ -2,7 +2,155 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="update">
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/REQUESTED" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/entry_points.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts-0.1.7.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts/arp_to_hosts.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/arp_to_hosts/arp_to_hosts_tests.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/LICENSE.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/pbr.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator-5.0.5.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/decorator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py-0.1.1.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py-0.1.1.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py-0.1.1.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py-0.1.1.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/delegator.py-0.1.1.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/AUTHORS" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/REQUESTED" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/entry_points.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr-0.8.0.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/cli.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/compat.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/contrib/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/contrib/subnet_splitter.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/core.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/iab.idx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/iab.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/ieee.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/oui.idx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/eui/oui.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/fbsocket.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/glob.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/iana.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/ipv4-address-space.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/ipv6-address-space.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/ipv6-unicast-address-assignments.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/multicast-addresses.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/nmap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/rfc1924.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/ip/sets.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/strategy/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/strategy/eui48.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/strategy/eui64.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/strategy/ipv4.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/netaddr/strategy/ipv6.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/nmap/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/nmap/nmap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/nmap/test_nmap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect-4.8.0.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/ANSI.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/FSM.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/_async.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/bashrc.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/exceptions.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/expect.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/fdpexpect.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/popen_spawn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/pty_spawn.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/pxssh.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/replwrap.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/run.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/screen.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/spawnbase.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/pexpect/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess-0.7.0.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess-0.7.0.dist-info/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess-0.7.0.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess-0.7.0.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess-0.7.0.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess/_fork_pty.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess/ptyprocess.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/ptyprocess/util.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/PKG-INFO" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/SOURCES.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/dependency_links.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/installed-files.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/requires.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts-1.0.1-py3.9.egg-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts/exception.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts/hosts.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_hosts/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_nmap-0.6.4-py3.9.egg-info/PKG-INFO" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_nmap-0.6.4-py3.9.egg-info/SOURCES.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_nmap-0.6.4-py3.9.egg-info/dependency_links.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_nmap-0.6.4-py3.9.egg-info/installed-files.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/python_nmap-0.6.4-py3.9.egg-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/LICENSE" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators-0.18.2.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/between.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/btc_address.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/card.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/domain.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/email.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/extremes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/hashes.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/i18n/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/i18n/es.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/i18n/fi.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/iban.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/ip_address.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/length.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/mac_address.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/slug.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/truthy.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/url.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/validators/uuid.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/DESCRIPTION.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/INSTALLER" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/METADATA" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/RECORD" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/WHEEL" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/metadata.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton-1.1.0.dist-info/top_level.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Lib/site-packages/win_inet_pton.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Scripts/arp-to-hosts.exe" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/venv/Scripts/netaddr.exe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/LoginRegister2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/LoginRegister2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer - oop/GUI/test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +412,14 @@
       <option name="project" value="LOCAL" />
       <updated>1617491501808</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="update">
+      <created>1617635968711</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1617635968711</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -290,7 +445,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Remote File Explorer - oop/GUI/LoginRegister2.py</url>
-          <line>205</line>
+          <line>232</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
       </breakpoints>
