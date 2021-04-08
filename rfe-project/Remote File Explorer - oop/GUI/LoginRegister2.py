@@ -1,3 +1,5 @@
+__author__ = 'Yaniv Nash'
+
 import threading
 from tkinter import *
 from tkinter import messagebox, ttk
@@ -118,7 +120,6 @@ def get_network_ip_list(SELF_IP):
         masked_ip = SELF_IP
         for _ in range(4 - count):
             masked_ip = masked_ip[:masked_ip.rfind('.')]
-        print(masked_ip)
 
         arp = os.popen('arp -a').read()
         arp = arp[arp.find(f'Interface: {SELF_IP}'):]
@@ -127,12 +128,12 @@ def get_network_ip_list(SELF_IP):
 
         arp = arp.split()
         network_ips = list()
-        for item in arp:
-            if item.startswith(masked_ip):
-                network_ips.append(item)
+        for ip in arp:
+            if ip.startswith(masked_ip):
+                network_ips.append(ip)
         return network_ips
     else:
-        return 'error'
+        return []
 
 
 def login_to_ssh_client(ip_frame, ip_dict):
@@ -160,10 +161,17 @@ def login_to_ssh_client(ip_frame, ip_dict):
         key_list = list(ip_butns_dict.keys())
         val_list = list(ip_butns_dict.values())
         bttn_name = key_list[val_list.index(event.widget)]
-        host = bttn_name[:bttn_name.index('-')]
-        username = bttn_name[bttn_name.index('-') + 1:]
-        check_var = IntVar(value=0)
-        try_connect(host, username)
+        if bttn_name.__contains__('bttn'):
+            host = bttn_name[:bttn_name.rfind('-bttn')]
+            username = simpledialog.askstring('Enter Username', f'Enter the Username of {host}:')
+            if username != None:
+                check_var = IntVar(value=1)
+                try_connect(host, username)
+        else:
+            host = bttn_name[:bttn_name.index('-')]
+            username = bttn_name[bttn_name.index('-') + 1:]
+            check_var = IntVar(value=0)
+            try_connect(host, username)
 
         # event.widget.bind('<ButtonRelease-1>', True)  ###########
 
@@ -174,14 +182,14 @@ def login_to_ssh_client(ip_frame, ip_dict):
         password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•')
         # con_ask = messagebox.askquestion(title='Connect', message=f'You are about to connect to {host}\nWould you like to connect')
         # if con_ask == 'yes':
-        if password == None or password == '':
+        if password == None:# or password == '':
             pass
         # elif password == '':
         #     password = simpledialog.askstring('Enter password', f'Enter the password to {host}:')
         else:
             ssh = manageSSH.connect_to_ssh(host, username, password)
-            if ssh == "wrong password":
-                messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct and try again")
+            if ssh == "wrong password/username":
+                messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password and the username are correct and try again")
             elif ssh == "no connection":
                 messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
             elif ssh == "timeout":
@@ -313,13 +321,6 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
         enter_ip.focus()
 
-    scrollable_frame = Frame(canvas, bg='white')
-    scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox('all')))
-    scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
-
-    enter_ip_pic = ImageTk.PhotoImage(Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)), Image.ANTIALIAS))
-    show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2', bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP', font=('Eras Bold ITC', main_window2.calc_width(10)))
-    show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(10))
 
     def on_enter(event):
         event.widget['background'] = 'papaya whip'
@@ -327,25 +328,118 @@ def login_to_ssh_client(ip_frame, ip_dict):
     def on_leave(event):
         event.widget['background'] = buttons_bg_color
 
-    for key, value in ip_dict.items():
-        ip_butns_dict[f'{key}-{value}'] = Button(scrollable_frame, bd=0, text=f'{value} - {key}', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(12)), anchor=CENTER, fg='gray20', bg=buttons_bg_color)
-        ip_butns_dict[f'{key}-{value}'].pack(anchor=CENTER, pady=4)
-        ip_butns_dict[f'{key}-{value}'].bind("<Button-1>", ip_butn_click)
-        ip_butns_dict[f'{key}-{value}'].bind("<Enter>", on_enter)
-        ip_butns_dict[f'{key}-{value}'].bind("<Leave>", on_leave)
 
-    for i in range(50):  # TEMP
-        Label(scrollable_frame, text=i + 1).pack()
+    def show_local_ip_list():
+        global scrollable_frame
+        scrollable_frame.destroy()
+        local_ip_bttn.configure(relief=SUNKEN)
+        account_ip_bttn.configure(relief=RAISED)
 
-    canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window2.calc_width(610))#, height=main_window2.calc_height(392))
+        scrollable_frame = Frame(canvas, bg='white')
+        scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
 
-    canvas.configure(yscrollcommand=scrollbar.set)
+        # enter_ip_pic = ImageTk.PhotoImage(
+        #     Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
+        #                                    Image.ANTIALIAS))
+        # show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
+        #                               bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
+        #                               font=('Eras Bold ITC', main_window2.calc_width(10)))
+        # show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(10))
 
-    canvas.yview_moveto('0.0')  # check scroll
+        Label(scrollable_frame, height=main_window2.calc_height(3), bg='white').pack()
 
-    canvas.pack(side="left", fill="both", expand=True)
-    scrollbar.pack(side="right", fill="y")
-    canvas.yview_moveto('0.0')
+        local_ip_list = get_network_ip_list(SELF_IP)
+        if local_ip_list == []:
+            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window2.calc_width(20)), bg=buttons_bg_color).place(x=main_window2.calc_width(155), y=main_window2.calc_height(170))
+        else:
+            for local_ip in local_ip_list:
+                ip_butns_dict[f'{local_ip}-bttn'] = Button(scrollable_frame, bd=0, text=local_ip, cursor='hand2',
+                                                         font=('Eras Bold ITC', main_window2.calc_width(12)), anchor=CENTER,
+                                                         fg='gray20', bg=buttons_bg_color)
+                ip_butns_dict[f'{local_ip}-bttn'].pack(anchor=CENTER, pady=4)
+                ip_butns_dict[f'{local_ip}-bttn'].bind("<Button-1>", ip_butn_click)
+                ip_butns_dict[f'{local_ip}-bttn'].bind("<Enter>", on_enter)
+                ip_butns_dict[f'{local_ip}-bttn'].bind("<Leave>", on_leave)
+
+        # for i in range(50):  # TEMP
+        #     Label(scrollable_frame, text=i + 1).pack()
+
+        canvas.create_window((0, 40), window=scrollable_frame, anchor=CENTER, width=main_window2.calc_width(610), height=main_window2.calc_height(392))
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.yview_moveto('0.0')  # check scroll
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+
+    def show_account_ip_list():
+        global scrollable_frame
+        scrollable_frame.destroy()
+        local_ip_bttn.configure(relief=RAISED)
+        account_ip_bttn.configure(relief=SUNKEN)
+
+        scrollable_frame = Frame(canvas, bg='white')
+        scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
+        scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+
+        # enter_ip_pic = ImageTk.PhotoImage(
+        #     Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
+        #                                    Image.ANTIALIAS))
+        # show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
+        #                               bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
+        #                               font=('Eras Bold ITC', main_window2.calc_width(10)))
+        # show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(10))
+
+        Label(scrollable_frame, height=main_window2.calc_height(3), bg='white').pack()
+
+        if ip_dict == {}:
+            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window2.calc_width(20)), bg=buttons_bg_color).place(x=main_window2.calc_width(155), y=main_window2.calc_height(170))
+        else:
+            for key, value in ip_dict.items():
+                ip_butns_dict[f'{key}-{value}'] = Button(scrollable_frame, bd=0, text=f'{value} - {key}', cursor='hand2',
+                                                         font=('Eras Bold ITC', main_window2.calc_width(12)), anchor=CENTER,
+                                                         fg='gray20', bg=buttons_bg_color)
+                ip_butns_dict[f'{key}-{value}'].pack(anchor=CENTER, pady=4)
+                ip_butns_dict[f'{key}-{value}'].bind("<Button-1>", ip_butn_click)
+                ip_butns_dict[f'{key}-{value}'].bind("<Enter>", on_enter)
+                ip_butns_dict[f'{key}-{value}'].bind("<Leave>", on_leave)
+
+        # for i in range(50):  # TEMP
+        #     Label(scrollable_frame, text=i + 1).pack()
+
+        canvas.create_window((0, 40), window=scrollable_frame, anchor=CENTER,
+                             width=main_window2.calc_width(610), height=main_window2.calc_height(392))
+
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.yview_moveto('0.0')  # check scroll
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+    enter_ip_pic = ImageTk.PhotoImage(
+        Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
+                                       Image.ANTIALIAS))
+    show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
+                                  bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
+                                  font=('Eras Bold ITC', main_window2.calc_width(10)))
+    show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(50))
+
+    local_ip_bttn = Button(frame, cursor='hand2', command=show_local_ip_list, bg=buttons_bg_color, borderwidth=3, text='Local Network IP List', font=('Eras Bold ITC', main_window2.calc_width(14)))
+    local_ip_bttn.place(x=main_window2.calc_width(0), y=main_window2.calc_height(0), width=main_window2.calc_width(305), height=main_window2.calc_height(40))
+
+    account_ip_bttn = Button(frame, cursor='hand2', command=show_account_ip_list, bg=buttons_bg_color, borderwidth=3, text='IP list saved to your account', font=('Eras Bold ITC', main_window2.calc_width(14)))
+    account_ip_bttn.place(x=main_window2.calc_width(305), y=main_window2.calc_height(0), width=main_window2.calc_width(305), height=main_window2.calc_height(40))
+
+    scrollable_frame = Frame(canvas, bg='white')
+
+    show_local_ip_list()
+
+    # scrollbar.set(0, 0)
+    # canvas.yview_moveto('0.0')
 
 
     # frame = Frame(ip_frame, bg='white')

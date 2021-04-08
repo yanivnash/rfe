@@ -1,3 +1,5 @@
+__author__ = 'Yaniv Nash'
+
 import manageSSH  # the file with funcs that connect to the ssh
 import LoginRegister2
 # import manageSERVER

@@ -86,7 +86,6 @@ def get_network_ip_list(SELF_IP):
         masked_ip = SELF_IP
         for _ in range(4 - count):
             masked_ip = masked_ip[:masked_ip.rfind('.')]
-        print(masked_ip)
 
         arp = os.popen('arp -a').read()
         arp = arp[arp.find(f'Interface: {SELF_IP}'):]
@@ -94,10 +93,15 @@ def get_network_ip_list(SELF_IP):
             arp = arp[:arp.rfind('Interface:')]
 
         arp = arp.split()
+        # network_ips_dict = dict()
+        # for ip in arp:
+        #     if ip.startswith(masked_ip):
+        #         network_ips_dict[ip] = socket.gethostbyaddr(ip)[0]
+        # return network_ips_dict
         network_ips = list()
-        for item in arp:
-            if item.startswith(masked_ip):
-                network_ips.append(item)
+        for ip in arp:
+            if ip.startswith(masked_ip):
+                network_ips.append(ip)
         return network_ips
     else:
-        return 'error'
+        return []

@@ -1,3 +1,5 @@
+__author__ = 'Yaniv Nash'
+
 import socket
 import json
 import os

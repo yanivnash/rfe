@@ -1,3 +1,5 @@
+__author__ = 'Yaniv Nash'
+
 import paramiko
 import stat
 
@@ -14,7 +16,7 @@ def connect_to_ssh(host, username, password):
     except paramiko.ssh_exception.NoValidConnectionsError:
         return "no connection"
     except paramiko.ssh_exception.AuthenticationException:
-        return "wrong password"
+        return "wrong password/username"
     except TimeoutError:
         return "timeout"
 

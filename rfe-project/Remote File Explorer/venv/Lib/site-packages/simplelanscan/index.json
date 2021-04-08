@@ -1,0 +1,48 @@
+{
+  "mappings": {
+    "dynamic": true,
+    "numeric_detection": false,
+    "date_detection": true,
+    "dynamic_date_formats": [
+      "strict_date_optional_time",
+      "yyyy/MM/dd HH:mm:ss Z||yyyy/MM/dd Z"
+    ],
+    "_source": {
+      "enabled": true,
+      "includes": [],
+      "excludes": []
+    },
+    "_meta": {},
+    "_routing": {
+      "required": false
+    },
+    "dynamic_templates": [],
+    "properties": {
+      "@timestamp": {
+        "type": "date"
+      },
+      "client.ip": {
+        "type": "ip",
+        "index": true,
+        "doc_values": true,
+        "store": false
+      },
+      "client.mac": {
+        "type": "text",
+        "eager_global_ordinals": false,
+        "index_phrases": false,
+        "norms": true,
+        "fielddata": false,
+        "index": true,
+        "store": false,
+        "index_options": "positions"
+      },
+      "client.name": {
+        "type": "text"
+      },
+      "client.domain": {
+        "type": "text"
+      }
+    }
+  }
+}

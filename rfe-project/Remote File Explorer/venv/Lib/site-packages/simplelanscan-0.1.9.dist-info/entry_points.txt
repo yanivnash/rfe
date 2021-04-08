@@ -1,0 +1,3 @@
+[console_scripts]
+simplelanscan=simplelanscan.scan:run_scan
+
