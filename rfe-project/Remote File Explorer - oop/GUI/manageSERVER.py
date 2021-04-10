@@ -94,7 +94,7 @@ def reset_password(email, reset_code, new_password):
     return send_to_server(send_object)  # True = password reset | False = password didn't reset
 
 # if __name__ == '__main__':
-    # print(create_new_user('y', '1'))
+#     print(delete_account('yanivnash1@gmail.com', '123'))
 
 # def get_icons_dict():
 #     send_object = json.dumps({'action': 'GET_ICONS'}).encode(FORMAT)

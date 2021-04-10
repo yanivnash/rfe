@@ -1288,7 +1288,10 @@ def choose_mode_window(email):
             Image.open('be-controlled-pic.png').resize((main_window2.calc_width(200), main_window2.calc_height(160)),
                                                        Image.ANTIALIAS))
         mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
-        choose_frame.destroy()
+        try:
+            choose_frame.destroy()
+        except:
+            pass
         # if email == 'yaniv2':
         #     choose_frame.destroy()
         # choose_frame.mainloop()
