@@ -69,6 +69,12 @@ def email_regex(email):
     else:
         return False
 
+def acc_signout():
+    discon_msg_box = messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
+    if discon_msg_box == 'yes':
+        root.destroy()
+        main_window2.main()
+
 
 def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     global mode, root
@@ -137,7 +143,7 @@ def get_network_ip_list(SELF_IP):
 
 
 def login_to_ssh_client(ip_frame, ip_dict):
-    global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username
+    global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username, canvas, scrollbar
     global app_width, app_height
 
     ip_butns_dict = dict()
@@ -148,9 +154,9 @@ def login_to_ssh_client(ip_frame, ip_dict):
     frame = Frame(ip_frame, bg='white')
     frame.place(x=main_window2.calc_width(231), y=main_window2.calc_height(133), width=main_window2.calc_width(610), height=main_window2.calc_height(392))
 
-    canvas = Canvas(frame)
-    scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
-    # scrollable_frame = Frame(canvas)
+    # canvas = Canvas(frame)
+    # scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
+    # # # scrollable_frame = Frame(canvas)
 
     def mouse_wheel(event):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -193,7 +199,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
             elif ssh == "no connection":
                 messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
             elif ssh == "timeout":
-                messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
+                messagebox.showerror(title="Couldn't connect", message=f"Couldn't connect to {host}\nPlease make sure the password is correct, that the computer is connected to the internet, has Remote File Explorer open in the 'Be Controlled' screen and try again")
             else:
                 sftp = ssh.open_sftp()
                 if check_var.get() == 1:
@@ -234,27 +240,30 @@ def login_to_ssh_client(ip_frame, ip_dict):
     #
     # canvas.create_window((0, 0), window=scrollable_frame, anchor=CENTER, width=main_window.calc_width(610), height=main_window.calc_height(392))
 
-    def go_back():
-        main(root, app_width, app_height, account, ssh_service_menu, email)
 
-        # can work
-        # print('back')
-        # frame.destroy()
-        # can work
-
-        # return choose_mode_window(email)  # doesnt work
-
-        # # works
-        # manageSSH.disconnect_ssh(ssh)
-        # root.destroy()
-        # main_window2.main()
-        # # works
+    # def go_back():
+    #     acc_signout()
+    #     # main(root, app_width, app_height, account, ssh_service_menu, email)  # LAST
+    #
+    #     # can work
+    #     # print('back')
+    #     # frame.destroy()
+    #     # can work
+    #
+    #     # return choose_mode_window(email)  # doesnt work
+    #
+    #     # # works
+    #     # manageSSH.disconnect_ssh(ssh)
+    #     # root.destroy()
+    #     # main_window2.main()
+    #     # # works
 
     back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
-    back_bttn = Button(ip_frame, image=back_pic, cursor='hand2',
-                       font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
-                       command=go_back)
-    back_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
+    signout_pic = ImageTk.PhotoImage(Image.open('signout.png').resize((main_window2.calc_width(57), main_window2.calc_height(51)), Image.ANTIALIAS))
+    signout_bttn = Button(ip_frame, image=signout_pic, cursor='hand2',# text='Sign Out', compound=TOP,
+                       font=('Eras Bold ITC', main_window2.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                       command=acc_signout)#go_back)
+    signout_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
 
     def create_enter_frame():
         global check_var, username
@@ -294,8 +303,8 @@ def login_to_ssh_client(ip_frame, ip_dict):
             root.bind('<Return>', no_action)
             enter_frame.destroy()
 
-        back_btn = Button(enter_frame, command=close_enter_frame, cursor='hand2', bg=buttons_bg_color, image=back_pic)
-        back_btn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
+        signout_bttn = Button(enter_frame, command=close_enter_frame, cursor='hand2', bg=buttons_bg_color, image=back_pic)
+        signout_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
 
         ip_error_title = Label(enter_frame, text='Please enter an ip', font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg='white')
         ip_error_title.place(x=main_window2.calc_width(50), y=main_window2.calc_height(110), width=main_window2.calc_width(500))
@@ -330,24 +339,19 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
 
     def show_local_ip_list():
-        global scrollable_frame
+        global scrollable_frame, scrollbar, canvas
+        scrollbar.destroy()
         scrollable_frame.destroy()
         local_ip_bttn.configure(relief=SUNKEN)
         account_ip_bttn.configure(relief=RAISED)
-
+        def no_action(event):
+            pass
+        scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
         scrollable_frame = Frame(canvas, bg='white')
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+        scrollable_frame.bind_all("<MouseWheel>", no_action)
 
-        # enter_ip_pic = ImageTk.PhotoImage(
-        #     Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
-        #                                    Image.ANTIALIAS))
-        # show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
-        #                               bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
-        #                               font=('Eras Bold ITC', main_window2.calc_width(10)))
-        # show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(10))
-
-        Label(scrollable_frame, height=main_window2.calc_height(3), bg='white').pack()
+        Label(scrollable_frame, height=main_window2.calc_height(2), bg='white').pack()
 
         local_ip_list = get_network_ip_list(SELF_IP)
         if local_ip_list == []:
@@ -362,42 +366,47 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 ip_butns_dict[f'{local_ip}-bttn'].bind("<Enter>", on_enter)
                 ip_butns_dict[f'{local_ip}-bttn'].bind("<Leave>", on_leave)
 
-        # for i in range(50):  # TEMP
-        #     Label(scrollable_frame, text=i + 1).pack()
+            if (num_of_temp_items - len(local_ip_list)) > 0:
+                for _ in range(num_of_temp_items - len(local_ip_list)):
+                    Button(scrollable_frame, bg='blue', bd=0, font=('Eras Bold ITC', main_window2.calc_width(12)),
+                           state='disable').pack(anchor=CENTER, pady=4)
 
-        canvas.create_window((0, 40), window=scrollable_frame, anchor=CENTER, width=main_window2.calc_width(610), height=main_window2.calc_height(392))
-
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.yview_moveto('0.0')  # check scroll
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+        if len(local_ip_list) > 8:
+            canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
+                                 width=main_window2.calc_width(610))
+            canvas.configure(yscrollcommand=scrollbar.set)
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+            scrollbar.pack(side="right", fill="y")
+        else:
+            canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
+                                 width=main_window2.calc_width(610))#, height=main_window2.calc_height(392))
+            canvas.configure(yscrollcommand=scrollbar.set)
+            canvas.pack(side="left", fill="both", expand=True)
+        canvas.yview_moveto('0.0')
 
 
     def show_account_ip_list():
-        global scrollable_frame
+        global scrollable_frame, scrollbar, canvas
+        scrollbar.destroy()
         scrollable_frame.destroy()
         local_ip_bttn.configure(relief=RAISED)
         account_ip_bttn.configure(relief=SUNKEN)
-
+        def no_action(event):
+            pass
+        scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
         scrollable_frame = Frame(canvas, bg='white')
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
-        scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+        scrollable_frame.bind_all("<MouseWheel>", no_action)
 
-        # enter_ip_pic = ImageTk.PhotoImage(
-        #     Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
-        #                                    Image.ANTIALIAS))
-        # show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
-        #                               bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
-        #                               font=('Eras Bold ITC', main_window2.calc_width(10)))
-        # show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(10))
-
-        Label(scrollable_frame, height=main_window2.calc_height(3), bg='white').pack()
+        Label(scrollable_frame, height=main_window2.calc_height(2), bg='white').pack()
 
         if ip_dict == {}:
             Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window2.calc_width(20)), bg=buttons_bg_color).place(x=main_window2.calc_width(155), y=main_window2.calc_height(170))
         else:
+            Label(scrollable_frame, wraplength=550,
+                  text="*These IP addresses are only available if you're connected to the same local network as they are",
+                  font=('Eras Bold ITC', main_window2.calc_width(10)), bg='white').pack()
             for key, value in ip_dict.items():
                 ip_butns_dict[f'{key}-{value}'] = Button(scrollable_frame, bd=0, text=f'{value} - {key}', cursor='hand2',
                                                          font=('Eras Bold ITC', main_window2.calc_width(12)), anchor=CENTER,
@@ -407,18 +416,28 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 ip_butns_dict[f'{key}-{value}'].bind("<Enter>", on_enter)
                 ip_butns_dict[f'{key}-{value}'].bind("<Leave>", on_leave)
 
-        # for i in range(50):  # TEMP
-        #     Label(scrollable_frame, text=i + 1).pack()
+            print(num_of_temp_items - len(ip_dict) - 1)
+            if (num_of_temp_items - len(ip_dict) - 1) > 0:
+                for _ in range(num_of_temp_items - len(ip_dict) - 1):
+                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window2.calc_width(12)),
+                           state='disable').pack(anchor=CENTER, pady=4)
 
-        canvas.create_window((0, 40), window=scrollable_frame, anchor=CENTER,
-                             width=main_window2.calc_width(610), height=main_window2.calc_height(392))
+        if len(ip_dict) > 8:
+            canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
+                                 width=main_window2.calc_width(610))
+            canvas.configure(yscrollcommand=scrollbar.set)
+            canvas.pack(side="left", fill="both", expand=True)
+            scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
+            scrollbar.pack(side="right", fill="y")
+        else:
+            canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
+                                 width=main_window2.calc_width(610))#, height=main_window2.calc_height(392))
+            canvas.configure(yscrollcommand=scrollbar.set)
+            canvas.pack(side="left", fill="both", expand=True)
+        canvas.yview_moveto('0.0')
 
-        canvas.configure(yscrollcommand=scrollbar.set)
-
-        canvas.yview_moveto('0.0')  # check scroll
-
-        canvas.pack(side="left", fill="both", expand=True)
-        scrollbar.pack(side="right", fill="y")
+    num_of_temp_items = max(len(get_network_ip_list(SELF_IP)), len(ip_dict))
+    canvas = Canvas(frame, bg='white')
 
     enter_ip_pic = ImageTk.PhotoImage(
         Image.open('entry.png').resize((main_window2.calc_width(55), main_window2.calc_height(41)),
@@ -426,48 +445,31 @@ def login_to_ssh_client(ip_frame, ip_dict):
     show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
                                   bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
                                   font=('Eras Bold ITC', main_window2.calc_width(10)))
-    show_enter_frame_btn.place(x=main_window2.calc_width(500), y=main_window2.calc_height(50))
+    show_enter_frame_btn.place(x=main_window2.calc_width(490), y=main_window2.calc_height(60))
 
-    local_ip_bttn = Button(frame, cursor='hand2', command=show_local_ip_list, bg=buttons_bg_color, borderwidth=3, text='Local Network IP List', font=('Eras Bold ITC', main_window2.calc_width(14)))
+    local_ip_bttn = Button(frame, cursor='hand2', command=show_local_ip_list, bg=buttons_bg_color, borderwidth=3, text='Local Network IPs', font=('Eras Bold ITC', main_window2.calc_width(14)))
     local_ip_bttn.place(x=main_window2.calc_width(0), y=main_window2.calc_height(0), width=main_window2.calc_width(305), height=main_window2.calc_height(40))
 
-    account_ip_bttn = Button(frame, cursor='hand2', command=show_account_ip_list, bg=buttons_bg_color, borderwidth=3, text='IP list saved to your account', font=('Eras Bold ITC', main_window2.calc_width(14)))
+    account_ip_bttn = Button(frame, cursor='hand2', command=show_account_ip_list, bg=buttons_bg_color, borderwidth=3, text='IPs saved to your account', font=('Eras Bold ITC', main_window2.calc_width(14)))
     account_ip_bttn.place(x=main_window2.calc_width(305), y=main_window2.calc_height(0), width=main_window2.calc_width(305), height=main_window2.calc_height(40))
 
+    # canvas = Canvas(frame)
+    scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
+    scrollbar.pack()
     scrollable_frame = Frame(canvas, bg='white')
 
     show_local_ip_list()
 
-    # scrollbar.set(0, 0)
-    # canvas.yview_moveto('0.0')
-
-
-    # frame = Frame(ip_frame, bg='white')
-    # frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))  # (x=231, y=133, width=610, height=392)
-
-    # choose_label = Label(frame, text='Choose an IP address to connect to:', font=('Eras Bold ITC', main_window.calc_width(25), 'bold underline'), fg='gray20', bg='white')
-    # choose_label.place(x=main_window.calc_width(55), y=main_window.calc_height(25))  # (x=55, y=25)
-
-    # control_button = Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')
-    # control_button.place(x=main_window.calc_width(70), y=main_window.calc_height(142))  # (x=70, y=142)
-    # # control_label = Label(frame, text='CONTROL', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    # control_label = Label(frame, text='CONTROL', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20', bg='white')
-    # control_label.place(x=main_window.calc_width(75), y=main_window.calc_height(100))  # (x=75, y=100)
-    # be_controlled_button = Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0, bg='white')
-    # be_controlled_button.place(x=main_window.calc_width(360), y=main_window.calc_height(140))  # (x=360, y=140)
-    # # control_label = Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', 20, 'bold'), fg='gray20', bg='white')
-    # control_label = Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', main_window.calc_height(20), 'bold'), fg='gray20', bg='white')
-    # control_label.place(x=main_window.calc_width(320), y=main_window.calc_height(100))  # (x=320, y=100)
+    canvas.yview_moveto('0.0')
 
     ip_frame.mainloop()
     return ssh, sftp, username
 
 
-def check_sshd_service():
-    SERVICE_NAME = 'sshd'
+def check_sshd_service(service_name):
     service = None
     try:
-        service = psutil.win_service_get(SERVICE_NAME)
+        service = psutil.win_service_get(service_name)
         service = service.as_dict()
     except Exception:
         pass
@@ -482,16 +484,18 @@ def check_sshd_service():
 
 def set_be_controlled(be_controlled_frame):
     def close_window():
-        sshd_status = check_sshd_service()
+        sshd_status = check_sshd_service('sshd')
         if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED':
             close_msg_box = messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
             if close_msg_box == 'yes':
                 root.destroy()
         elif sshd_status == 'ON':
-            close_msg_box = messagebox.askquestion(title='Stop Service & Close', message='Are you sure you want to close the window and Stop the Service?\n(this will make your computer not available for others to connect)')
+            close_msg_box = messagebox.askquestion(title='Stop Service / Close', message='Would you like to Close the window and Stop the SSH Service?\n(Stopping the SSH service will make your computer not available for others to connect to)')
             if close_msg_box == 'yes':
                 if run_power_shell('off_cmnd') == 'DONE':
                     root.destroy()
+            elif close_msg_box == 'no':
+                root.destroy()
     root.protocol("WM_DELETE_WINDOW", close_window)
 
     def recheck_sshd():
@@ -501,6 +505,9 @@ def set_be_controlled(be_controlled_frame):
 
     import time
     def run_power_shell(cmnd):
+        # install_cmnd = """
+        # Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0
+        # """
         install_and_on_cmnd = """
             Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
             Start-Service sshd
@@ -522,7 +529,7 @@ def set_be_controlled(be_controlled_frame):
                     time.sleep(0.01)
                 for x in range(4):
                     root.update_idletasks()
-                    sshd_status = check_sshd_service()
+                    sshd_status = check_sshd_service('sshd')
                     print(sshd_status)
                     if sshd_status == 'ON':
                         p_bar['value'] = 100
@@ -544,6 +551,8 @@ def set_be_controlled(be_controlled_frame):
                     #     p_bar['value'] = 100
                     #     recheck_sshd()
                     #     break
+
+            # loading_label = Label(frame, text='Installing SSH Service...', font=('Eras Bold ITC', main_window2.calc_width(20)), bg='white')
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + install_and_on_cmnd)
                 loading_label = Label(frame, text='Installing SSH Service...', font=('Eras Bold ITC', main_window2.calc_width(20)), bg='white')
@@ -554,7 +563,7 @@ def set_be_controlled(be_controlled_frame):
                 # loading_label.after(1000, start)
                 start()
 
-                sshd_status = check_sshd_service()
+                sshd_status = check_sshd_service('sshd')
                 if sshd_status == 'ON':
                     root.update_idletasks()
                     time.sleep(1)
@@ -610,14 +619,15 @@ def set_be_controlled(be_controlled_frame):
             loading_label.destroy()  #
 
 
-    sshd_status = check_sshd_service()
+    sshd_status = check_sshd_service('sshd')
     print(sshd_status)  # TEMP
     print(email)  # TEMP
     main_title = Label(be_controlled_frame, text='Be Controlled:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window2.calc_width(350), y=main_window2.calc_height(25))
 
-    def go_back():
-        frame.destroy()
+    # def go_back():
+    #     acc_signout()
+    #     # frame.destroy()
 
     # def go_back():  # works
     #     sshd_status = check_sshd_service()
@@ -630,12 +640,13 @@ def set_be_controlled(be_controlled_frame):
     #         return choose_mode_window(email)
     #         # be_controlled_frame.destroy()
 
-    # back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
-    back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))
+    # # back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(65), main_window2.calc_height(50)), Image.ANTIALIAS))
+    # back_pic = ImageTk.PhotoImage(Image.open('back.png').resize((main_window2.calc_width(57), main_window2.calc_height(44)), Image.ANTIALIAS))  # GOOD
+    signout_pic = ImageTk.PhotoImage(Image.open('signout.png').resize((main_window2.calc_width(57), main_window2.calc_height(51)), Image.ANTIALIAS))
 
-    back_bttn = Button(be_controlled_frame, image=back_pic, cursor='hand2',
+    back_bttn = Button(be_controlled_frame, image=signout_pic, cursor='hand2',
                        font=('Eras Bold ITC', main_window2.calc_width(12)), fg='gray20', bg=buttons_bg_color,
-                       command=go_back)
+                       command=acc_signout)#go_back)
     back_bttn.place(x=main_window2.calc_width(10), y=main_window2.calc_height(10))
 
     frame = Frame(be_controlled_frame, bg='white')
@@ -1249,11 +1260,11 @@ def server_status(main_frame):
 
 
 def choose_mode_window(email):
-    def acc_signout():
-        discon_msg_box = messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
-        if discon_msg_box == 'yes':
-            root.destroy()
-            main_window2.main()
+    # def acc_signout():
+    #     discon_msg_box = messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
+    #     if discon_msg_box == 'yes':
+    #         root.destroy()
+    #         main_window2.main()
 
     def settings_popup():
         pass

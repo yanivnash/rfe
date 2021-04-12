@@ -822,16 +822,16 @@ def main():
     def copy_name():
         pyperclip.copy(SELF_NAME)
     pc_info.add_command(label=f'IP: {SELF_IP}', command=copy_ip, activebackground='steelblue2', activeforeground='black')
-    pc_info.add_command(label=f'Userame: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
+    pc_info.add_command(label=f'Username: {SELF_NAME}', command=copy_name, activebackground='steelblue2', activeforeground='black')
 
     def recheck_ssh_menubar():
         print('checked')
-        ssh_service_menu.entryconfigure(1, label=LoginRegister2.check_sshd_service())
+        ssh_service_menu.entryconfigure(1, label=LoginRegister2.check_sshd_service('sshd'))
 
     ssh_service_menu = Menu(menubar, tearoff=0)
     menubar.add_cascade(label='SSH Service', menu=ssh_service_menu)
     ssh_service_menu.add_command(label='The SSH Service is:', command=None, state='disabled', activebackground='grey90')
-    ssh_service_menu.add_command(label=LoginRegister2.check_sshd_service(), command=None, state='disabled', activebackground='grey90')
+    ssh_service_menu.add_command(label=LoginRegister2.check_sshd_service('sshd'), command=None, state='disabled', activebackground='grey90')
     ssh_service_menu.add_separator()
     ssh_service_menu.add_command(label='Recheck Service', command=recheck_ssh_menubar, activebackground='steelblue2', activeforeground='black')
     root.config(menu=menubar)
@@ -972,10 +972,10 @@ def main():
                 menubar.add_cascade(label='Account', menu=account)
                 LoginRegister2.choose_mode_window(email)
 
-        disconnect = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label='Disconnect', menu=disconnect)
-        disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2',
-                               activeforeground='black')
+        # disconnect = Menu(menubar, tearoff=0)
+        # menubar.add_cascade(label='Disconnect', menu=disconnect)
+        # disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2',
+        #                        activeforeground='black')
 
         end_video_name = 'end-animation.mp4'
         LoginRegister2.play_video(end_video_name)
