@@ -146,6 +146,17 @@ def login_to_ssh_client(ip_frame, ip_dict):
     global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username, canvas, scrollbar
     global app_width, app_height
 
+    def close_window():
+        global ssh, sftp, username
+        close_msg_box = messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
+        if close_msg_box == 'yes':
+            ssh = None
+            sftp = None
+            username = None
+            root.destroy()
+
+    root.protocol("WM_DELETE_WINDOW", close_window)
+
     ip_butns_dict = dict()
 
     main_title = Label(ip_frame, text='Choose a computer to connect to:', font=('Eras Bold ITC', main_window2.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
