@@ -46,6 +46,9 @@ SELF_IP = socket.gethostbyname(socket.gethostname())
 # app_height = int(screen_height / 1.542)
 # print(screen_width, screen_height, app_width, app_height)  # temp
 
+screen_width = main_window2.screen_width
+screen_height = main_window2.screen_height
+
 label_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
 # start_video_name = f'{ROOT_PROJ_DIR}\start-animation.mp4'
@@ -754,6 +757,7 @@ def start_login_window(main_frame):
                 email_error_title.configure(text='Please enter your email')
                 email_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(110), width=main_window2.calc_width(500))  # (x=55, y=110, width=500)
             if enter_password.get() == '':
+                pass_error_title.configure(text='Please enter your password')
                 pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(215), width=main_window2.calc_width(500))  # (x=55, y=215, width=500)
             # break
         elif not manageSERVER.check_if_email_exists(enter_email.get()):  # check if email doesn't exist in the DB
@@ -1300,14 +1304,120 @@ def server_status(main_frame):
 
 
 def choose_mode_window(email):
-    # def acc_signout():
-    #     discon_msg_box = messagebox.askquestion(title='Sign Out', message='Are you sure you want to sign out of your account?')
-    #     if discon_msg_box == 'yes':
-    #         root.destroy()
-    #         main_window2.main()
+    global answr
+    answr = None
+    def create_popup_window(title, label_text, msg_box_text, approve_text):
+        global answr
+        popup_width = main_window2.calc_width(400)
+        popup_height = main_window2.calc_height(200)
+        popup_x = int((screen_width - popup_width) / 2)
+        popup_y = int((screen_height - popup_height) / 2)
 
-    def settings_popup():
-        pass
+        def submit():
+            global answr
+            pass_error_title.place_forget()
+            password = enter_password.get()
+            if password == '':
+                if password == '':
+                    pass_error_title.configure(text='Please enter your password')
+                    pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120),
+                                           width=main_window2.calc_width(400))
+            elif not manageSERVER.check_if_email_exists(email):  # check if email doesn't exist in the DB
+                pass_error_title.configure(text="This email address doesn't have an account")
+                pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120),
+                                       width=main_window2.calc_width(400))
+            elif not manageSERVER.login(email, password, 0):  # check if password doesn't match the email
+                pass_error_title.configure(text='Password is incorrect, Try again')
+                pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120),
+                                       width=main_window2.calc_width(400))
+            else:  # email exists and the password matches
+                pass_error_title.place_forget()
+                msg_box = messagebox.askquestion(title=title, message=f'{msg_box_text}\nThis action is not reversible!')
+                if msg_box == 'yes':
+                    if title == 'Reset saved IP list in your account':
+                        if manageSERVER.reset_ip_dict(email, password):
+                            answr = True
+                            messagebox.showinfo(title=title, message=approve_text)
+                            popup.quit()
+                            # return True
+                        else:
+                            answr = False
+                            popup.quit()
+                            # return False
+
+                    elif title == 'Permanently delete your account':
+                        if manageSERVER.delete_account(email, password):
+                            answr = True
+                            messagebox.showinfo(title=title, message=approve_text)
+                            popup.quit()
+                            # return True
+                        else:
+                            answr = False
+                            popup.quit()
+                            # return False
+                elif msg_box == 'no':
+                    popup.quit()
+                    answr = None
+
+        def show_hide_pass():
+            if enter_password.cget('show') == '':
+                enter_password.configure(show='•')
+                show_hide_button.configure(image=show_icon)
+            else:
+                enter_password.configure(show='')
+                show_hide_button.configure(image=hide_icon)
+
+        popup = Toplevel(bg=label_bg_color)
+        popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
+        popup.iconbitmap('icon.ico')
+        popup.resizable(False, False)
+        popup.title(title)
+
+        def enter_key(event):
+            login_button.invoke()
+
+        popup.bind('<Return>', enter_key)
+
+        pass_error_title = Label(popup, text='Please enter your password', font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg=label_bg_color)
+        pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120), width=main_window2.calc_width(400))
+        pass_error_title.place_forget()
+
+        Label(popup, text=label_text, wraplength=popup_width, bg=label_bg_color, font=('Eras Bold ITC', main_window2.calc_width(12))).place(x=main_window2.calc_width(0), y=main_window2.calc_height(5), width=main_window2.calc_width(400))
+        Label(popup, text=f'{email}', wraplength=popup_width, bg=label_bg_color, font=('Eras Bold ITC', main_window2.calc_width(15))).place(x=main_window2.calc_width(0), y=main_window2.calc_height(50), width=main_window2.calc_width(400))
+        enter_password = Entry(popup, font=('Eras Bold ITC', main_window2.calc_width(15)), bg='white', justify='center', show='•')
+        enter_password.place(x=main_window2.calc_width(32), y=main_window2.calc_height(85), width=main_window2.calc_width(300), height=main_window2.calc_height(35))
+        show_hide_button = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
+        show_hide_button.place(x=main_window2.calc_width(333), y=main_window2.calc_height(85), width=main_window2.calc_width(35), height=main_window2.calc_height(35))
+
+        login_button = Button(popup, text='Login', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+        login_button.place(x=main_window2.calc_width(150), y=main_window2.calc_height(145), width=main_window2.calc_width(100), height=main_window2.calc_height(32))
+        enter_password.focus()
+        # print(answr)
+        popup.mainloop()
+        # print(answr)
+        # return answr
+
+    def reset_ip_list():
+        global answr
+        create_popup_window('Reset saved IP list in your account', "Enter your account's password to delete all the saved IPs in your account:", f'Are you sure you want to delete all the IPs saved to your account: {email}?', 'IP list reset successfully')
+        print(f'answr {answr}')
+        if answr:
+            root.destroy()
+            main_window2.main()
+        elif not answr:
+            messagebox.showerror(title='Error', message="An error occurred while resetting your account's saved IPs list")
+
+    def delete_account():
+        global answr
+        create_popup_window('Permanently delete your account', "Enter your account's password to permanently delete it:", f'Are you sure you want to permanently delete your account: {email}?', 'Account deleted successfully')
+        print(f'answr {answr}')
+        if answr:
+            root.destroy()
+            main_window2.main()
+        elif not answr:
+            messagebox.showerror(title='Error', message='An error occurred while deleting your account')
+            root.destroy()
+            main_window2.main()
 
     print(f'email: {email}')
     mode = None
@@ -1319,33 +1429,37 @@ def choose_mode_window(email):
             account.delete(0)
         except:
             pass
-        account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
-        account.add_command(label='Account Settings', command=settings_popup, activebackground='steelblue2',
-                            activeforeground='black')
-        account.add_separator()
-        account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2',
-                            activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
-        root.title('Remote File Explorer')
-        choose_frame = Frame(root)
-        choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
-        bg_image = Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
-        # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
-        # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
-        control_pic = ImageTk.PhotoImage(
-            Image.open('control-pic.png').resize((main_window2.calc_width(160), main_window2.calc_height(160)),
-                                                 Image.ANTIALIAS))
-        be_controlled_pic = ImageTk.PhotoImage(
-            Image.open('be-controlled-pic.png').resize((main_window2.calc_width(200), main_window2.calc_height(160)),
-                                                       Image.ANTIALIAS))
-        mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
-        try:
-            choose_frame.destroy()
-        except:
-            pass
-        # if email == 'yaniv2':
-        #     choose_frame.destroy()
-        # choose_frame.mainloop()
+        finally:
+            account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
+
+            settings_menu = Menu(account, tearoff=0)
+            settings_menu.add_command(label='Reset saved IP list in your account', command=reset_ip_list,activebackground='steelblue2', activeforeground='black')
+            settings_menu.add_command(label='Permanently delete your account', command=delete_account, activebackground='steelblue2', activeforeground='black')
+            account.add_cascade(label='Account Settings', menu=settings_menu, activebackground='steelblue2', activeforeground='black')
+
+            account.add_separator()
+            account.add_command(label='Sign Out', command=acc_signout, activebackground='steelblue2', activeforeground='black')  # DodgerBlue2, DeepSkyBlue2
+            root.title('Remote File Explorer')
+            choose_frame = Frame(root)
+            choose_frame.place(x=0, y=0, width=app_width, height=app_height)
+            bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
+            bg_image = Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)
+            # control_pic = ImageTk.PhotoImage(Image.open('control-pic.png').resize((160, 160), Image.ANTIALIAS))
+            # be_controlled_pic = ImageTk.PhotoImage(Image.open('be-controlled-pic.png').resize((200, 160), Image.ANTIALIAS))
+            control_pic = ImageTk.PhotoImage(
+                Image.open('control-pic.png').resize((main_window2.calc_width(160), main_window2.calc_height(160)),
+                                                     Image.ANTIALIAS))
+            be_controlled_pic = ImageTk.PhotoImage(
+                Image.open('be-controlled-pic.png').resize((main_window2.calc_width(200), main_window2.calc_height(160)),
+                                                           Image.ANTIALIAS))
+            mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
+            try:
+                choose_frame.destroy()
+            except:
+                pass
+            # if email == 'yaniv2':
+            #     choose_frame.destroy()
+            # choose_frame.mainloop()
 
     # if email != None:
     #     root = Tk()

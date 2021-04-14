@@ -113,3 +113,106 @@ import socket
 
 # import requests
 # EXTERNAL_IP = requests.get('http://ip.42.pl/raw').text
+
+
+
+
+from tkinter import *
+import main_window2
+import manageSERVER
+from tkinter import messagebox
+
+label_bg_color = '#e9eed6'
+buttons_bg_color = '#d9dcc7'
+show_icon = None
+hide_icon = None
+screen_width = main_window2.screen_width
+screen_height = main_window2.screen_height
+email = 'yanivnash1@gmail.com'
+
+
+def create_popup_window(title, label_text, msg_box_text, approve_text):
+    popup_width = main_window2.calc_width(400)
+    popup_height = main_window2.calc_height(200)
+    popup_x = int((screen_width - popup_width) / 2)
+    popup_y = int((screen_height - popup_height) / 2)
+
+
+    def submit():
+        pass_error_title.place_forget()
+        password = enter_password.get()
+        if password == '':
+            if password == '':
+                pass_error_title.configure(text='Please enter your password')
+                pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120), width=main_window2.calc_width(400))
+        elif not manageSERVER.check_if_email_exists(email):  # check if email doesn't exist in the DB
+            pass_error_title.configure(text="This email address doesn't have an account")
+            pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120), width=main_window2.calc_width(400))
+        elif not manageSERVER.login(email, password, 0):  # check if password doesn't match the email
+            pass_error_title.configure(text='Password is incorrect, Try again')
+            pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120), width=main_window2.calc_width(400))
+        else:  # email exists and the password matches
+            pass_error_title.place_forget()
+            msg_box = messagebox.askquestion(title=title,
+                                                    message=f'{msg_box_text}\nThis action is not reversible!')
+            print(msg_box)
+            if msg_box == 'yes':
+                if title == 'Reset saved IP list in your account':
+                    if manageSERVER.reset_ip_dict(email, password):
+                        popup.destroy()
+                        messagebox.showinfo(title=title, message=approve_text)
+                        return True
+                    else:
+                        return False
+
+                elif title == 'Permanently delete your account':
+                    if manageSERVER.delete_account(email, password):
+                        popup.destroy()
+                        messagebox.showinfo(title=title, message=approve_text)
+                        return True
+                    else:
+                        return False
+            elif msg_box == 'no':
+                popup.destroy()
+                return None
+
+    def show_hide_pass():
+        if enter_password.cget('show') == '':
+            enter_password.configure(show='•')
+            show_hide_button.configure(image=show_icon)
+        else:
+            enter_password.configure(show='')
+            show_hide_button.configure(image=hide_icon)
+
+    popup = Toplevel(bg=label_bg_color)
+    popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
+    popup.iconbitmap('icon.ico')
+    popup.resizable(False, False)
+    popup.title(title)
+    def enter_key(event):
+        submit()
+    popup.bind('<Return>', enter_key)
+
+    pass_error_title = Label(popup, text='Please enter your password',
+                             font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg=label_bg_color)
+    pass_error_title.place(x=main_window2.calc_width(0), y=main_window2.calc_height(120),
+                           width=main_window2.calc_width(400))
+    pass_error_title.place_forget()
+
+
+    Label(popup, text=label_text, wraplength=popup_width, bg=label_bg_color, font=('Eras Bold ITC', main_window2.calc_width(12))).place(x=main_window2.calc_width(0), y=main_window2.calc_height(5), width=main_window2.calc_width(400))
+    Label(popup, text=f'{email}', wraplength=popup_width, bg=label_bg_color, font=('Eras Bold ITC', main_window2.calc_width(15))).place(x=main_window2.calc_width(0), y=main_window2.calc_height(50), width=main_window2.calc_width(400))
+    enter_password = Entry(popup, font=('Eras Bold ITC', main_window2.calc_width(15)), bg='white', justify='center', show='•')
+    enter_password.place(x=main_window2.calc_width(32), y=main_window2.calc_height(85), width=main_window2.calc_width(300), height=main_window2.calc_height(35))
+    show_hide_button = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
+    show_hide_button.place(x=main_window2.calc_width(333), y=main_window2.calc_height(85), width=main_window2.calc_width(35), height=main_window2.calc_height(35))
+
+    login_button = Button(popup, text='Login', cursor='hand2',
+                          font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                          command=submit)
+    login_button.place(x=main_window2.calc_width(150), y=main_window2.calc_height(145),
+                       width=main_window2.calc_width(100), height=main_window2.calc_height(32))
+    enter_password.focus()
+    popup.mainloop()
+
+print(create_popup_window('Reset saved IP list in your account', "Enter your account's password to delete all the saved IPs in your account:", f'Are you sure you want to delete all the IPs saved to your account: {email}?', 'IP list reset successfully'))

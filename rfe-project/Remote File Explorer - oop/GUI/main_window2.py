@@ -961,17 +961,17 @@ def main():
         file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2',
                                   activeforeground='black')
 
-        def disconnect_func():  # add disconnecting from the machine (SSH)
-            discon_msg_box = messagebox.askquestion(title='Disconnect', message='Are you sure you want to disconnect?')
-            if discon_msg_box == 'yes':
-                manageSSH.disconnect_ssh(ssh)
-                menubar.delete('Account')
-                menubar.delete('Go to...')
-                menubar.delete('Disconnect')
-                account = Menu(menubar, tearoff=0)
-                menubar.add_cascade(label='Account', menu=account)
-                LoginRegister2.choose_mode_window(email)
-
+        # def disconnect_func():  # add disconnecting from the machine (SSH)
+        #     discon_msg_box = messagebox.askquestion(title='Disconnect', message='Are you sure you want to disconnect?')
+        #     if discon_msg_box == 'yes':
+        #         manageSSH.disconnect_ssh(ssh)
+        #         menubar.delete('Account')
+        #         menubar.delete('Go to...')
+        #         menubar.delete('Disconnect')
+        #         account = Menu(menubar, tearoff=0)
+        #         menubar.add_cascade(label='Account', menu=account)
+        #         LoginRegister2.choose_mode_window(email)
+        #
         # disconnect = Menu(menubar, tearoff=0)
         # menubar.add_cascade(label='Disconnect', menu=disconnect)
         # disconnect.add_command(label='Disconnect', command=disconnect_func, activebackground='steelblue2',
