@@ -116,19 +116,22 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):#, old_frame):
     return mode
 
 
-def get_network_ip_list(SELF_IP):
+def get_network_ip_list():
     ipconfig = os.popen('ipconfig').read()
-    ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
-    if 'Subnet Mask' in ipconfig:
-        subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
+    # ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
+    self_ip = ipconfig[ipconfig.find('IPv4 Address'):ipconfig.find('Subnet Mask')]
+    subnet_mask = ipconfig[ipconfig.find('Subnet Mask'):ipconfig.find('Default Gateway')]
+    if 'Subnet Mask' in subnet_mask and 'IPv4 Address' in self_ip:
+        self_ip = self_ip[self_ip.find(': ') + 2:].replace('\n', '').replace(' ', '')
+        # subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
 
         count = subnet_mask.count('255')
-        masked_ip = SELF_IP
+        masked_ip = self_ip
         for _ in range(4 - count):
             masked_ip = masked_ip[:masked_ip.rfind('.')]
 
         arp = os.popen('arp -a').read()
-        arp = arp[arp.find(f'Interface: {SELF_IP}'):]
+        arp = arp[arp.find(f'Interface: {self_ip}'):]
         while arp.count('Interface:') > 1:
             arp = arp[:arp.rfind('Interface:')]
 
@@ -140,6 +143,32 @@ def get_network_ip_list(SELF_IP):
         return network_ips
     else:
         return []
+
+
+# def get_network_ip_list(SELF_IP):
+#     ipconfig = os.popen('ipconfig').read()
+#     ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
+#     if 'Subnet Mask' in ipconfig:
+#         subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
+#
+#         count = subnet_mask.count('255')
+#         masked_ip = SELF_IP
+#         for _ in range(4 - count):
+#             masked_ip = masked_ip[:masked_ip.rfind('.')]
+#
+#         arp = os.popen('arp -a').read()
+#         arp = arp[arp.find(f'Interface: {SELF_IP}'):]
+#         while arp.count('Interface:') > 1:
+#             arp = arp[:arp.rfind('Interface:')]
+#
+#         arp = arp.split()
+#         network_ips = list()
+#         for ip in arp:
+#             if ip.startswith(masked_ip):
+#                 network_ips.append(ip)
+#         return network_ips
+#     else:
+#         return []
 
 
 def login_to_ssh_client(ip_frame, ip_dict):
@@ -364,7 +393,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
         Label(scrollable_frame, height=main_window2.calc_height(2), bg='white').pack()
 
-        local_ip_list = get_network_ip_list(SELF_IP)
+        local_ip_list = get_network_ip_list()
         if local_ip_list == []:
             Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window2.calc_width(20)), bg=buttons_bg_color).place(x=main_window2.calc_width(155), y=main_window2.calc_height(170))
         else:
@@ -447,7 +476,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
             canvas.pack(side="left", fill="both", expand=True)
         canvas.yview_moveto('0.0')
 
-    num_of_temp_items = max(len(get_network_ip_list(SELF_IP)), len(ip_dict))
+    num_of_temp_items = max(len(get_network_ip_list()), len(ip_dict))
     canvas = Canvas(frame, bg='white')
 
     enter_ip_pic = ImageTk.PhotoImage(

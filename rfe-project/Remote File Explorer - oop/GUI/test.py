@@ -76,32 +76,40 @@ import socket
 #     print('error')
 
 
-def get_network_ip_list(SELF_IP):
-    ipconfig = os.popen('ipconfig').read()
-    ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
-    if 'Subnet Mask' in ipconfig:
-        subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
 
-        count = subnet_mask.count('255')
-        masked_ip = SELF_IP
-        for _ in range(4 - count):
-            masked_ip = masked_ip[:masked_ip.rfind('.')]
 
-        arp = os.popen('arp -a').read()
-        arp = arp[arp.find(f'Interface: {SELF_IP}'):]
-        while arp.count('Interface:') > 1:
-            arp = arp[:arp.rfind('Interface:')]
+# def get_network_ip_list(SELF_IP):
+#     ipconfig = os.popen('ipconfig').read()
+#     ipconfig = ipconfig[ipconfig.find(SELF_IP) + len(SELF_IP):ipconfig.find('Default Gateway')]
+#     if 'Subnet Mask' in ipconfig:
+#         subnet_mask = ipconfig[ipconfig.find(': ') + 2:].replace('\n', '').replace(' ', '')
+#
+#         count = subnet_mask.count('255')
+#         masked_ip = SELF_IP
+#         for _ in range(4 - count):
+#             masked_ip = masked_ip[:masked_ip.rfind('.')]
+#
+#         arp = os.popen('arp -a').read()
+#         arp = arp[arp.find(f'Interface: {SELF_IP}'):]
+#         while arp.count('Interface:') > 1:
+#             arp = arp[:arp.rfind('Interface:')]
+#
+#         arp = arp.split()
+#         # network_ips_dict = dict()
+#         # for ip in arp:
+#         #     if ip.startswith(masked_ip):
+#         #         network_ips_dict[ip] = socket.gethostbyaddr(ip)[0]
+#         # return network_ips_dict
+#         network_ips = list()
+#         for ip in arp:
+#             if ip.startswith(masked_ip):
+#                 network_ips.append(ip)
+#         return network_ips
+#     else:
+#         return []
 
-        arp = arp.split()
-        # network_ips_dict = dict()
-        # for ip in arp:
-        #     if ip.startswith(masked_ip):
-        #         network_ips_dict[ip] = socket.gethostbyaddr(ip)[0]
-        # return network_ips_dict
-        network_ips = list()
-        for ip in arp:
-            if ip.startswith(masked_ip):
-                network_ips.append(ip)
-        return network_ips
-    else:
-        return []
+
+
+
+# import requests
+# EXTERNAL_IP = requests.get('http://ip.42.pl/raw').text

@@ -7,33 +7,34 @@ import threading
 import sqlite3
 import random
 import string
-
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-
-import tkinter
-
-from PIL import ImageTk, Image
 import json
 import datetime
 from termcolor import colored
 import os
+import requests
 
 MSG_LEN = 2048
 PORT = 5050
 FORMAT = 'utf-8'
-# SERVER = socket.gethostbyname(socket.gethostname())
+LOCAL_IP = socket.gethostbyname(socket.gethostname())
+EXTERNAL_IP = requests.get('http://ip.42.pl/raw').text
 SERVER = '0.0.0.0'
 ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-# def create_icons_dict():
-#     global icons_dict
-#     icons_dict = dict()
-#     icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
-#     for icon in icons_list:
-#         icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
+def start_server():
+    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server.bind((SERVER, PORT))
+    print(colored("[STARTING] Server is up", "yellow"))
+    server.listen()
+    print(colored(f"[LISTENING] Server is listening - {EXTERNAL_IP}:{PORT} | {LOCAL_IP}:{PORT}", "yellow"))
+    while True:
+        conn, addr = server.accept()
+        thread = threading.Thread(target=manage_client_db, args=(conn, addr))
+        thread.start()
 
 
 def manage_client_db(conn, addr):
@@ -419,21 +420,6 @@ def manage_client_db(conn, addr):
     cursor.execute("""SELECT * FROM users""")
     print(cursor.fetchall())
     # DELETE
-
-
-def start_server():
-    # temp_root = tkinter.Tk()
-    # create_icons_dict()
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((SERVER, PORT))
-    print(colored("[STARTING] Server is up", "yellow"))
-    server.listen()
-    print(colored(f"[LISTENING] Server is listening - 84.111.109.58:{PORT}", "yellow"))
-    while True:
-        conn, addr = server.accept()
-        thread = threading.Thread(target=manage_client_db, args=(conn, addr))
-        thread.start()
-        # print(f"{threading.activeCount()-1} [ACTIVE CONNECTIONS]")
 
 
 if __name__ == '__main__':

@@ -4,8 +4,7 @@ import socket
 import json
 import os
 
-# SERVER_IP = '192.168.56.1'
-SERVER_IP = '84.111.109.58'
+SERVER_IP = '84.111.109.58'  # Change if server is running on a different machine
 PORT = 5050
 FORMAT = 'utf-8'
 MSG_LEN = 2048
