@@ -1,7 +1,7 @@
 from vidstream import StreamingServer
 import threading
 
-receiver = StreamingServer('192.168.1.20', 9999, 1)
+receiver = StreamingServer('192.168.1.20', 9999, 8, 'e')
 
 t = threading.Thread(target=receiver.start_server)
 t.start()

@@ -5,7 +5,7 @@ import LoginRegister2
 # import manageSERVER
 from tkinter import *
 from tkinter import ttk
-from tkinter import messagebox
+from tkinter import messagebox, filedialog
 import socket
 import os
 from PIL import ImageTk, Image
@@ -227,13 +227,32 @@ def double_click(event):
 #     event.widget.configure(bg="green")
 
 
+def download_file(event):
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    file = item_name[:item_name.find('_btn_')]
+    file_type = file[file.rfind('.'):]
+    file_name = file[:file.rfind('.')]
+    local_path = filedialog.asksaveasfilename(defaultextension=file_type, title='Choose where to save the file',
+                                              initialfile=file_name, filetypes=((file_type, file_type),))
+    if local_path:
+        remote_path = cur_path + '\\' + file
+
+        print(f'remote_path - {remote_path}')
+        print(f'local_path - {local_path}')
+        sftp2 = ssh.open_sftp()
+        sftp2.get(remote_path, local_path)
+        refresh_button()
+
+
 def right_click(event):
     # global right_click_file_menu, right_click_dir_menu
     # event.widget.configure(bg="blue")  # TEMP
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
-    item_name = item_name[0:item_name.find('_btn_')]
+    item_name = item_name[:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
 
     right_click_dir_menu = Menu(root, tearoff=False)
@@ -248,6 +267,7 @@ def right_click(event):
     elif item_type == 'file':
         # if right_click_file_menu.entrycget(0, 'label') == '':
         right_click_file_menu.add_command(label='Open File', command=lambda: double_click(event))
+        right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
         right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
         right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
@@ -314,9 +334,12 @@ def remove_item(event):
     elif item_type == 'file':
         dlt_msg_box = messagebox.askquestion(title='Delete', message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
         if dlt_msg_box == 'yes':
-            sftp2 = ssh.open_sftp()
-            sftp2.remove(item_path)
-            refresh_button()
+            try:
+                sftp2 = ssh.open_sftp()
+                sftp2.remove(item_path)
+                refresh_button()
+            except PermissionError:
+                messagebox.showerror(title="Can't delete this file", message="This file is open or being used by another software and can't be deleted at the moment")
 
 
 def DELE():
@@ -337,7 +360,8 @@ def DELE():
 
 
 def up_button():
-    global cur_path
+    global cur_path, is_searching
+    is_searching = False
     manageSSH.chdir(sftp, '..')
     cur_path = sftp.getcwd()[1:].replace('/', '\\')
     while cur_path.endswith('\\'):
@@ -419,6 +443,10 @@ def check_new_name(new_name, input_title, type):
     invalid_names_list = ['CON', 'PRN', 'AUX', 'NUL', 'COM1', 'COM2', 'COM3', 'COM4', 'COM5', 'COM6', 'COM7', 'COM8',
                           'COM9', 'LPT1', 'LPT2', 'LPT3', 'LPT4', 'LPT5', 'LPT6', 'LPT7', 'LPT8', 'LPT9']
 
+    lowered_invalid_names_list = list()
+    for invalid_name in invalid_names_list:
+        lowered_invalid_names_list.append(invalid_name.lower())
+
     # new_name = simpledialog.askstring(input_title, 'Enter a name for the folder:')
     if type == 'dir':
         while True:
@@ -430,7 +458,7 @@ def check_new_name(new_name, input_title, type):
             elif new_name.lower() in lower_items_list:
                 new_name = simpledialog.askstring(input_title, 'This name is already taken, Try again:')
 
-            elif new_name in invalid_names_list or new_name.__contains__('..'):
+            elif new_name.lower() in lowered_invalid_names_list or new_name.__contains__('..'):
                 new_name = simpledialog.askstring(input_title, 'This name is invalid, Try again:')
 
             elif not re.match(r"^[^\\/:*?\"<>|]+$", new_name):
@@ -617,19 +645,24 @@ def right_click_search(event):
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_path = key_list[val_list.index(event.widget)]
-    item_path = item_path[0:item_path.find('_btn_')]
-    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_path)
+    item_path = item_path[:item_path.find('_btn_')]
+    item_name = item_path[item_path.rfind('\\') + 1:]
+    item_type = manageSSH.check_if_item_is_dir(sftp, item_path[:item_path.index(item_name)], item_name)
+
+    right_click_dir_search_menu = Menu(root, tearoff=False)
+    right_click_file_search_menu = Menu(root, tearoff=False)
+
     if item_type == 'dir':
-        if right_click_dir_search_menu.entrycget(0, 'label') == '':
-            right_click_dir_search_menu.add_command(label='Open Folder', command=lambda: double_click(event))
-            right_click_dir_search_menu.add_command(label='Copy Folder Path', command=lambda: pyperclip.copy(item_path))
+        # if right_click_dir_search_menu.entrycget(0, 'label') == '':
+        right_click_dir_search_menu.add_command(label='Open Folder', command=lambda: double_click_search(event))
+        right_click_dir_search_menu.add_command(label='Copy Folder Path', command=lambda: pyperclip.copy(item_path))
         right_click_dir_search_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
         end_index = item_path.rfind('\\')
         item_location_path = item_path[:end_index]
-        if right_click_file_search_menu.entrycget(0, 'label') == '':
-            right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click(event))
-            right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
+        # if right_click_file_search_menu.entrycget(0, 'label') == '':
+        right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click_search(event))
+        right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
         right_click_file_search_menu.tk_popup(event.x_root, event.y_root)
 
 
@@ -710,11 +743,8 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     drive_label = Label(wrapper1, text='Drive Select:', bg='white')
     drive_label.grid(column=2, row=0)
 
-    new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'], bg=buttons_bg_color, command=new_dir_button)
-    new_dir_btn.grid(column=3, row=1)
-
     ref_btn = Button(wrapper1, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
-    ref_btn.grid(column=4, row=1)
+    # ref_btn.grid(column=4, row=1)
 
     # searching_label = Label(wrapper1)#, text='Searching for "" in ""')
     # searching_label.grid(column=3, row=2, sticky=E)
@@ -767,14 +797,19 @@ def create_frame(items_list):#back_img, forw_img, ref_img):
     if is_searching:
         stop_search_btn = Button(wrapper1, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
         stop_search_btn.grid(column=5, row=1, sticky=E)
+        ref_btn.grid(column=3, row=1)
     else:
+        ref_btn.grid(column=4, row=1)
+        new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'],
+                             bg=buttons_bg_color, command=new_dir_button)
+        new_dir_btn.grid(column=3, row=1)
         search_bar_entry = Entry(wrapper1, text='Search', font=(calc_width(20)))
         search_bar_entry.delete(0, 'end')
         search_bar_entry.insert(0, 'Search')
         search_bar_entry.bind('<FocusIn>', entry_click)
         search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
         # search_pic = ImageTk.PhotoImage(Image.open('icons/search.png').resize((calc_width(50), calc_height(50)), Image.ANTIALIAS))
-        search_btn = Button(wrapper1, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, text='GO')
+        search_btn = Button(wrapper1, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)#, cursor='hand2')
         search_btn.grid(column=5, row=1, sticky=E)
 
     # ds_btn = Button(menu_window, text='Disconnect', command=dscon_bttn)
@@ -942,6 +977,28 @@ def main():
             items_list = sftp.listdir()
             update_frame(items_list)
 
+        def copy_file_to_remote():
+            local_path = filedialog.askopenfilename(title='Choose a file to copy', filetypes=(('All Files', '*.*'),))
+            if local_path:
+                file = local_path[local_path.rfind('/'):]
+                file_type = file[file.rfind('.'):]
+                file_name = file[:file.rfind('.')]
+
+                _, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
+                lower_items_list = list()
+                for item in files_list:
+                    lower_items_list.append(item.lower())
+                while file[1:].lower() in lower_items_list:
+                    lower_items_list.remove(file[1:].lower())
+                    file_name += ' - copy'
+                    file = file_name + file_type
+
+                remote_path = cur_path + file
+                sftp2 = ssh.open_sftp()
+                sftp2.put(local_path, remote_path)
+                refresh_button()
+
+
         go_to = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Go to...', menu=go_to)
         go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2',
@@ -958,7 +1015,7 @@ def main():
 
         file_transfer = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='File Transfer', menu=file_transfer)
-        file_transfer.add_command(label='Desktop', command=None, activebackground='steelblue2',
+        file_transfer.add_command(label='Copy a file from this local computer to the remote computer', command=copy_file_to_remote, activebackground='steelblue2',
                                   activeforeground='black')
 
         # def disconnect_func():  # add disconnecting from the machine (SSH)

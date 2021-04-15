@@ -178,11 +178,11 @@ class server(object):
                     sender_email = 'rfe.noreply@gmail.com'  # sending email
                     password = 'RFE123456789'  # sending email's password
                     send_to_email = email  # receiving email
-                    subject = 'Your password was reset'
+                    subject = 'Your password was changed'
                     messageHTML = f"""
                             <body style="text-align:center; background-color:#e9eed6;">
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
-                            <h1>Your password was successfully changed!</h1>
+                            <h1>Your password was changed successfully!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
                             <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                             </body>
@@ -191,7 +191,7 @@ class server(object):
                     # "https://i.ibb.co/Wy56qnN/email-logo.png"
                     messagePlain = f"""
                             Hey, {email}
-                            Your password was successfully changed!
+                            Your password was changed successfully!
                             © Remote File Explorer - Yaniv Nash - 2021
                             """
 
@@ -211,7 +211,7 @@ class server(object):
                     try:
                         server.sendmail(sender_email, send_to_email, text)
                     except smtplib.SMTPRecipientsRefused:
-                        answr = 'ERROR'
+                        answr = 'EMAIL NOT SENT'
                     finally:
                         server.quit()
 

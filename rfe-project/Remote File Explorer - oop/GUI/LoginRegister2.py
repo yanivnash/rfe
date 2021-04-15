@@ -755,18 +755,18 @@ def start_login_window(main_frame):
         if enter_email.get() == '' or enter_password.get() == '':
             if enter_email.get() == '':
                 email_error_title.configure(text='Please enter your email')
-                email_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(110), width=main_window2.calc_width(500))  # (x=55, y=110, width=500)
+                email_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(110), width=main_window2.calc_width(500))
             if enter_password.get() == '':
                 pass_error_title.configure(text='Please enter your password')
-                pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(215), width=main_window2.calc_width(500))  # (x=55, y=215, width=500)
+                pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(215), width=main_window2.calc_width(500))
             # break
         elif not manageSERVER.check_if_email_exists(enter_email.get()):  # check if email doesn't exist in the DB
             email_error_title.configure(text="This email address doesn't have an account")
-            email_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(110), width=main_window2.calc_width(500))  # (x=55, y=110, width=500)
+            email_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(110), width=main_window2.calc_width(500))
             # break
         elif manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()) == False:  # check if password doesn't match the email
             pass_error_title.configure(text='Email or Password are incorrect, Try again')
-            pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(215), width=main_window2.calc_width(500))  # (x=55, y=215, width=500)
+            pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(215), width=main_window2.calc_width(500))
             # break
         else:  # email exists and the password matches
             email = enter_email.get()
@@ -1304,9 +1304,9 @@ def server_status(main_frame):
 
 
 def choose_mode_window(email):
-    global answr
+    global ssh, sftp, username, answr
     answr = None
-    def create_popup_window(title, label_text, msg_box_text, approve_text):
+    def create_popup_window(mode, title, label_text, msg_box_text, approve_text):
         global answr
         popup_width = main_window2.calc_width(400)
         popup_height = main_window2.calc_height(200)
@@ -1342,6 +1342,8 @@ def choose_mode_window(email):
                             # return True
                         else:
                             answr = False
+                            messagebox.showerror(title='Error',
+                                                 message="An error occurred")
                             popup.quit()
                             # return False
 
@@ -1353,6 +1355,8 @@ def choose_mode_window(email):
                             # return True
                         else:
                             answr = False
+                            messagebox.showerror(title='Error',
+                                                 message="An error occurred")
                             popup.quit()
                             # return False
                 elif msg_box == 'no':
@@ -1374,7 +1378,7 @@ def choose_mode_window(email):
         popup.title(title)
 
         def enter_key(event):
-            login_button.invoke()
+            confirm_button.invoke()
 
         popup.bind('<Return>', enter_key)
 
@@ -1389,33 +1393,206 @@ def choose_mode_window(email):
         show_hide_button = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
         show_hide_button.place(x=main_window2.calc_width(333), y=main_window2.calc_height(85), width=main_window2.calc_width(35), height=main_window2.calc_height(35))
 
-        login_button = Button(popup, text='Login', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
-        login_button.place(x=main_window2.calc_width(150), y=main_window2.calc_height(145), width=main_window2.calc_width(100), height=main_window2.calc_height(32))
+        confirm_button = Button(popup, text='Confirm', cursor='hand2', font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20', bg=buttons_bg_color, command=submit)
+        confirm_button.place(x=main_window2.calc_width(150), y=main_window2.calc_height(145), width=main_window2.calc_width(100), height=main_window2.calc_height(32))
         enter_password.focus()
-        # print(answr)
         popup.mainloop()
-        # print(answr)
-        # return answr
+
+
+    def change_password():
+        popup_width = main_window2.calc_width(610)
+        popup_height = main_window2.calc_height(392)
+        popup_x = int((screen_width - popup_width) / 2)
+        popup_y = int((screen_height - popup_height) / 2)
+
+        def submit():
+            global email
+            cur_pass_error_title.place_forget()
+            pass_error_title.place_forget()
+            re_pass_error_title.place_forget()
+            if enter_cur_password.get() == '' or enter_password.get() == '' or re_enter_password.get() == '':
+                if enter_cur_password.get() == '':
+                    cur_pass_error_title.configure(text='Please enter your current password')
+                    cur_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(85),
+                                            width=main_window2.calc_width(500))
+                if enter_password.get() == '':
+                    pass_error_title.configure(text='Please enter a new password')
+                    pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(180),
+                                           width=main_window2.calc_width(500))
+                if re_enter_password.get() == '':
+                    re_pass_error_title.configure(text='Please Retype the new password')
+                    re_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(275),
+                                              width=main_window2.calc_width(500))
+            elif not manageSERVER.check_if_email_exists(email):  # check if email exists
+                messagebox.showerror(title='Error', message="This email address doesn't have an account")
+                root.destroy()
+                main_window2.main()
+            elif enter_password.get() != re_enter_password.get():  # check if the two passwords aren't the same
+                re_pass_error_title.configure(text="The passwords don't match")
+                re_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(275),
+                                          width=main_window2.calc_width(500))
+            elif not manageSERVER.login(email, enter_cur_password.get(), 0):
+                cur_pass_error_title.configure(text='The password is incorrect, Try again')
+                cur_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(85),
+                                           width=main_window2.calc_width(500))
+            elif enter_cur_password.get() == enter_password.get():  # check if the new password is not the same as the current one
+                re_pass_error_title.configure(text="The new password can't be the same as the current one,\nPlease choose a new password")
+                re_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(275),
+                                          width=main_window2.calc_width(500))
+
+            else:
+                password = enter_cur_password.get()
+                new_password = enter_password.get()
+                change_pass_answr = manageSERVER.change_password(email, password, new_password)
+                print(change_pass_answr)
+                if change_pass_answr == True:
+                    messagebox.showinfo(title='Password changed',
+                                        message=f'Password changed successfully, a confirmation email was sent to: {email}')
+                    popup.destroy()
+                elif change_pass_answr == 'EMAIL NOT SENT':
+                    messagebox.showinfo(title='Password changed', message=f'Password changed, but we were unable to send an email to the address: {email}')
+                    popup.destroy()
+                elif not change_pass_answr:
+                    messagebox.showerror(title='Error', message="An error occurred")
+                    root.destroy()
+                    main_window2.main()
+
+
+        def show_hide_pass1():
+            if enter_cur_password.cget('show') == '':
+                enter_cur_password.configure(show='•')
+                show_hide_button1.configure(image=show_icon)
+            else:
+                enter_cur_password.configure(show='')
+                show_hide_button1.configure(image=hide_icon)
+
+        def show_hide_pass2():
+            if enter_password.cget('show') == '':
+                enter_password.configure(show='•')
+                show_hide_button2.configure(image=show_icon)
+            else:
+                enter_password.configure(show='')
+                show_hide_button2.configure(image=hide_icon)
+
+        def show_hide_pass3():
+            if re_enter_password.cget('show') == '':
+                re_enter_password.configure(show='•')
+                show_hide_button3.configure(image=show_icon)
+            else:
+                re_enter_password.configure(show='')
+                show_hide_button3.configure(image=hide_icon)
+
+        def key_entered(key):
+            password1 = enter_password.get()
+            password2 = re_enter_password.get()
+            if len(password1) > len(password2):
+                password2 = re_enter_password.get() + key.char
+            else:
+                password1 = enter_password.get() + key.char
+            print(f'pass1: {password1}\npass2: {password2}\n')
+            re_pass_error_title.place_forget()
+            if password1 != password2:
+                re_pass_error_title.configure(text="The passwords don't match")
+                re_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(275),
+                                  width=main_window2.calc_width(500))
+
+        popup = Toplevel(bg=label_bg_color)
+        popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
+        popup.iconbitmap('icon.ico')
+        popup.resizable(False, False)
+        popup.title('Change Password')
+
+        def enter_key(event):
+            confirm_button.invoke()
+
+        popup.bind('<Return>', enter_key)
+
+        cur_pass_error_title = Label(popup, text='Please enter your current password',
+                                 font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg=label_bg_color)
+        pass_error_title = Label(popup, text='Please enter a new password',
+                                 font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg=label_bg_color)
+        pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(180),
+                               width=main_window2.calc_width(500))
+        re_pass_error_title = Label(popup, text='Please Retype the new password',
+                                    font=('Eras Bold ITC', main_window2.calc_width(10)), fg='red', bg=label_bg_color)
+        re_pass_error_title.place(x=main_window2.calc_width(55), y=main_window2.calc_height(275),
+                                  width=main_window2.calc_width(500))
+        cur_pass_error_title.place_forget()
+        pass_error_title.place_forget()
+        re_pass_error_title.place_forget()
+
+        Label(popup, text=f"{email}\nCurrent Password:",
+                               font=('Eras Bold ITC', main_window2.calc_width(15), 'bold'), fg='gray20',
+                               bg=label_bg_color).place(x=main_window2.calc_width(0),
+                                                 y=main_window2.calc_height(0), width=main_window2.calc_width(610))
+        enter_cur_password = Entry(popup, font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20',
+                               bg='white', justify='center', show="•")
+        enter_cur_password.place(x=main_window2.calc_width(55), y=main_window2.calc_height(50), width=main_window2.calc_width(500), height=main_window2.calc_height(35))
+
+        show_hide_button1 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
+                                   command=show_hide_pass1)
+        show_hide_button1.place(x=main_window2.calc_width(555), y=main_window2.calc_height(50),
+                                width=main_window2.calc_width(35),
+                                height=main_window2.calc_height(35))
+
+        Label(popup, text='New Password:',
+                               font=('Eras Bold ITC', main_window2.calc_width(15), 'bold'), fg='gray20',
+                               bg=label_bg_color).place(x=main_window2.calc_width(0),
+                                                 y=main_window2.calc_height(110), width=main_window2.calc_width(610))
+        enter_password = Entry(popup, font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20',
+                               bg='white', justify='center', show="•")
+        enter_password.place(x=main_window2.calc_width(55), y=main_window2.calc_height(145),
+                             width=main_window2.calc_width(500),
+                             height=main_window2.calc_height(35))
+
+        enter_password.bind("<Key>", key_entered)
+
+        show_hide_button2 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
+                                   command=show_hide_pass2)
+        show_hide_button2.place(x=main_window2.calc_width(555), y=main_window2.calc_height(145),
+                                width=main_window2.calc_width(35),
+                                height=main_window2.calc_height(35))
+
+        Label(popup, text='Retype New Password:',
+                                  font=('Eras Bold ITC', main_window2.calc_width(15), 'bold'), fg='gray20',
+                                  bg=label_bg_color).place(x=main_window2.calc_width(0),
+                                                    y=main_window2.calc_height(205), width=main_window2.calc_width(610))
+        re_enter_password = Entry(popup, font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20',
+                                  bg='white', justify='center', show="•")
+        re_enter_password.place(x=main_window2.calc_width(55), y=main_window2.calc_height(240),
+                                width=main_window2.calc_width(500),
+                                height=main_window2.calc_height(35))
+
+        re_enter_password.bind("<Key>", key_entered)
+
+        show_hide_button3 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
+                                   command=show_hide_pass3)
+        show_hide_button3.place(x=main_window2.calc_width(555), y=main_window2.calc_height(240),
+                                width=main_window2.calc_width(35),
+                                height=main_window2.calc_height(35))
+
+        confirm_button = Button(popup, text='Confirm', cursor='hand2',
+                                font=('Eras Bold ITC', main_window2.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                                command=submit)
+        confirm_button.place(x=main_window2.calc_width(255), y=main_window2.calc_height(315), width=main_window2.calc_width(100), height=main_window2.calc_height(35))
+
+        enter_cur_password.focus()
+        popup.mainloop()
+
 
     def reset_ip_list():
         global answr
-        create_popup_window('Reset saved IP list in your account', "Enter your account's password to delete all the saved IPs in your account:", f'Are you sure you want to delete all the IPs saved to your account: {email}?', 'IP list reset successfully')
+        create_popup_window(0, 'Reset saved IP list in your account', "Enter your account's password to delete all the saved IPs in your account:", f'Are you sure you want to delete all the IPs saved to your account: {email}?', 'IP list reset successfully')
         print(f'answr {answr}')
         if answr:
             root.destroy()
             main_window2.main()
-        elif not answr:
-            messagebox.showerror(title='Error', message="An error occurred while resetting your account's saved IPs list")
 
     def delete_account():
         global answr
-        create_popup_window('Permanently delete your account', "Enter your account's password to permanently delete it:", f'Are you sure you want to permanently delete your account: {email}?', 'Account deleted successfully')
+        create_popup_window(0, 'Permanently delete your account', "Enter your account's password to permanently delete it:", f'Are you sure you want to permanently delete your account: {email}?', 'Account deleted successfully')
         print(f'answr {answr}')
         if answr:
-            root.destroy()
-            main_window2.main()
-        elif not answr:
-            messagebox.showerror(title='Error', message='An error occurred while deleting your account')
             root.destroy()
             main_window2.main()
 
@@ -1433,7 +1610,8 @@ def choose_mode_window(email):
             account.add_command(label=email, command=None, state='disabled', activebackground='grey90')
 
             settings_menu = Menu(account, tearoff=0)
-            settings_menu.add_command(label='Reset saved IP list in your account', command=reset_ip_list,activebackground='steelblue2', activeforeground='black')
+            settings_menu.add_command(label='Change your password', command=change_password, activebackground='steelblue2', activeforeground='black')
+            settings_menu.add_command(label='Reset saved IP list in your account', command=reset_ip_list, activebackground='steelblue2', activeforeground='black')
             settings_menu.add_command(label='Permanently delete your account', command=delete_account, activebackground='steelblue2', activeforeground='black')
             account.add_cascade(label='Account Settings', menu=settings_menu, activebackground='steelblue2', activeforeground='black')
 
