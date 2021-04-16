@@ -188,6 +188,8 @@ def double_click(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
+    if cur_path.endswith('\\') or cur_path.endswith('/'):
+        cur_path = cur_path[:-1]
     temp = cur_path + '\\' + item_name
     print(temp)
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
@@ -214,7 +216,7 @@ def double_click(event):
         print(f'stdin: {stdin}')
         print(f'stdout: {stdout.read()}')
         print(f'stderror: {stderr.read()}')
-        'open file here'
+        # 'open file here'
         # pass
 
     elif item_type == 'item not found':
@@ -426,6 +428,11 @@ def close_window():
 def copy_path_button(event):
     # import time
     pyperclip.copy(cur_path)
+    event.widget.configure(text='Copied!')
+    event.widget.after(3000, lambda: event.widget.configure(text='Copy Path'))
+    # copied_label = Label(root, text='Copied!')
+    # copied_label.place(x=(app_width / 2) + 10, y=10)
+    # copied_label.after(5000, copied_label.destroy)
 
     # doesnt work
     # event.widget.configure(text='Copied!')
