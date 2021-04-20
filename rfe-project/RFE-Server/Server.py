@@ -76,29 +76,26 @@ class server(object):
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
                 send_to_email = email  # receiving email
-                subject = 'Welcome to Remote File Explorer'
+                subject = 'Welcome to Remote File Explorer - old'
                 messageHTML = f"""
                             <body style="text-align:center; background-color:#e9eed6;">
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your account was successfully created!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
                             </body>
                             """
-
-                # "https://i.ibb.co/Wy56qnN/email-logo.png"
                 messagePlain = f"""
                             Hey, {email}
                             Your account was successfully created!
-                            © Remote File Explorer - Yaniv Nash - 2021
+                            © Remote File Explorer - old - Yaniv Nash - 2021
                             """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer'
+                msg['From'] = 'Remote File Explorer - old'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
-                # Attach both plain and HTML versions
                 msg.attach(MIMEText(messagePlain, 'plain'))
                 msg.attach(MIMEText(messageHTML, 'html'))
 
@@ -139,10 +136,7 @@ class server(object):
             answr = cursor.fetchall()
             if answr:
                 ip_dict = json.loads(answr[0][0])
-                # dict_values = []
-                # for key in ip_dict.keys():
-                #     dict_values.append(key)
-                if not pc_ip in ip_dict.keys():# dict_values:
+                if not pc_ip in ip_dict.keys():
                     ip_dict[pc_ip] = pc_name
                     update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ?"
                     cursor.execute(update_ip_dict, [(ip_dict), (email.lower().encode(self.FORMAT))])
@@ -162,7 +156,6 @@ class server(object):
                 answr = False
 
         elif action == "CHANGE_PASSWORD":
-            # change the password from the user settings (after login)
             email = msg["email"]
             password = msg["password"]
             new_password = msg["new_password"]
@@ -184,23 +177,21 @@ class server(object):
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your password was changed successfully!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
                             </body>
                             """
 
-                    # "https://i.ibb.co/Wy56qnN/email-logo.png"
                     messagePlain = f"""
                             Hey, {email}
                             Your password was changed successfully!
-                            © Remote File Explorer - Yaniv Nash - 2021
+                            © Remote File Explorer - old - Yaniv Nash - 2021
                             """
 
                     msg = MIMEMultipart('alternative')
-                    msg['From'] = 'Remote File Explorer'
+                    msg['From'] = 'Remote File Explorer - old'
                     msg['To'] = send_to_email
                     msg['Subject'] = subject
 
-                    # Attach both plain and HTML versions
                     msg.attach(MIMEText(messagePlain, 'plain'))
                     msg.attach(MIMEText(messageHTML, 'html'))
 
@@ -232,9 +223,6 @@ class server(object):
             else:
                 answr = False
 
-        # elif action == "GET_ICONS":
-        #     answr = icons_dict
-
         elif action == "DELETE_USER":
             email = msg["email"]
             password = msg["password"]
@@ -250,29 +238,27 @@ class server(object):
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
                 send_to_email = email  # receiving email
-                subject = 'Remote File Explorer'
+                subject = 'Remote File Explorer - old'
                 messageHTML = f"""
                             <body style="text-align:center; background-color:#e9eed6;">
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your account was successfully deleted!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
                             </body>
                             """
 
-                # "https://i.ibb.co/Wy56qnN/email-logo.png"
                 messagePlain = f"""
                             Hey, {email}
                             Your account was successfully deleted!
-                            © Remote File Explorer - Yaniv Nash - 2021
+                            © Remote File Explorer - old - Yaniv Nash - 2021
                             """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer'
+                msg['From'] = 'Remote File Explorer - old'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
-                # Attach both plain and HTML versions
                 msg.attach(MIMEText(messagePlain, 'plain'))
                 msg.attach(MIMEText(messageHTML, 'html'))
 
@@ -315,24 +301,23 @@ class server(object):
                 <body style="text-align:center; background-color:#e9eed6;">
                 <h1>Your password reset code is:</h1>
                 <h1><span style="color: #496dd0">{reset_code}</span></h1>
-                <h1>Go back to the "Remote File Explorer" app and use that code to reset your password and log back in to your account</h1>
+                <h1>Go back to the "Remote File Explorer - old" app and use that code to reset your password and log back in to your account</h1>
                 <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
+                <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
                 </body>
                 """
                 messagePlain = f"""
                 Your password reset code is:
                 {reset_code}
-                Go back to the "Remote File Explorer" app and use that code to reset your password and log back in to your account
-                © Remote File Explorer - Yaniv Nash - 2021
+                Go back to the "Remote File Explorer - old" app and use that code to reset your password and log back in to your account
+                © Remote File Explorer - old - Yaniv Nash - 2021
                 """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer'
+                msg['From'] = 'Remote File Explorer - old'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
-                # Attach both plain and HTML versions
                 msg.attach(MIMEText(messagePlain, 'plain'))
                 msg.attach(MIMEText(messageHTML, 'html'))
 
@@ -359,9 +344,12 @@ class server(object):
             answr = cursor.fetchall()
             if answr:
                 update_password = "UPDATE users SET password = ? WHERE email = ? AND reset_code = ?"
-                cursor.execute(update_password, [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)), (reset_code.encode(self.FORMAT))])
+                cursor.execute(update_password,
+                               [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)),
+                                (reset_code.encode(self.FORMAT))])
                 update_reset_code = "UPDATE users SET reset_code = ? WHERE email = ? AND password = ?"
-                cursor.execute(update_reset_code, [(''.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)), (new_password.encode(self.FORMAT))])
+                cursor.execute(update_reset_code, [(''.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)),
+                                                   (new_password.encode(self.FORMAT))])
                 answr = True
 
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
@@ -373,23 +361,21 @@ class server(object):
                         <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                         <h1>Your password was reset successfully!</h1>
                         <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                        <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
+                        <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
                         </body>
                         """
 
-                # "https://i.ibb.co/Wy56qnN/email-logo.png"
                 messagePlain = f"""
                         Hey, {email}
                         Your password was reset successfully!
-                        © Remote File Explorer - Yaniv Nash - 2021
+                        © Remote File Explorer - old - Yaniv Nash - 2021
                         """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer'
+                msg['From'] = 'Remote File Explorer - old'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
-                # Attach both plain and HTML versions
                 msg.attach(MIMEText(messagePlain, 'plain'))
                 msg.attach(MIMEText(messageHTML, 'html'))
 
@@ -414,7 +400,8 @@ class server(object):
             answr = cursor.fetchall()
             if answr:
                 update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ? AND password = ?"
-                cursor.execute(update_ip_dict, [({}), (email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
+                cursor.execute(update_ip_dict,
+                               [({}), (email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
                 answr = True
             else:
                 answr = False
@@ -424,7 +411,6 @@ class server(object):
 
         db.commit()
         conn.send(json.dumps(answr).encode(self.FORMAT))
-        # conn.send(str(answr).encode(FORMAT))
         if type(answr) == type(dict()):
             print(colored(f"{action} - True"))
         else:
@@ -432,10 +418,10 @@ class server(object):
         conn.close()
         print(colored(f"[DISCONNECTED] {addr[0]}", "red"))
 
-        # DELETE
-        cursor.execute("""SELECT * FROM users""")
-        print(cursor.fetchall())
-        # DELETE
+        # # PRINT THE DB
+        # cursor.execute("""SELECT * FROM users""")
+        # print(cursor.fetchall())
+        # # PRINT THE DB
 
 
 if __name__ == '__main__':
