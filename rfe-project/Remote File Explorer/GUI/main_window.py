@@ -111,7 +111,7 @@ def double_click(event):
     if cur_path.endswith('\\') or cur_path.endswith('/'):
         cur_path = cur_path[:-1]
     temp = cur_path + '\\' + item_name
-    print(temp)
+    print(temp)  # TEMP
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if item_type == 'dir':
         cur_path = temp

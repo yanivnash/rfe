@@ -22,7 +22,9 @@ SELF_NAME = os.getlogin()
 SELF_IP = socket.gethostbyname(socket.gethostname())
 
 app = wx.App(False)
-screen_width, screen_height = wx.GetDisplaySize()
+
+screen_width = main_window.screen_width
+screen_height = main_window.screen_height
 
 label_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
