@@ -1653,6 +1653,8 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         main_frame = Frame(root)
         main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
+        server_status(main_frame)
+
         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         show_icon = ImageTk.PhotoImage(
