@@ -3,9 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RFE-Server/RFE.db" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/RFE.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/GUI/LoginRegister.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/GUI/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/openfile.bat" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/GUI/openfile.bat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +43,7 @@
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Remote File Explorer - old/venv/pyvenv.cfg" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Remote File Explorer - backup" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -321,17 +321,54 @@
       <option name="project" value="LOCAL" />
       <updated>1619027513570</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="final-update">
+      <created>1619036662805</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1619036662805</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
+        <entry key="9216eaf9-fafa-4109-a6d9-1fb3da016e40">
+          <value>
+            <State>
+              <option name="SHOW_ONLY_AFFECTED_CHANGES" value="true" />
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                  <entry key="structure">
+                    <value>
+                      <list>
+                        <option value="dir:C:/git/rfe/rfe-project/Remote File Explorer/GUI/icons" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
         <entry key="MAIN">
           <value>
             <State />
           </value>
         </entry>
+      </map>
+    </option>
+    <option name="OPEN_GENERIC_TABS">
+      <map>
+        <entry key="9216eaf9-fafa-4109-a6d9-1fb3da016e40" value="TOOL_WINDOW" />
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />

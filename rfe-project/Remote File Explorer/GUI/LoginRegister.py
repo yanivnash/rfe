@@ -146,8 +146,8 @@ def login_to_ssh_client(ip_frame, ip_dict):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def ip_butn_click(event):
-        global ssh, sftp, check_var, username
-
+        global ssh, sftp, check_var, username, host
+        host = None
         key_list = list(ip_butns_dict.keys())
         val_list = list(ip_butns_dict.values())
         bttn_name = key_list[val_list.index(event.widget)]
@@ -1634,7 +1634,7 @@ def choose_mode_window(email):
         back_frame = Frame(root, bg=label_bg_color)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
-    return email, mode, ssh, sftp, username
+    return email, mode, ssh, sftp, username, host
 
 
 def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):

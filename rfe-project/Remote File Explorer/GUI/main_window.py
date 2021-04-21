@@ -111,36 +111,12 @@ def double_click(event):
     if cur_path.endswith('\\') or cur_path.endswith('/'):
         cur_path = cur_path[:-1]
     temp = cur_path + '\\' + item_name
-    print(temp)  # TEMP
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if item_type == 'dir':
         cur_path = temp
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         update_frame(items_list)
-    elif item_type == 'file':
-
-        # stdin, stdout, stderr = ssh.exec_command(
-        #     "powershell Start-Process python -ArgumentList \"C:\Users\yaniv\Desktop\RFE - TEst\New Microsoft Word Document.docx\",\"-param1\", \"param1\",\"-param2\",\"param2\" -Verb \"runAs\" -Wait")
-        # print(stdin, stdout, stderr)
-
-        open_file_path = ROOT_PROJ_DIR + r'\openfile.bat'
-        print([open_file_path])
-        sftp2 = ssh.open_sftp()
-        f = sftp2.open(open_file_path, 'w')
-        f.write(f'"{temp}"')
-        f.close()
-
-        # manageSSH.run_action(ssh, f'"{ROOT_PROJ_DIR}\openfile.bat"')#(ssh, f'"{temp}"')  # only png works
-        stdin, stdout, stderr = ssh.exec_command(f'"{ROOT_PROJ_DIR}\openfile.bat"')
-        print(f'stdin: {stdin}')
-        print(f'stdout: {stdout.read()}')
-        print(f'stderror: {stderr.read()}')
-        # 'open file here'
-        # pass
-
-    elif item_type == 'item not found':
-        print(f'{item_name} - not found')
 
 
 def download_file(event):
@@ -504,6 +480,12 @@ def create_frame(items_list):
     copy_btn.bind("<Button-1>", copy_path_button)
     copy_btn.grid(column=4, row=0, sticky=W)
 
+    ip_username_label = Label(wrapper1, text=f'Connected to:\n{host} - {username}', wraplength=450, bg='white')
+    ip_username_label.grid(column=5, row=0)
+
+    disconnect_btn = Button(wrapper1, text='Disconnect', bg=buttons_bg_color, command=acc_signout)
+    disconnect_btn.grid(column=6, row=0, sticky=W)
+
     up_btn = Button(wrapper1, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
 
@@ -591,9 +573,19 @@ def create_frame(items_list):
     for x in range(10):
         Grid.columnconfigure(wrapper1, x, weight=1)
 
+
+def acc_signout():
+    discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out',
+                                            message='Are you sure you want to disconnect and sign out of your account?')
+    if discon_msg_box == 'yes':
+        manageSSH.disconnect_ssh(ssh)
+        root.destroy()
+        main()
+
+
 def main():
     global cur_path, root, frame, ssh, sftp
-    global x, y, username, account, menubar, email
+    global x, y, username, host, account, menubar, email
 
     SELF_NAME = os.getlogin()
     SELF_IP = socket.gethostbyname(socket.gethostname())
@@ -637,7 +629,7 @@ def main():
     root.config(menu=menubar)
     root.resizable(False, False)
 
-    email, mode, ssh, sftp, username = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu, None)
+    email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu, None)
     if email != None and ssh != None and sftp != None:
         global cur_path
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -667,14 +659,6 @@ def main():
                     cur_path = new_path
                     items_list = sftp.listdir()
                     update_frame(items_list)
-
-        def acc_signout():
-            discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out',
-                                                    message='Are you sure you want to disconnect and sign out of your account?')
-            if discon_msg_box == 'yes':
-                manageSSH.disconnect_ssh(ssh)
-                root.destroy()
-                main()
 
         account.delete('Sign Out')
         account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2',
