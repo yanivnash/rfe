@@ -1,3 +1,5 @@
+__author__ = 'Yaniv Nash'
+
 """
 A server that can receive multiple requests from multiple clients at the same time - using threads
 """
