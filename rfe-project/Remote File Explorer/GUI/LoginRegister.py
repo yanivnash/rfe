@@ -17,7 +17,8 @@ import manageSERVER
 import manageSSH
 import main_window
 
-ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+# ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_PROJ_DIR = os.getcwd()
 SELF_NAME = os.getlogin()
 SELF_IP = socket.gethostbyname(socket.gethostname())
 

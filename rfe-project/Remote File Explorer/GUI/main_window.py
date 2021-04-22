@@ -36,7 +36,9 @@ app_height = int(screen_height / 1.542)
 bttns_dict = dict()
 icons_dict = dict()
 
-ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_PROJ_DIR = os.getcwd()
+print(ROOT_PROJ_DIR)
+# ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 is_searching = False
 cur_path = 'C:\\'
@@ -169,10 +171,10 @@ def rename_item(event):
     if item_type == 'file':
         dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
         items_list = dirs_list + files_list
-        for item in items_list:
-            if item in files_list:
-                end_index = item.rfind('.')
-                file_type = item[end_index:]
+        for _ in items_list:
+            if item_name in files_list:
+                end_index = item_name.rfind('.')
+                file_type = item_name[end_index:]
                 break
 
     new_name = simpledialog.askstring('Rename', f'Enter a new name for "{item_name}":')
