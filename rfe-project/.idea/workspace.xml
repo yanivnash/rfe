@@ -3,70 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/ScreenShare/c.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/ScreenShare/s.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.dir_folder.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.dir_folder.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.docx.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.docx.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.jpg.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.jpg.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.mp3.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.mp3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.mp4.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.mp4.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.none.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.none.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.pdf.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.pdf.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.png.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.png.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.pptx.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.pptx.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.txt.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.txt.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.xlsx.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.xlsx.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/.zip.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.zip.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/new_dir.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/new_dir.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/refresh.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/refresh.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/icons/up.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/up.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/pip/_internal/operations/install/wheel.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/pip/_internal/operations/install/wheel.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/dist.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/dist.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/msvccompiler.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/msvccompiler.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/Remote File Explorer.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/Remote File Explorer.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/animation.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/back.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/back.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/background.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/be-controlled-pic.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/be-controlled-pic.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/be_controlled.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/be_controlled.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/control-pic.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/control-pic.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/control.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/control.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/end-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/end-animation.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/entry.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/entry.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/hide.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/hide.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icon.ico" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.dir_folder.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.doc.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.doc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.docx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.jpg.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.mkv.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.mkv.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.mp3.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.mp4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.none.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.pdf.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.png.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.pptx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.py.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.py.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.py3.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.py3.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.pyc.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.pyc.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.txt.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.xlsx.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/.zip.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/new_dir.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/refresh.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/search.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/search.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/icons/up.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/install-modules.bat" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/install-modules.bat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/manageSERVER.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSERVER.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/manageSSH.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/mid-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/mid-animation.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/show.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/show.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/signout.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/signout.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/start-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/start-animation.mp4" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/v.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/v.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/GUI/x.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/x.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RFE-Server/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/Server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/be_controlled.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/control.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -374,7 +315,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619107949176</updated>
     </task>
-    <option name="localTasksCounter" value="33" />
+    <task id="LOCAL-00033" summary="final-update">
+      <created>1619120394385</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1619120394385</updated>
+    </task>
+    <option name="localTasksCounter" value="34" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

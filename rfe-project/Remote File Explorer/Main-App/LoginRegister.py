@@ -17,7 +17,6 @@ import manageSERVER
 import manageSSH
 import main_window
 
-# ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_PROJ_DIR = os.getcwd()
 SELF_NAME = os.getlogin()
 SELF_IP = socket.gethostbyname(socket.gethostname())
@@ -32,6 +31,10 @@ buttons_bg_color = '#d9dcc7'
 start_video_name = 'start-animation.mp4'
 mid_video_name = 'mid-animation.mp4'
 end_video_name = 'end-animation.mp4'
+
+
+def no_action(event):
+    pass
 
 
 def email_regex(email):
@@ -232,9 +235,6 @@ def login_to_ssh_client(ip_frame, ip_dict):
             main_title.configure(text='Choose a computer to connect to:')
             main_title.place(x=main_window.calc_width(120), y=main_window.calc_height(25))
 
-            def no_action(event):
-                pass
-
             root.bind('<Return>', no_action)
             enter_frame.destroy()
 
@@ -297,9 +297,6 @@ def login_to_ssh_client(ip_frame, ip_dict):
         local_ip_bttn.configure(relief=SUNKEN)
         account_ip_bttn.configure(relief=RAISED)
 
-        def no_action(event):
-            pass
-
         scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
         scrollable_frame = Frame(canvas, bg='white')
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
@@ -346,9 +343,6 @@ def login_to_ssh_client(ip_frame, ip_dict):
         scrollable_frame.destroy()
         local_ip_bttn.configure(relief=RAISED)
         account_ip_bttn.configure(relief=SUNKEN)
-
-        def no_action(event):
-            pass
 
         scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
         scrollable_frame = Frame(canvas, bg='white')

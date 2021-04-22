@@ -15,7 +15,6 @@ from email.mime.multipart import MIMEMultipart
 import json
 import datetime
 from termcolor import colored
-import os
 import requests
 
 
@@ -27,7 +26,6 @@ class server(object):
         self.LOCAL_IP = socket.gethostbyname(socket.gethostname())
         self.EXTERNAL_IP = requests.get('http://ip.42.pl/raw').text
         self.SERVER = '0.0.0.0'
-        self.ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
     def start_server(self):
@@ -43,7 +41,7 @@ class server(object):
 
 
     def manage_client_db(self, conn, addr):
-        global answr
+        global answer
         with sqlite3.connect('RFE.db') as db:
             cursor = db.cursor()
 
@@ -73,7 +71,7 @@ class server(object):
                             VALUES(?, ?, ?, ?)
                             """
                 cursor.execute(new_user, (email.lower().encode(self.FORMAT), password.encode(self.FORMAT), ip_dict, ''.encode(self.FORMAT)))
-                answr = True
+                answer = True
 
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
@@ -108,12 +106,12 @@ class server(object):
                 try:
                     server.sendmail(sender_email, send_to_email, text)
                 except smtplib.SMTPRecipientsRefused:
-                    answr = 'EMAIL NOT SENT'
+                    answer = 'EMAIL NOT SENT'
                 finally:
                     server.quit()
 
             except sqlite3.IntegrityError:
-                answr = False
+                answer = False
                 print('email already exists')
             finally:
                 db.commit()
@@ -122,11 +120,11 @@ class server(object):
             email = msg["email"]
             find_email = ("SELECT * FROM users WHERE email = ?")
             cursor.execute(find_email, [(email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
-                answr = True
+            answer = cursor.fetchall()
+            if answer:
+                answer = True
             else:
-                answr = False
+                answer = False
 
         elif action == "UPDATE_PC":
             email = msg["email"]
@@ -135,27 +133,27 @@ class server(object):
 
             find_user = ("SELECT ip_dict FROM users WHERE email = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
-                ip_dict = json.loads(answr[0][0])
+            answer = cursor.fetchall()
+            if answer:
+                ip_dict = json.loads(answer[0][0])
                 if not pc_ip in ip_dict.keys():
                     ip_dict[pc_ip] = pc_name
                     update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ?"
                     cursor.execute(update_ip_dict, [(ip_dict), (email.lower().encode(self.FORMAT))])
-                answr = ip_dict
+                answer = ip_dict
             else:
-                answr = False
+                answer = False
 
         elif action == "LOGIN":
             email = msg["email"]
             password = msg["password"]
             find_user = ("SELECT ip_dict FROM users WHERE email = ? AND password = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
-                answr = True
+            answer = cursor.fetchall()
+            if answer:
+                answer = True
             else:
-                answr = False
+                answer = False
 
         elif action == "CHANGE_PASSWORD":
             email = msg["email"]
@@ -165,10 +163,10 @@ class server(object):
             cursor.execute(update_password, [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
             find_user = "SELECT password FROM users WHERE email = ?"
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()[0][0].decode(self.FORMAT)
-            if answr:
-                if answr == new_password:
-                    answr = True
+            answer = cursor.fetchall()[0][0].decode(self.FORMAT)
+            if answer:
+                if answer == new_password:
+                    answer = True
 
                     sender_email = 'rfe.noreply@gmail.com'  # sending email
                     password = 'RFE123456789'  # sending email's password
@@ -204,35 +202,35 @@ class server(object):
                     try:
                         server.sendmail(sender_email, send_to_email, text)
                     except smtplib.SMTPRecipientsRefused:
-                        answr = 'EMAIL NOT SENT'
+                        answer = 'EMAIL NOT SENT'
                     finally:
                         server.quit()
 
                 else:
-                    answr = False
+                    answer = False
             else:
-                answr = False
+                answer = False
 
         elif action == "GET_IP_DICT":
             email = msg["email"]
 
             find_user = ("SELECT ip_dict FROM users WHERE email = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
-                ip_dict = json.loads(answr[0][0])
-                answr = ip_dict
+            answer = cursor.fetchall()
+            if answer:
+                ip_dict = json.loads(answer[0][0])
+                answer = ip_dict
             else:
-                answr = False
+                answer = False
 
         elif action == "DELETE_USER":
             email = msg["email"]
             password = msg["password"]
             find_user = ("SELECT ip_dict FROM users WHERE email = ? AND password = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
-                answr = True
+            answer = cursor.fetchall()
+            if answer:
+                answer = True
 
                 delete_user = ("DELETE FROM users WHERE email = ? AND password = ?")
                 cursor.execute(delete_user, [(email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
@@ -271,15 +269,15 @@ class server(object):
                 try:
                     server.sendmail(sender_email, send_to_email, text)
                 except smtplib.SMTPRecipientsRefused:
-                    answr = 'ERROR'
+                    answer = 'ERROR'
                 finally:
                     server.quit()
 
             else:
-                answr = False
+                answer = False
 
         elif action == "TEST_SERVER":
-            answr = "SERVER IS UP"
+            answer = "SERVER IS UP"
 
         elif action == "GENERATE_SEND_RESET_CODE":
             reset_code_length = 10
@@ -288,12 +286,12 @@ class server(object):
             letters_and_digits = string.ascii_letters + string.digits
             reset_code = ''.join((random.choice(letters_and_digits) for _ in range(reset_code_length)))
             cursor.execute(update_reset_code, [(reset_code.encode(self.FORMAT)), (email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()
+            answer = cursor.fetchall()
             find_code = "SELECT reset_code FROM users WHERE email = ?"
             cursor.execute(find_code, [(email.lower().encode(self.FORMAT))])
-            answr = cursor.fetchall()[0][0].decode(self.FORMAT)
-            if answr == reset_code:
-                answr = True
+            answer = cursor.fetchall()[0][0].decode(self.FORMAT)
+            if answer == reset_code:
+                answer = True
 
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
@@ -330,12 +328,12 @@ class server(object):
                 try:
                     server.sendmail(sender_email, send_to_email, text)
                 except smtplib.SMTPRecipientsRefused:
-                    answr = 'ERROR'
+                    answer = 'ERROR'
                 finally:
                     server.quit()
 
             else:
-                answr = False
+                answer = False
 
         elif action == "RESET_PASSWORD":
             email = msg["email"]
@@ -343,8 +341,8 @@ class server(object):
             new_password = msg["new_password"]
             find_user = ("SELECT reset_code FROM users WHERE email = ? AND reset_code = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT)), (reset_code.encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
+            answer = cursor.fetchall()
+            if answer:
                 update_password = "UPDATE users SET password = ? WHERE email = ? AND reset_code = ?"
                 cursor.execute(update_password,
                                [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)),
@@ -352,7 +350,7 @@ class server(object):
                 update_reset_code = "UPDATE users SET reset_code = ? WHERE email = ? AND password = ?"
                 cursor.execute(update_reset_code, [(''.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)),
                                                    (new_password.encode(self.FORMAT))])
-                answr = True
+                answer = True
 
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
@@ -388,42 +386,42 @@ class server(object):
                 try:
                     server.sendmail(sender_email, send_to_email, text)
                 except smtplib.SMTPRecipientsRefused:
-                    answr = 'ERROR'
+                    answer = 'ERROR'
                 finally:
                     server.quit()
             else:
-                answr = False
+                answer = False
 
         elif action == "RESET_IP_DICT":
             email = msg["email"]
             password = msg["password"]
             find_user = ("SELECT ip_dict FROM users WHERE email = ? AND password = ?")
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
-            answr = cursor.fetchall()
-            if answr:
+            answer = cursor.fetchall()
+            if answer:
                 update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ? AND password = ?"
                 cursor.execute(update_ip_dict,
                                [({}), (email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
-                answr = True
+                answer = True
             else:
-                answr = False
+                answer = False
 
         else:
-            answr = None
+            answer = None
 
         db.commit()
-        conn.send(json.dumps(answr).encode(self.FORMAT))
-        if type(answr) == type(dict()):
+        conn.send(json.dumps(answer).encode(self.FORMAT))
+        if type(answer) == type(dict()):
             print(colored(f"{action} - True"))
         else:
-            print(colored(f"{action} - {answr}"))
+            print(colored(f"{action} - {answer}"))
         conn.close()
         print(colored(f"[DISCONNECTED] {addr[0]}", "red"))
 
-        # # PRINT THE DB
-        # cursor.execute("""SELECT * FROM users""")
-        # print(cursor.fetchall())
-        # # PRINT THE DB
+        # PRINT THE DB
+        cursor.execute("""SELECT * FROM users""")
+        print(cursor.fetchall())
+        # PRINT THE DB
 
 
 if __name__ == '__main__':

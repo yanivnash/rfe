@@ -151,7 +151,6 @@ def right_click(event):
         right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
         right_click_dir_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
-        # right_click_file_menu.add_command(label='Open File', command=lambda: double_click(event))
         right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
         right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
         right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
