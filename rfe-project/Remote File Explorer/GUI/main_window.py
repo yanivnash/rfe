@@ -37,8 +37,6 @@ bttns_dict = dict()
 icons_dict = dict()
 
 ROOT_PROJ_DIR = os.getcwd()
-print(ROOT_PROJ_DIR)
-# ROOT_PROJ_DIR = os.path.dirname(os.path.abspath(__file__))
 
 is_searching = False
 cur_path = 'C:\\'

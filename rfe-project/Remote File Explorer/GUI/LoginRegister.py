@@ -1243,8 +1243,10 @@ def stream(vid_label, vid_frame, video_name):
 
 
 def server_status(main_frame):
+    global email
     status = manageSERVER.get_server_status()
     if status != 'SERVER IS UP':
+        email = False
         error_frame = Frame(main_frame, bg='white')
         error_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133),
                           width=main_window.calc_width(610), height=main_window.calc_height(392))
@@ -1260,8 +1262,9 @@ def server_status(main_frame):
 
 
 def choose_mode_window(email):
-    global ssh, sftp, username, answr
+    global ssh, sftp, username, answr, host
     answr = None
+    host = None
 
     def create_popup_window(mode, title, label_text, msg_box_text, approve_text):
         global answr
@@ -1655,7 +1658,8 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
         server_status(main_frame)
-
+        if email == False:
+            return None, None, None, None, None, None
         bg = ImageTk.PhotoImage(Image.open('background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         show_icon = ImageTk.PhotoImage(

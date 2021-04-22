@@ -78,23 +78,23 @@ class server(object):
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
                 send_to_email = email  # receiving email
-                subject = 'Welcome to Remote File Explorer - old'
+                subject = 'Welcome to Remote File Explorer'
                 messageHTML = f"""
                             <body style="text-align:center; background-color:#e9eed6;">
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your account was successfully created!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                             </body>
                             """
                 messagePlain = f"""
                             Hey, {email}
                             Your account was successfully created!
-                            © Remote File Explorer - old - Yaniv Nash - 2021
+                            © Remote File Explorer 2021 - Yaniv Nash
                             """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer - old'
+                msg['From'] = 'Remote File Explorer'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
@@ -179,18 +179,18 @@ class server(object):
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your password was changed successfully!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                             </body>
                             """
 
                     messagePlain = f"""
                             Hey, {email}
                             Your password was changed successfully!
-                            © Remote File Explorer - old - Yaniv Nash - 2021
+                            © Remote File Explorer 2021 - Yaniv Nash
                             """
 
                     msg = MIMEMultipart('alternative')
-                    msg['From'] = 'Remote File Explorer - old'
+                    msg['From'] = 'Remote File Explorer'
                     msg['To'] = send_to_email
                     msg['Subject'] = subject
 
@@ -240,24 +240,24 @@ class server(object):
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
                 password = 'RFE123456789'  # sending email's password
                 send_to_email = email  # receiving email
-                subject = 'Remote File Explorer - old'
+                subject = 'Remote File Explorer'
                 messageHTML = f"""
                             <body style="text-align:center; background-color:#e9eed6;">
                             <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                             <h1>Your account was successfully deleted!</h1>
                             <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                            <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
+                            <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                             </body>
                             """
 
                 messagePlain = f"""
                             Hey, {email}
                             Your account was successfully deleted!
-                            © Remote File Explorer - old - Yaniv Nash - 2021
+                            © Remote File Explorer 2021 - Yaniv Nash
                             """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer - old'
+                msg['From'] = 'Remote File Explorer'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
@@ -303,20 +303,20 @@ class server(object):
                 <body style="text-align:center; background-color:#e9eed6;">
                 <h1>Your password reset code is:</h1>
                 <h1><span style="color: #496dd0">{reset_code}</span></h1>
-                <h1>Go back to the "Remote File Explorer - old" app and use that code to reset your password and log back in to your account</h1>
+                <h1>Go back to the "Remote File Explorer" app and use that code to reset your password and log back in to your account</h1>
                 <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
+                <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                 </body>
                 """
                 messagePlain = f"""
                 Your password reset code is:
                 {reset_code}
-                Go back to the "Remote File Explorer - old" app and use that code to reset your password and log back in to your account
-                © Remote File Explorer - old - Yaniv Nash - 2021
+                Go back to the "Remote File Explorer" app and use that code to reset your password and log back in to your account
+                © Remote File Explorer 2021 - Yaniv Nash
                 """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer - old'
+                msg['From'] = 'Remote File Explorer'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
@@ -363,18 +363,18 @@ class server(object):
                         <h1><span style="color: #496dd0">Hey, {email}</span></h1>
                         <h1>Your password was reset successfully!</h1>
                         <img src="https://i.ibb.co/Wy56qnN/email-logo.png" alt="LOGO">
-                        <h3>© Remote File Explorer - old 2021 - Yaniv Nash</h3>
+                        <h3>© Remote File Explorer 2021 - Yaniv Nash</h3>
                         </body>
                         """
 
                 messagePlain = f"""
                         Hey, {email}
                         Your password was reset successfully!
-                        © Remote File Explorer - old - Yaniv Nash - 2021
+                        © Remote File Explorer 2021 - Yaniv Nash
                         """
 
                 msg = MIMEMultipart('alternative')
-                msg['From'] = 'Remote File Explorer - old'
+                msg['From'] = 'Remote File Explorer'
                 msg['To'] = send_to_email
                 msg['Subject'] = subject
 
