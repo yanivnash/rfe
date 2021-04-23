@@ -5,6 +5,7 @@ import LoginRegister
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox, filedialog
+import sys
 import socket
 import os
 from PIL import ImageTk, Image
@@ -12,6 +13,16 @@ from tkinter import simpledialog  # opens the popup for the new folder name inpu
 import pyperclip  # copy to clipboard module
 import re
 import wx  # get screen resolution
+
+SELF_OS_PLATFORM = sys.platform
+if SELF_OS_PLATFORM == 'win32' or SELF_OS_PLATFORM == 'cygwin':
+    SELF_OS_PLATFORM = 'Windows'
+elif SELF_OS_PLATFORM.startswith('linux'):
+    SELF_OS_PLATFORM = 'linux'
+elif SELF_OS_PLATFORM.startswith('darwin'):
+    SELF_OS_PLATFORM = 'macos'
+
+OTHER_OS_PLATFORM = None
 
 frame_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
@@ -39,7 +50,9 @@ icons_dict = dict()
 ROOT_PROJ_DIR = os.getcwd()
 
 is_searching = False
-cur_path = 'C:\\'
+# cur_path = 'C:\\'
+# cur_path = os.getcwd()
+cur_path = ''
 
 
 def calc_width(size):
@@ -108,15 +121,26 @@ def double_click(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
-    if cur_path.endswith('\\') or cur_path.endswith('/'):
-        cur_path = cur_path[:-1]
-    temp = cur_path + '\\' + item_name
-    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-    if item_type == 'dir':
-        cur_path = temp
-        manageSSH.chdir(sftp, cur_path)
-        items_list = sftp.listdir()
-        update_frame(items_list)
+    if OTHER_OS_PLATFORM == 'windows':
+        if cur_path.endswith('\\') or cur_path.endswith('/'):
+            cur_path = cur_path[:-1]
+        temp = cur_path + '\\' + item_name
+        item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+        if item_type == 'dir':
+            cur_path = temp
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
+    else:
+        if cur_path.endswith('\\') or cur_path.endswith('/'):
+            cur_path = cur_path[:-1]
+        temp = cur_path + '/' + item_name
+        item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+        if item_type == 'dir':
+            cur_path = temp
+            manageSSH.chdir(sftp, cur_path)
+            items_list = sftp.listdir()
+            update_frame(items_list)
 
 
 def download_file(event):
@@ -163,7 +187,10 @@ def rename_item(event):
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-    old_path = cur_path + '\\' + item_name
+    if OTHER_OS_PLATFORM == 'windows':
+        old_path = cur_path + '\\' + item_name
+    else:
+        old_path = cur_path + '/' + item_name
     file_type = ''
     if item_type == 'file':
         dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
@@ -180,7 +207,10 @@ def rename_item(event):
         new_name = check_new_name(new_name, 'Rename', item_type)
 
         if new_name != False:
-            new_path = cur_path + '\\' + new_name
+            if OTHER_OS_PLATFORM == 'windows':
+                new_path = cur_path + '\\' + new_name
+            else:
+                new_path = cur_path + '/' + new_name
             sftp2 = ssh.open_sftp()
             sftp2.rename(old_path, new_path)
             refresh_button()
@@ -192,7 +222,10 @@ def remove_item(event):
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-    item_path = cur_path + '\\' + item_name
+    if OTHER_OS_PLATFORM == 'windows':
+        item_path = cur_path + '\\' + item_name
+    else:
+        item_path = cur_path + '/' + item_name
     if item_type == 'dir':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
@@ -331,18 +364,22 @@ def create_search_bttn(frame, items_list):
 
     dirs_list = list()
     files_list = list()
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     for item in items_list:
-        end_index = item.rfind('\\')
+        end_index = item.rfind(dir_sign)
         item_name = item[end_index + 1:]
         item_path = item[:end_index]
         sftp2 = ssh.open_sftp()
         item_type = manageSSH.check_if_item_is_dir(sftp2, item_path, item_name)
         if item_type == 'dir':
-            dirs_list.append(item_path + '\\' + item_name)
+            dirs_list.append(item_path + dir_sign + item_name)
         elif item_type == 'file':
-            files_list.append(item_path + '\\' + item_name)
+            files_list.append(item_path + dir_sign + item_name)
     for item in items_list:
-        end_index = item.rfind('\\')
+        end_index = item.rfind(dir_sign)
         item_name = item[end_index + 1:]
         btn_text = item_name
         if item in dirs_list:
@@ -378,14 +415,18 @@ def create_search_bttn(frame, items_list):
 
 def double_click_search(event):
     global items_list, cur_path, frame, bttns_dict, is_searching
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     full_path = key_list[val_list.index(event.widget)]
     full_path = full_path[0:full_path.find('_btn_')]
-    end_index = full_path.rfind('\\')
+    end_index = full_path.rfind(dir_sign)
     item_name = full_path[end_index + 1:]
-    item_path = full_path[:full_path.rfind('\\')]
-    temp = item_path + '\\' + item_name
+    item_path = full_path[:full_path.rfind(dir_sign)]
+    temp = item_path + dir_sign + item_name
     item_type = manageSSH.check_if_item_is_dir(sftp, item_path, item_name)
     if item_type == 'dir':
         is_searching = False
@@ -488,24 +529,25 @@ def create_frame(items_list):
     up_btn = Button(wrapper1, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
 
-    answr = str(manageSSH.run_action(ssh, 'wmic logicaldisk get caption').read())
-    drives_list = answr[answr.find('Caption') + 9:answr.rfind(r'       \r\r\n\r\r\n')].split(r'       \r\r\n')
-    drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
-    for i in range(len(drives_list)):
-        drives_list[i] += '\\'
-    drives_combobox = ttk.Combobox(wrapper1, values=drives_list, state='readonly')
-    default_value = cur_path[0:3]
-    try:
+    if OTHER_OS_PLATFORM == 'windows':
+        answr = str(manageSSH.run_action(ssh, 'wmic logicaldisk get caption').read())
+        drives_list = answr[answr.find('Caption') + 9:answr.rfind(r'       \r\r\n\r\r\n')].split(r'       \r\r\n')
+        drives_list[0] = drives_list[0].replace(r'\r\r\n', '')
+        for i in range(len(drives_list)):
+            drives_list[i] += '\\'
+        drives_combobox = ttk.Combobox(wrapper1, values=drives_list, state='readonly')
+        default_value = cur_path[0:3]
+        try:
+            drives_combobox.current(drives_list.index(default_value))
+        except ValueError:
+            default_value = cur_path[0:2] + '\\'
+            drives_combobox.current(drives_list.index(default_value))
         drives_combobox.current(drives_list.index(default_value))
-    except ValueError:
-        default_value = cur_path[0:2] + '\\'
-        drives_combobox.current(drives_list.index(default_value))
-    drives_combobox.current(drives_list.index(default_value))
-    drives_combobox.bind("<<ComboboxSelected>>", drives_box_change)
-    drives_combobox.grid(column=2, row=1)
+        drives_combobox.bind("<<ComboboxSelected>>", drives_box_change)
+        drives_combobox.grid(column=2, row=1)
 
-    drive_label = Label(wrapper1, text='Drive Select:', bg='white')
-    drive_label.grid(column=2, row=0)
+        drive_label = Label(wrapper1, text='Drive Select:', bg='white')
+        drive_label.grid(column=2, row=0)
 
     ref_btn = Button(wrapper1, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
 
@@ -518,7 +560,7 @@ def create_frame(items_list):
         search_key = search_bar_entry.get()
         if search_key != '':
             sftp2 = ssh.open_sftp()
-            items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key)
+            items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
             root.config(cursor='arrow')
             if items_list == []:
                 messagebox.showinfo(title='Not Found',
@@ -630,11 +672,20 @@ def main():
 
     email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu, None)
     if email != None and ssh != None and sftp != None:
-        global cur_path
+        global cur_path, OTHER_OS_PLATFORM
         root.protocol("WM_DELETE_WINDOW", close_window)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
         root.title('Remote File Explorer')
-        cur_path = rf'{system_drive}\Users\{username}\Desktop'
+        if manageSSH.run_action(ssh, 'systeminfo').read().decode().__contains__('OS Name:                   Microsoft Windows 10 Home'):
+            OTHER_OS_PLATFORM = 'windows'
+            cur_path = rf'{system_drive}\Users\{username}\Desktop'
+        elif manageSSH.run_action(ssh, 'uname').read().decode() == 'Linux\n':
+            OTHER_OS_PLATFORM = 'linux'
+            cur_path = manageSSH.run_action(ssh, 'pwd').read().decode().replace('\n', '')
+        elif manageSSH.run_action(ssh, 'uname').read().decode() == 'Darwin\n':
+            OTHER_OS_PLATFORM = 'macos'
+            cur_path = manageSSH.run_action(ssh, 'pwd').read().decode().replace('\n', '')
+        print(f'OTHER_OS_PLATFORM = {OTHER_OS_PLATFORM}\ncur_path = {cur_path}')  # TEMP
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         icons_dict = get_icons_dict()

@@ -2,13 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.exe" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/Remote File Explorer.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/Remote File Explorer.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE - Setup.exe" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE - Setup.zip" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.zip" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.zip" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -330,7 +329,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619129476046</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="final-update">
+      <created>1619187020927</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1619187020927</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -381,5 +387,12 @@
     <MESSAGE value="update" />
     <MESSAGE value="final-update" />
     <option name="LAST_COMMIT_MESSAGE" value="final-update" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="cur_path" language="Python" />
+      </configuration>
+    </watches-manager>
   </component>
 </project>
