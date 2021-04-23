@@ -320,7 +320,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
             if (num_of_temp_items - len(local_ip_list)) > 0:
                 for _ in range(num_of_temp_items - len(local_ip_list)):
-                    Button(scrollable_frame, bg='blue', bd=0, font=('Eras Bold ITC', main_window.calc_width(12)),
+                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window.calc_width(12)),
                            state='disable').pack(anchor=CENTER, pady=4)
 
         if len(local_ip_list) > 8:
