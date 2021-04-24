@@ -72,15 +72,15 @@ def get_dirs_files_lists(sftp, path):
     return dirs_list, files_list
 
 
-def tree_items(sftp, remotedir, tree_list, search_key, PLAT):
+def tree_items(sftp, remotedir, tree_list, search_key, plat):
     for item in sftp.listdir_attr(remotedir):
-        if PLAT == 'windows':
+        if plat == 'windows':
             remotepath = remotedir + '\\' + item.filename
         else:
             remotepath = remotedir + '/' + item.filename
         mode = item.st_mode
         if stat.S_ISDIR(mode):
-            tree_items(sftp, remotepath, tree_list, search_key, PLAT)
+            tree_items(sftp, remotepath, tree_list, search_key, plat)
             if item.filename.lower().__contains__(search_key.lower()):
                 tree_list.append(remotepath)
         elif stat.S_ISREG(mode):

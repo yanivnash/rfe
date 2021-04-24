@@ -82,65 +82,61 @@ def create_bttn(frame):
     rw = 2
     dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
     items_list = dirs_list + files_list
-    for item in items_list:
-        btn_text = item
-        if item in dirs_list:
-            # if 'item' is a dir
-            file_type = '.dir_folder'
-            if len(item) > 30:
-                btn_text = item[0:30] + '...'
-        elif item in files_list:
-            # if 'item' is a file
-            end_index = item.rfind('.')
-            file_type = item[end_index:].lower()
+    if len(items_list) == 0:
+        Label(frame, text='This folder is empty', width=calc_width(150), bg='white').pack()
+    else:
+        for item in items_list:
+            btn_text = item
+            if item in dirs_list:
+                # if 'item' is a dir
+                file_type = '.dir_folder'
+                if len(item) > 30:
+                    btn_text = item[0:30] + '...'
+            elif item in files_list:
+                # if 'item' is a file
+                end_index = item.rfind('.')
+                file_type = item[end_index:].lower()
 
-            if len(item) > 30:
-                btn_text = item[0:30] + '...' + file_type
-        else:
-            file_type = '.none'
-        try:
-            icon = icons_dict[file_type + '.png']
-        except KeyError:
-            icon = icons_dict['.none.png']
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
-                                                                    compound=TOP, justify=CENTER, image=icon,
-                                                                    height=120, width=120)
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
-                                                                pady=9)
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
-        clm += 1
-        if clm == 7:
-            clm = 0
-            rw += 1
+                if len(item) > 30:
+                    btn_text = item[0:30] + '...' + file_type
+            else:
+                file_type = '.none'
+            try:
+                icon = icons_dict[file_type + '.png']
+            except KeyError:
+                icon = icons_dict['.none.png']
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
+                                                                        compound=TOP, justify=CENTER, image=icon,
+                                                                        height=120, width=120)
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
+                                                                    pady=9)
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
+            clm += 1
+            if clm == 7:
+                clm = 0
+                rw += 1
 
 
 def double_click(event):
     global items_list, cur_path, frame, bttns_dict
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
-    if OTHER_OS_PLATFORM == 'windows':
-        if cur_path.endswith('\\') or cur_path.endswith('/'):
-            cur_path = cur_path[:-1]
-        temp = cur_path + '\\' + item_name
-        item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-        if item_type == 'dir':
-            cur_path = temp
-            manageSSH.chdir(sftp, cur_path)
-            items_list = sftp.listdir()
-            update_frame(items_list)
-    else:
-        if cur_path.endswith('\\') or cur_path.endswith('/'):
-            cur_path = cur_path[:-1]
-        temp = cur_path + '/' + item_name
-        item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-        if item_type == 'dir':
-            cur_path = temp
-            manageSSH.chdir(sftp, cur_path)
-            items_list = sftp.listdir()
-            update_frame(items_list)
+    if cur_path.endswith('\\') or cur_path.endswith('/'):
+        cur_path = cur_path[:-1]
+    temp = cur_path + dir_sign + item_name
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+    if item_type == 'dir':
+        cur_path = temp
+        manageSSH.chdir(sftp, cur_path)
+        items_list = sftp.listdir()
+        update_frame(items_list)
 
 
 def download_file(event):
@@ -151,9 +147,13 @@ def download_file(event):
     file_type = file[file.rfind('.'):]
     file_name = file[:file.rfind('.')]
     local_path = filedialog.asksaveasfilename(defaultextension=file_type, title='Choose where to save the file',
-                                              initialfile=file_name, filetypes=((file_type, file_type),))
+                                              initialfile=file, filetypes=((file_type, file_type),))
     if local_path:
-        remote_path = cur_path + '\\' + file
+        if OTHER_OS_PLATFORM == 'windows':
+            remote_path = cur_path + '\\' + file
+        else:
+            remote_path = cur_path + '/' + file
+
         sftp2 = ssh.open_sftp()
         sftp2.get(remote_path, local_path)
         refresh_button()
@@ -182,35 +182,31 @@ def right_click(event):
 
 
 def rename_item(event):
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
-    item_name = key_list[val_list.index(event.widget)]
-    item_name = item_name[0:item_name.find('_btn_')]
-    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-    if OTHER_OS_PLATFORM == 'windows':
-        old_path = cur_path + '\\' + item_name
-    else:
-        old_path = cur_path + '/' + item_name
-    file_type = ''
-    if item_type == 'file':
-        dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
-        items_list = dirs_list + files_list
-        for _ in items_list:
-            if item_name in files_list:
-                end_index = item_name.rfind('.')
-                file_type = item_name[end_index:]
-                break
-
-    new_name = simpledialog.askstring('Rename', f'Enter a new name for "{item_name}":')
-    if new_name != None and new_name != '':
-        new_name += file_type
-        new_name = check_new_name(new_name, 'Rename', item_type)
+    old_name = key_list[val_list.index(event.widget)]
+    old_name = old_name[0:old_name.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, old_name)
+    old_path = cur_path + dir_sign + old_name
+    new_name = simpledialog.askstring(title='Rename', prompt=f'Enter a new name for "{old_name}":', initialvalue=old_name, parent=root)
+    if new_name != None and new_name != '' and new_name != old_name:
+        new_name = check_new_name(new_name, 'Rename', item_type, old_name, old_name)
 
         if new_name != False:
-            if OTHER_OS_PLATFORM == 'windows':
-                new_path = cur_path + '\\' + new_name
-            else:
-                new_path = cur_path + '/' + new_name
+            if item_type == 'file':
+                file_type = old_name[old_name.rfind('.'):]
+                if file_type != new_name[new_name.rfind('.'):]:
+                    change_type = messagebox.askquestion(title='Change file extension',
+                                                         message='If you change the file extension the file might be unusable.\nAre you sure you want to continue?',
+                                                         icon='warning')
+                    if change_type == 'no':
+                        return
+
+            new_path = cur_path + dir_sign + new_name
             sftp2 = ssh.open_sftp()
             sftp2.rename(old_path, new_path)
             refresh_button()
@@ -231,8 +227,15 @@ def remove_item(event):
                                              message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
         if dlt_msg_box == 'yes':
             sftp2 = ssh.open_sftp()
-            sftp2.rmdir(item_path)
-            refresh_button()
+            if OTHER_OS_PLATFORM == 'windows':
+                sftp2.rmdir(item_path)
+                refresh_button()
+            else:
+                try:
+                    sftp2.rmdir(item_path)
+                    refresh_button()
+                except:
+                    messagebox.showerror(title="Can't delete this folder", message="This folder isn't empty")
     elif item_type == 'file':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
@@ -250,9 +253,14 @@ def up_button():
     global cur_path, is_searching
     is_searching = False
     manageSSH.chdir(sftp, '..')
-    cur_path = sftp.getcwd()[1:].replace('/', '\\')
-    while cur_path.endswith('\\'):
-        cur_path = cur_path[:len(cur_path) - 1]
+    if OTHER_OS_PLATFORM == 'windows':
+        cur_path = sftp.getcwd()[1:].replace('/', '\\')
+        while cur_path.endswith('\\'):
+            cur_path = cur_path[:len(cur_path) - 1]
+    else:
+        cur_path = '/' + sftp.getcwd()[1:]
+        while cur_path.endswith('/'):
+            cur_path = cur_path[:len(cur_path) - 1]
     items_list = sftp.listdir()
     update_frame(items_list)
 
@@ -288,7 +296,7 @@ def copy_path_button(event):
     event.widget.after(3000, lambda: event.widget.configure(text='Copy Path'))
 
 
-def check_new_name(new_name, input_title, type):
+def check_new_name(new_name, input_title, type, old_name, initialv):
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
     lower_items_list = list()
@@ -303,17 +311,21 @@ def check_new_name(new_name, input_title, type):
         lowered_invalid_names_list.append(invalid_name.lower())
     if type == 'dir':
         while True:
-            if new_name == None or new_name == '':
+            if new_name == None or new_name == '' or new_name == old_name:
                 return False
 
             elif new_name.lower() in lower_items_list:
-                new_name = simpledialog.askstring(input_title, 'This name is already taken, Try again:')
+                new_name = simpledialog.askstring(title=input_title, prompt='This name is already taken, Try again:',
+                                                  initialvalue=initialv, parent=root)
 
             elif new_name.lower() in lowered_invalid_names_list or new_name.__contains__('..'):
-                new_name = simpledialog.askstring(input_title, 'This name is invalid, Try again:')
+                new_name = simpledialog.askstring(title=input_title, prompt='This name is invalid, Try again:',
+                                                  initialvalue=initialv, parent=root)
 
             elif not re.match(r"^[^\\/:*?\"<>|]+$", new_name):
-                new_name = simpledialog.askstring(input_title, """The name can't contain: \/:*?"<>| Try again:""")
+                new_name = simpledialog.askstring(title=input_title,
+                                                  prompt="""The name can't contain: \/:*?"<>| Try again:""",
+                                                  initialvalue=initialv, parent=root)
 
             elif new_name.endswith('.') or new_name.endswith(' '):
                 new_name = new_name[:-1]
@@ -322,24 +334,28 @@ def check_new_name(new_name, input_title, type):
 
     elif type == 'file':
         while True:
-            if new_name == None or new_name == '':
+            if new_name == None or new_name == '' or new_name == old_name:
                 return False
 
             elif new_name.lower() in lower_items_list:
-                new_name = simpledialog.askstring(input_title, 'This name is already taken, Try again:')
+                new_name = simpledialog.askstring(title=input_title, prompt='This name is already taken, Try again:',
+                                                  initialvalue=initialv, parent=root)
 
             elif new_name in invalid_names_list:
-                new_name = simpledialog.askstring(input_title, 'This name is invalid, Try again:')
+                new_name = simpledialog.askstring(title=input_title, prompt='This name is invalid, Try again:',
+                                                  initialvalue=initialv, parent=root)
 
             elif not re.match(r"^[^\\/:*?\"<>|]+$", new_name):
-                new_name = simpledialog.askstring(input_title, """The name can't contain: \/:*?"<>| Try again:""")
+                new_name = simpledialog.askstring(title=input_title,
+                                                  prompt="""The name can't contain: \/:*?"<>| Try again:""",
+                                                  initialvalue=initialv, parent=root)
             else:
                 return new_name
 
 
 def new_dir_button():
-    new_folder_name = simpledialog.askstring('New folder', 'Enter a name for the folder:')
-    new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir')
+    new_folder_name = simpledialog.askstring(title='New folder', prompt='Enter a name for the folder:', initialvalue='New folder', parent=root)
+    new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir', '', 'New folder')
     if new_folder_name != False:
         sftp.mkdir(new_folder_name)
         items_list = sftp.listdir()
@@ -448,11 +464,15 @@ def double_click_search(event):
 
 
 def right_click_search(event):
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_path = key_list[val_list.index(event.widget)]
     item_path = item_path[:item_path.find('_btn_')]
-    item_name = item_path[item_path.rfind('\\') + 1:]
+    item_name = item_path[item_path.rfind(dir_sign) + 1:]
     item_type = manageSSH.check_if_item_is_dir(sftp, item_path[:item_path.index(item_name)], item_name)
 
     right_click_dir_search_menu = Menu(root, tearoff=False)
@@ -463,7 +483,7 @@ def right_click_search(event):
         right_click_dir_search_menu.add_command(label='Copy Folder Path', command=lambda: pyperclip.copy(item_path))
         right_click_dir_search_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
-        end_index = item_path.rfind('\\')
+        end_index = item_path.rfind(dir_sign)
         item_location_path = item_path[:end_index]
         right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click_search(event))
         right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
@@ -561,7 +581,6 @@ def create_frame(items_list):
         if search_key != '':
             sftp2 = ssh.open_sftp()
             items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
-            root.config(cursor='arrow')
             if items_list == []:
                 messagebox.showinfo(title='Not Found',
                                     message="Couldn't find any files or folders with this Search Key in the current path!")
@@ -572,6 +591,7 @@ def create_frame(items_list):
                 create_frame(items_list)
                 cur_path_label.configure(text=f'Searching for "{search_key}" in "{cur_path}"')
                 create_search_bttn(frame, items_list)
+        root.config(cursor='arrow')
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
@@ -676,7 +696,7 @@ def main():
         root.protocol("WM_DELETE_WINDOW", close_window)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
         root.title('Remote File Explorer')
-        if manageSSH.run_action(ssh, 'systeminfo').read().decode().__contains__('OS Name:                   Microsoft Windows 10 Home'):
+        if manageSSH.run_action(ssh, 'systeminfo').read().decode().__contains__('Microsoft Windows'):  # check when not windows 10
             OTHER_OS_PLATFORM = 'windows'
             cur_path = rf'{system_drive}\Users\{username}\Desktop'
         elif manageSSH.run_action(ssh, 'uname').read().decode() == 'Linux\n':
@@ -695,11 +715,11 @@ def main():
         def go_to_path():
             global cur_path
             new_path = simpledialog.askstring('Enter a path', 'Enter a valid path to go to:')
-            if new_path == '' or new_path == None:
-                pass
-            else:
+            if new_path != '' and new_path != None:
                 while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
                     new_path = new_path[1:]
+                if OTHER_OS_PLATFORM != 'windows':
+                    new_path = '/' + new_path
                 new_path = new_path[0].upper() + new_path[1:]
                 answr = manageSSH.chdir(sftp, new_path)
                 if answr == 'path not found':
@@ -766,15 +786,16 @@ def main():
 
         go_to = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Go to...', menu=go_to)
-        go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2',
-                          activeforeground='black')
-        go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2',
-                          activeforeground='black')
-        go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2',
-                          activeforeground='black')
-        go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2',
-                          activeforeground='black')
-        go_to.add_separator()
+        if OTHER_OS_PLATFORM == 'windows':
+            go_to.add_command(label='Desktop', command=go_to_desktop, activebackground='steelblue2',
+                              activeforeground='black')
+            go_to.add_command(label='Documents', command=go_to_documents, activebackground='steelblue2',
+                              activeforeground='black')
+            go_to.add_command(label='Downloads', command=go_to_downloads, activebackground='steelblue2',
+                              activeforeground='black')
+            go_to.add_command(label='Pictures', command=go_to_pictures, activebackground='steelblue2',
+                              activeforeground='black')
+            go_to.add_separator()
         go_to.add_command(label='Enter a path', command=go_to_path, activebackground='steelblue2',
                           activeforeground='black')
 

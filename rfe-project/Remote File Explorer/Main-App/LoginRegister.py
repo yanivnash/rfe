@@ -157,7 +157,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         bttn_name = key_list[val_list.index(event.widget)]
         if bttn_name.__contains__('bttn'):
             host = bttn_name[:bttn_name.rfind('-bttn')]
-            username = simpledialog.askstring('Enter Username', f'Enter the Username of {host}:')
+            username = simpledialog.askstring('Enter Username', f'Enter the Username of {host}:', parent=root)
             if username != None:
                 check_var = IntVar(value=1)
                 try_connect(host, username)
@@ -171,7 +171,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         global ssh, sftp
         ssh = None
         sftp = None
-        password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•')
+        password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•', parent=root)
         if password != None:
             ssh = manageSSH.connect_to_ssh(host, username, password)
             if ssh == "wrong password/username":
@@ -356,7 +356,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
                   bg=buttons_bg_color).place(x=main_window.calc_width(155), y=main_window.calc_height(170))
         else:
             Label(scrollable_frame, wraplength=550,
-                  text="*These IP addresses are only available if you're connected to the same local network as they are",
+                  text="*The Local IP addresses are only available if you're connected to the same local network as they are",
                   font=('Eras Bold ITC', main_window.calc_width(10)), bg='white').pack()
             for key, value in ip_dict.items():
                 ip_butns_dict[f'{key}-{value}'] = Button(scrollable_frame, bd=0, text=f'{value} - {key}',
