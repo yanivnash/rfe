@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -364,7 +361,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619221991947</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="final-update">
+      <created>1619307750044</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1619307750044</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

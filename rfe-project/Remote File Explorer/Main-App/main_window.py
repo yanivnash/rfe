@@ -696,7 +696,7 @@ def main():
         root.protocol("WM_DELETE_WINDOW", close_window)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
         root.title('Remote File Explorer')
-        if manageSSH.run_action(ssh, 'systeminfo').read().decode().__contains__('Microsoft Windows'):  # check when not windows 10
+        if manageSSH.run_action(ssh, 'systeminfo').read().decode().__contains__('Microsoft Windows'):
             OTHER_OS_PLATFORM = 'windows'
             cur_path = rf'{system_drive}\Users\{username}\Desktop'
         elif manageSSH.run_action(ssh, 'uname').read().decode() == 'Linux\n':
