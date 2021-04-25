@@ -80,6 +80,7 @@ def create_bttn(frame):
     global icons_dict, bttns_dict, sftp, right_click_file_menu, right_click_dir_menu
     clm = 0
     rw = 2
+    sftp = ssh.open_sftp()
     dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
     items_list = dirs_list + files_list
     if len(items_list) == 0:
@@ -128,6 +129,7 @@ def double_click(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
+    sftp = ssh.open_sftp()
     if cur_path.endswith('\\') or cur_path.endswith('/'):
         cur_path = cur_path[:-1]
     temp = cur_path + dir_sign + item_name
@@ -137,6 +139,7 @@ def double_click(event):
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         update_frame(items_list)
+    sftp.close()
 
 
 def download_file(event):
@@ -145,7 +148,7 @@ def download_file(event):
     item_name = key_list[val_list.index(event.widget)]
     file = item_name[:item_name.find('_btn_')]
     file_type = file[file.rfind('.'):]
-    file_name = file[:file.rfind('.')]
+    # file_name = file[:file.rfind('.')]
     local_path = filedialog.asksaveasfilename(defaultextension=file_type, title='Choose where to save the file',
                                               initialfile=file, filetypes=((file_type, file_type),))
     if local_path:
@@ -154,9 +157,10 @@ def download_file(event):
         else:
             remote_path = cur_path + '/' + file
 
-        sftp2 = ssh.open_sftp()
-        sftp2.get(remote_path, local_path)
+        sftp = ssh.open_sftp()
+        sftp.get(remote_path, local_path)
         refresh_button()
+        sftp.close()
 
 
 def right_click(event):
@@ -164,6 +168,7 @@ def right_click(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[:item_name.find('_btn_')]
+    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
 
     right_click_dir_menu = Menu(root, tearoff=False)
@@ -179,6 +184,7 @@ def right_click(event):
         right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
         right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
+    sftp.close()
 
 
 def rename_item(event):
@@ -190,10 +196,12 @@ def rename_item(event):
     val_list = list(bttns_dict.values())
     old_name = key_list[val_list.index(event.widget)]
     old_name = old_name[0:old_name.find('_btn_')]
+    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, old_name)
     old_path = cur_path + dir_sign + old_name
-    new_name = simpledialog.askstring(title='Rename', prompt=f'Enter a new name for "{old_name}":', initialvalue=old_name, parent=root)
-    if new_name != None and new_name != '' and new_name != old_name:
+    new_name = simpledialog.askstring(title='Rename', prompt=f'Enter a new name for "{old_name}":',
+                                      initialvalue=old_name, parent=root)
+    if new_name is not None and new_name != '' and new_name != old_name:
         new_name = check_new_name(new_name, 'Rename', item_type, old_name, old_name)
 
         if new_name != False:
@@ -207,9 +215,9 @@ def rename_item(event):
                         return
 
             new_path = cur_path + dir_sign + new_name
-            sftp2 = ssh.open_sftp()
-            sftp2.rename(old_path, new_path)
+            sftp.rename(old_path, new_path)
             refresh_button()
+    sftp.close()
 
 
 def remove_item(event):
@@ -217,6 +225,7 @@ def remove_item(event):
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
+    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if OTHER_OS_PLATFORM == 'windows':
         item_path = cur_path + '\\' + item_name
@@ -226,27 +235,53 @@ def remove_item(event):
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
         if dlt_msg_box == 'yes':
-            sftp2 = ssh.open_sftp()
             if OTHER_OS_PLATFORM == 'windows':
-                sftp2.rmdir(item_path)
+                sftp.rmdir(item_path)
                 refresh_button()
             else:
+                tree_list = manageSSH.tree_items(sftp, item_path, [], '', OTHER_OS_PLATFORM)
+                temp = tree_list.copy()
+                longest_path = 0
+                for item in tree_list:
+                    if item.count('/') > longest_path:
+                        longest_path = item.count('/')
+                sorted_items_list = []
+                while temp != [] and longest_path >= 0:
+                    for item in tree_list:
+                        if item.count('/') == longest_path:
+                            sorted_items_list.append(item)
+                            temp.remove(item)
+                    longest_path -= 1
+
+                for item in sorted_items_list:
+                    try:
+                        sftp.rmdir(item)
+                    except:
+                        try:
+                            sftp.remove(item)
+                        except:
+                            pass
                 try:
-                    sftp2.rmdir(item_path)
-                    refresh_button()
+                    sftp.rmdir(item_path)
                 except:
-                    messagebox.showerror(title="Can't delete this folder", message="This folder isn't empty")
+                    messagebox.showerror(title="Can't delete this folder",
+                                         message="There's an error, Please try again later")
+                # try:
+                #     sftp.rmdir(item_path)
+                #     refresh_button()
+                # except:
+                #     messagebox.showerror(title="Can't delete this folder", message="This folder isn't empty")
     elif item_type == 'file':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
         if dlt_msg_box == 'yes':
             try:
-                sftp2 = ssh.open_sftp()
-                sftp2.remove(item_path)
-                refresh_button()
+                sftp.remove(item_path)
             except PermissionError:
                 messagebox.showerror(title="Can't delete this file",
                                      message="This file is open or being used by another software and can't be deleted at the moment")
+    refresh_button()
+    sftp.close()
 
 
 def up_button():
@@ -268,18 +303,22 @@ def up_button():
 def refresh_button():
     global is_searching
     is_searching = False
+    sftp = ssh.open_sftp()
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
     update_frame(items_list)
+    sftp.close()
 
 
 def drives_box_change(event):
     global cur_path
     selected_drive = event.widget.get()
     cur_path = selected_drive
+    sftp = ssh.open_sftp()
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
     update_frame(items_list)
+    sftp.close()
 
 
 def close_window():
@@ -297,6 +336,7 @@ def copy_path_button(event):
 
 
 def check_new_name(new_name, input_title, type, old_name, initialv):
+    sftp = ssh.open_sftp()
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
     lower_items_list = list()
@@ -351,6 +391,7 @@ def check_new_name(new_name, input_title, type, old_name, initialv):
                                                   initialvalue=initialv, parent=root)
             else:
                 return new_name
+    sftp.close()
 
 
 def new_dir_button():
@@ -371,7 +412,7 @@ def update_frame(items_list):
 
 
 def create_search_bttn(frame, items_list):
-    global icons_dict, bttns_dict, sftp, right_click_dir_search_menu, right_click_file_search_menu
+    global icons_dict, bttns_dict, right_click_dir_search_menu, right_click_file_search_menu
     clm = 0
     rw = 2
 
@@ -384,12 +425,13 @@ def create_search_bttn(frame, items_list):
         dir_sign = '\\'
     else:
         dir_sign = '/'
+    sftp = ssh.open_sftp()
     for item in items_list:
         end_index = item.rfind(dir_sign)
         item_name = item[end_index + 1:]
         item_path = item[:end_index]
-        sftp2 = ssh.open_sftp()
-        item_type = manageSSH.check_if_item_is_dir(sftp2, item_path, item_name)
+        # sftp = ssh.open_sftp()
+        item_type = manageSSH.check_if_item_is_dir(sftp, item_path, item_name)
         if item_type == 'dir':
             dirs_list.append(item_path + dir_sign + item_name)
         elif item_type == 'file':
@@ -427,6 +469,7 @@ def create_search_bttn(frame, items_list):
         if clm == 7:
             clm = 0
             rw += 1
+        sftp.close()
 
 
 def double_click_search(event):
@@ -443,6 +486,7 @@ def double_click_search(event):
     item_name = full_path[end_index + 1:]
     item_path = full_path[:full_path.rfind(dir_sign)]
     temp = item_path + dir_sign + item_name
+    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, item_path, item_name)
     if item_type == 'dir':
         is_searching = False
@@ -461,6 +505,7 @@ def double_click_search(event):
         print(f'{item_name} - not found')
     else:
         pass
+    sftp.close()
 
 
 def right_click_search(event):
@@ -468,6 +513,7 @@ def right_click_search(event):
         dir_sign = '\\'
     else:
         dir_sign = '/'
+    sftp = ssh.open_sftp()
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_path = key_list[val_list.index(event.widget)]
@@ -488,6 +534,7 @@ def right_click_search(event):
         right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click_search(event))
         right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
         right_click_file_search_menu.tk_popup(event.x_root, event.y_root)
+    sftp.close()
 
 
 def create_frame(items_list):
@@ -579,8 +626,9 @@ def create_frame(items_list):
         temp_list = list()
         search_key = search_bar_entry.get()
         if search_key != '':
-            sftp2 = ssh.open_sftp()
-            items_list = manageSSH.tree_items(sftp2, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
+            sftp = ssh.open_sftp()
+            items_list = manageSSH.tree_items(sftp, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
+            sftp = ssh.open_sftp()
             if items_list == []:
                 messagebox.showinfo(title='Not Found',
                                     message="Couldn't find any files or folders with this Search Key in the current path!")
@@ -645,7 +693,7 @@ def acc_signout():
 
 
 def main():
-    global cur_path, root, frame, ssh, sftp
+    global cur_path, root, frame, ssh
     global x, y, username, host, account, menubar, email
 
     SELF_NAME = os.getlogin()
@@ -768,6 +816,7 @@ def main():
                 file = local_path[local_path.rfind('/'):]
                 file_type = file[file.rfind('.'):]
                 file_name = file[:file.rfind('.')]
+                sftp = ssh.open_sftp()
 
                 _, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
                 lower_items_list = list()
@@ -779,9 +828,26 @@ def main():
                     file = file_name + file_type
 
                 remote_path = cur_path + file
-                sftp2 = ssh.open_sftp()
-                sftp2.put(local_path, remote_path)
+                sftp.put(local_path, remote_path)
                 refresh_button()
+                sftp.close()
+
+        def open_cmd_terminal():
+            popup_width = calc_width(800)
+            popup_height = calc_height(400)
+            popup_x = int((screen_width - popup_width) / 2)
+            popup_y = int((screen_height - popup_height) / 2)
+            popup = Toplevel(bg='black')
+            popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
+            popup.iconbitmap('icon.ico')
+            popup.resizable(False, False)
+            if OTHER_OS_PLATFORM == 'windows':
+                popup.title('CMD')
+            else:
+                popup.title('Terminal')
+            text_box = Text(popup, bg='white', blockcursor=True)
+            text_box.pack(fill='')
+            popup.mainloop()
 
 
         go_to = Menu(menubar, tearoff=0)
@@ -803,6 +869,16 @@ def main():
         menubar.add_cascade(label='File Transfer', menu=file_transfer)
         file_transfer.add_command(label='Copy a file from this local computer to the remote computer',
                                   command=copy_file_to_remote, activebackground='steelblue2',
+                                  activeforeground='black')
+
+        cmd_terminal = Menu(menubar, tearoff=0)
+        if OTHER_OS_PLATFORM == 'windows':
+            menu_name = 'CMD'
+        else:
+            menu_name = 'Terminal'
+        menubar.add_cascade(label=menu_name, menu=cmd_terminal)
+        cmd_terminal.add_command(label=f'Open {menu_name}',
+                                  command=open_cmd_terminal, activebackground='steelblue2',
                                   activeforeground='black')
 
         end_video_name = 'end-animation.mp4'

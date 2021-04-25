@@ -44,6 +44,11 @@ def run_action(ssh, action):
     return stdout
 
 
+def cmd_terminal(ssh, cmnd):
+    stdin, stdout, stderr = ssh.exec_command(cmnd)
+    return stdin, stdout, stderr
+
+
 def check_if_item_is_dir(sftp, cur_path, item_name):
     chdir(sftp, cur_path)
     for file in sftp.listdir_attr():
