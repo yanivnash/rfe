@@ -30,12 +30,14 @@ def calc_height(size):
         return int(app_height / (700 / size))
 
 
-OTHER_OS_PLATFORM = 'linux'
+# OTHER_OS_PLATFORM = 'linux'
+OTHER_OS_PLATFORM = 'windows'
+
 username = 'yaniv'
-ssh = manageSSH.connect_to_ssh('192.168.1.20', username, '911911')
+ssh = manageSSH.connect_to_ssh('192.168.1.20', username, 'Yanivn911911')
 
-cur_path = '/home/yaniv'
-
+# cur_path = '/home/yaniv'
+cur_path = r'C:\Users\yaniv'
 
 def open_cmd_terminal():
     global line
@@ -92,7 +94,7 @@ def open_cmd_terminal():
     popup = Toplevel(bg='black')
     popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
     popup.iconbitmap('icon.ico')
-    popup.resizable(False, False)
+    # popup.resizable(False, False)
     text_box = Text(popup, bg='black', bd='0', fg='white', blockcursor=True, insertbackground='white',
                     selectforeground='black', selectbackground='white', font=('Arial', calc_width(14)))
     text_box.place(x=0, y=0, width=calc_width(800), height=calc_height(400))
@@ -107,10 +109,10 @@ def open_cmd_terminal():
         popup.title('CMD')
     else:
         popup.title('Terminal')
-        text_box.insert(line, f'\n{cur_dir}>')
-        text_box.mark_set('insert', f'{line} lineend')
-        text_box.tag_add('green-text', line, f'{line} lineend')
-        text_box.tag_configure('green-text', foreground='green')
+    text_box.insert(line, f'\n{cur_dir}>')
+    text_box.mark_set('insert', f'{line} lineend')
+    text_box.tag_add('green-text', line, f'{line} lineend')
+    text_box.tag_configure('green-text', foreground='green')
 
     # print(text_box.index('end'))
     # p = str(float(text_box.index('end')) - 1)
