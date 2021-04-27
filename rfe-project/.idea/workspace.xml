@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/_msvccompiler.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/venv/Lib/site-packages/setuptools/_distutils/_msvccompiler.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,7 +53,7 @@
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI\icons" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test2">
+  <component name="RunManager" selected="Python.main_window">
     <configuration name="main_window" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="rfe-project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -123,9 +124,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main_window" />
         <item itemvalue="Python.test2" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.main_window" />
       </list>
     </recent_temporary>
   </component>
@@ -411,7 +412,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619390553882</updated>
     </task>
-    <option name="localTasksCounter" value="40" />
+    <task id="LOCAL-00040" summary="final-update">
+      <created>1619460557549</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1619460557549</updated>
+    </task>
+    <option name="localTasksCounter" value="41" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -477,15 +485,32 @@
           <option name="timeStamp" value="19" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py</url>
+          <line>292</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py</url>
+          <line>124</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py</url>
-          <line>64</line>
-          <option name="timeStamp" value="21" />
+          <line>76</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py</url>
+          <line>109</line>
+          <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="row" language="Python" />
+        <watch expression="abs(list_count)" language="Python" />
+        <watch expression="list_count" language="Python" />
+        <watch expression="len(cmnds_list)" language="Python" />
       </configuration>
     </watches-manager>
   </component>
