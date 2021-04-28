@@ -1,7 +1,7 @@
 @echo off
 setlocal
 :PROMPT
-SET /P AREYOUSURE=Would you like to install the modules (Y/[N])?
+SET /P AREYOUSURE=Would you like to install the modules (Y/N)?
 IF /I "%AREYOUSURE%" NEQ "Y" GOTO END
 
 

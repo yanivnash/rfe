@@ -5,7 +5,6 @@ import LoginRegister
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox, filedialog
-import sys
 import socket
 import os
 import math
@@ -14,14 +13,6 @@ from tkinter import simpledialog  # opens the popup for the new folder name inpu
 import pyperclip  # copy to clipboard module
 import re
 import wx  # get screen resolution
-
-SELF_OS_PLATFORM = sys.platform
-if SELF_OS_PLATFORM == 'win32' or SELF_OS_PLATFORM == 'cygwin':
-    SELF_OS_PLATFORM = 'Windows'
-elif SELF_OS_PLATFORM.startswith('linux'):
-    SELF_OS_PLATFORM = 'linux'
-elif SELF_OS_PLATFORM.startswith('darwin'):
-    SELF_OS_PLATFORM = 'macos'
 
 OTHER_OS_PLATFORM = None
 
@@ -91,7 +82,7 @@ def create_bttn(frame):
             btn_text = item
             if item in dirs_list:
                 # if 'item' is a dir
-                file_type = '.dir_folder'
+                file_type = 'dir_folder'
                 if len(item) > 30:
                     btn_text = item[0:30] + '...'
             elif item in files_list:
@@ -447,7 +438,7 @@ def create_search_bttn(frame, items_list):
         btn_text = item_name
         if item in dirs_list:
             # if 'item' is a dir
-            file_type = '.dir_folder'
+            file_type = 'dir_folder'
             if len(item_name) > 30:
                 btn_text = btn_text[0:30] + '...'
         elif item in files_list:
@@ -598,7 +589,8 @@ def create_frame(items_list):
     disconnect_btn = Button(wrapper1, text='Disconnect', bg=buttons_bg_color, command=acc_signout)
     disconnect_btn.grid(column=6, row=0, sticky=W)
 
-    up_btn = Button(wrapper1, image=icons_dict['up.png'], bg=buttons_bg_color, command=up_button)
+
+    up_btn = Button(wrapper1, image=up_pic, bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
 
     if OTHER_OS_PLATFORM == 'windows':
@@ -621,7 +613,7 @@ def create_frame(items_list):
         drive_label = Label(wrapper1, text='Drive Select:', bg='white')
         drive_label.grid(column=2, row=0)
 
-    ref_btn = Button(wrapper1, image=icons_dict['refresh.png'], bg=buttons_bg_color, command=refresh_button)
+    ref_btn = Button(wrapper1, image=ref_pic, bg=buttons_bg_color, command=refresh_button)
 
     def search():
         global is_searching
@@ -667,7 +659,7 @@ def create_frame(items_list):
         ref_btn.grid(column=3, row=1)
     else:
         ref_btn.grid(column=4, row=1)
-        new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=icons_dict['new_dir.png'],
+        new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=new_dir_pic,
                              bg=buttons_bg_color, command=new_dir_button)
         new_dir_btn.grid(column=3, row=1)
         search_bar_entry = Entry(wrapper1, text='Search', font=(calc_width(20)))
@@ -675,7 +667,7 @@ def create_frame(items_list):
         search_bar_entry.insert(0, 'Search')
         search_bar_entry.bind('<FocusIn>', entry_click)
         search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
-        search_btn = Button(wrapper1, image=icons_dict['search.png'], bg=buttons_bg_color, command=search)
+        search_btn = Button(wrapper1, image=search_pic, bg=buttons_bg_color, command=search)
         search_btn.grid(column=5, row=1, sticky=E)
 
     for x in range(10):
@@ -698,7 +690,7 @@ def acc_signout():
 
 
 def main():
-    global cur_path, root, frame, ssh
+    global cur_path, root, frame, ssh, new_dir_pic, ref_pic, up_pic, search_pic
     global x, y, username, host, account, menubar, email
 
     SELF_NAME = os.getlogin()
@@ -709,7 +701,7 @@ def main():
     x = int((screen_width - app_width) / 2)
     y = int((screen_height - app_height) / 2)
     root.geometry(f'{app_width}x{app_height}+{x}+{y}')
-    root.iconbitmap('icon.ico')
+    root.iconbitmap('assets/icon.ico')
     menubar = Menu(root)
     account = Menu(menubar, tearoff=0)
     menubar.add_cascade(label='Account', menu=account)
@@ -762,6 +754,10 @@ def main():
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         icons_dict = get_icons_dict()
+        new_dir_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\new_dir.png'))
+        search_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\search.png'))
+        up_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\up.png'))
+        ref_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\refresh.png'))
         create_frame(items_list)
         create_bttn(frame)
 
@@ -911,7 +907,7 @@ def main():
 
                 text_box_dict[f'{button_count - 1}_input'].configure(height=cmnd_lines, state=DISABLED)
 
-                text_box_dict[f'{button_count}_answer'] = Text(sec_frame, bg='grey', bd='0', fg='white',
+                text_box_dict[f'{button_count}_answer'] = Text(sec_frame, bg='black', bd='0', fg='white',
                                                                blockcursor=True,
                                                                insertbackground='white',
                                                                selectforeground='black', selectbackground='white',
@@ -961,7 +957,7 @@ def main():
             popup_y = int((screen_height - popup_height) / 2)
             popup = Toplevel(bg='black')
             popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
-            popup.iconbitmap('icon.ico')
+            popup.iconbitmap('assets\\icon.ico')
             popup.resizable(False, False)
 
             def on_mousewheel(event):
@@ -1053,7 +1049,7 @@ def main():
                                   command=open_cmd_terminal, activebackground='steelblue2',
                                   activeforeground='black')
 
-        end_video_name = 'end-animation.mp4'
+        end_video_name = f'{ROOT_PROJ_DIR}\\assets\\end-animation.mp4'
         LoginRegister.play_video(end_video_name)
 
         root.mainloop()

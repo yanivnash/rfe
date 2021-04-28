@@ -2,9 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/Remote File Explorer.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/Remote File Explorer.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.exe" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.exe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.zip" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/RFE-Setup.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/animation.mp4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/back.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/back.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/background.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/background.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/be-controlled-pic.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/be-controlled-pic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/control-pic.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/control-pic.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/end-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/end-animation.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/entry.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/entry.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/hide.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/hide.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/icon.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.dir_folder.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/dir_folder.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/new_dir.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/new_dir.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/refresh.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/refresh.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/search.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/search.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/up.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/up.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/install-modules.bat" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/install-modules.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/mid-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/mid-animation.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/show.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/show.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/signout.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/signout.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/start-animation.mp4" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/start-animation.mp4" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/v.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/v.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/x.png" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/assets/x.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +68,7 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\git\rfe\rfe-project\Remote File Explorer\Main-App\assets" />
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer\Main-App" />
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI" />
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI\icons" />
@@ -432,7 +454,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619562373436</updated>
     </task>
-    <option name="localTasksCounter" value="43" />
+    <task id="LOCAL-00043" summary="final-update">
+      <created>1619562586703</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1619562586703</updated>
+    </task>
+    <option name="localTasksCounter" value="44" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -499,12 +528,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py</url>
-          <line>292</line>
+          <line>283</line>
           <option name="timeStamp" value="23" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py</url>
-          <line>124</line>
+          <line>115</line>
           <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -517,13 +546,16 @@
           <line>109</line>
           <option name="timeStamp" value="34" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py</url>
+          <line>740</line>
+          <option name="timeStamp" value="38" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
-        <watch expression="abs(list_count)" language="Python" />
-        <watch expression="list_count" language="Python" />
-        <watch expression="len(cmnds_list)" language="Python" />
+        <watch expression="cur_path" language="Python" />
       </configuration>
     </watches-manager>
   </component>
