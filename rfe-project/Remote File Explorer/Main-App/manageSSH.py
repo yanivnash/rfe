@@ -31,6 +31,7 @@ def disconnect_ssh(ssh):
 def chdir(sftp, path):
     try:
         sftp.chdir(path)
+        return True
     except FileNotFoundError:
         try:
             sftp.chdir(None)

@@ -173,16 +173,19 @@ def right_click(event):
         right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
         right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
         right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
+        # right_click_dir_menu.add_command(label='Duplicate Folder', command=lambda: duplicate_item(event))
         right_click_dir_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
         right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
         right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
         right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
+        # right_click_file_menu.add_command(label='Duplicate File', command=lambda: duplicate_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
     sftp.close()
 
 
 def rename_item(event):
+    global sftp
     if OTHER_OS_PLATFORM == 'windows':
         dir_sign = '\\'
     else:
@@ -191,11 +194,11 @@ def rename_item(event):
     val_list = list(bttns_dict.values())
     old_name = key_list[val_list.index(event.widget)]
     old_name = old_name[0:old_name.find('_btn_')]
-    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, old_name)
     old_path = cur_path + dir_sign + old_name
     new_name = simpledialog.askstring(title='Rename', prompt=f'Enter a new name for "{old_name}":',
                                       initialvalue=old_name, parent=root)
+    sftp2 = ssh.open_sftp()
     if new_name is not None and new_name != '' and new_name != old_name:
         new_name = check_new_name(new_name, 'Rename', item_type, old_name, old_name)
 
@@ -210,28 +213,33 @@ def rename_item(event):
                         return
 
             new_path = cur_path + dir_sign + new_name
-            sftp.rename(old_path, new_path)
+            sftp2.rename(old_path, new_path)
             refresh_button()
-    sftp.close()
+    sftp2.close()
 
 
 def remove_item(event):
+    global sftp
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     item_name = item_name[0:item_name.find('_btn_')]
-    sftp = ssh.open_sftp()
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if OTHER_OS_PLATFORM == 'windows':
         item_path = cur_path + '\\' + item_name
     else:
         item_path = cur_path + '/' + item_name
+    sftp2 = ssh.open_sftp()
     if item_type == 'dir':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
         if dlt_msg_box == 'yes':
             if OTHER_OS_PLATFORM == 'windows':
-                sftp.rmdir(item_path)
+                try:
+                    sftp2.rmdir(item_path)
+                except OSError:
+                    messagebox.showerror(title="Can't delete this folder",
+                                         message="There's an error, Try to delete it's contents then try again")
                 refresh_button()
             else:
                 tree_list = manageSSH.tree_items(sftp, item_path, [], '', OTHER_OS_PLATFORM)
@@ -250,14 +258,14 @@ def remove_item(event):
 
                 for item in sorted_items_list:
                     try:
-                        sftp.rmdir(item)
+                        sftp2.rmdir(item)
                     except:
                         try:
-                            sftp.remove(item)
+                            sftp2.remove(item)
                         except:
                             pass
                 try:
-                    sftp.rmdir(item_path)
+                    sftp2.rmdir(item_path)
                 except:
                     messagebox.showerror(title="Can't delete this folder",
                                          message="There's an error, Please try again later")
@@ -271,12 +279,53 @@ def remove_item(event):
                                              message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
         if dlt_msg_box == 'yes':
             try:
-                sftp.remove(item_path)
+                sftp2.remove(item_path)
             except PermissionError:
                 messagebox.showerror(title="Can't delete this file",
                                      message="This file is open or being used by another software and can't be deleted at the moment")
     refresh_button()
-    sftp.close()
+    sftp2.close()
+
+
+def duplicate_item(event):
+    global sftp
+    if OTHER_OS_PLATFORM == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    item_name = item_name[0:item_name.find('_btn_')]
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+    new_name = f'{item_name}(copy)'
+    dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
+    if item_type == 'file':
+        file_type = item_name[item_name.rfind('.'):]
+        new_name = f"{item_name[:item_name.rfind('.')]}(copy)"
+        while new_name + file_type in dirs_list:
+            new_name += '(copy)'
+        new_name += file_type
+    elif item_type == 'dir':
+        while new_name in dirs_list:
+            new_name += '(copy)'
+
+    sftp2 = ssh.open_sftp()
+    # new_name = check_new_name(new_name, 'Duplicate', item_type, item_name, '')
+
+    # if new_name != False:
+    #     if item_type == 'file':
+    #         new_name = new_name[:new_name.rfind('.')]
+    #         change_type = messagebox.askquestion(title='Change file extension',
+    #                                              message='If you change the file extension the file might be unusable.\nAre you sure you want to continue?',
+    #                                              icon='warning')
+    #                 if change_type == 'no':
+    #                     return
+
+    new_path = cur_path + dir_sign + new_name
+    sftp2.cp(item_name, new_path)
+    refresh_button()
+    sftp2.close()
 
 
 def up_button():
@@ -299,11 +348,11 @@ def up_button():
 def refresh_button():
     global is_searching
     is_searching = False
-    sftp = ssh.open_sftp()
-    manageSSH.chdir(sftp, cur_path)
-    items_list = sftp.listdir()
+    sftp2 = ssh.open_sftp()
+    manageSSH.chdir(sftp2, cur_path)
+    items_list = sftp2.listdir()
     update_frame(items_list)
-    sftp.close()
+    sftp2.close()
 
 
 def drives_box_change(event):
@@ -618,25 +667,31 @@ def create_frame(items_list):
     def search():
         global is_searching
         root.bind('<Return>', no_action)
-        root.config(cursor='exchange')
+        # root.config(cursor='exchange')
         is_searching = True
         temp_list = list()
+        extras_list = list()
         search_key = search_bar_entry.get()
         if search_key != '':
             sftp = ssh.open_sftp()
             items_list = manageSSH.tree_items(sftp, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
-            sftp = ssh.open_sftp()
+            sftp.close()
             if items_list == []:
                 messagebox.showinfo(title='Not Found',
                                     message="Couldn't find any files or folders with this Search Key in the current path!")
             else:
+                items_num = len(items_list)
+                if items_num >= 50:
+                    extras_list = items_list[50:]
+                    items_list = [f'& {items_num - 50} more'] + items_list[:50]
+
                 wrapper1.destroy()
                 wrapper2.destroy()
                 frame.destroy()
                 create_frame(items_list)
                 cur_path_label.configure(text=f'Searching for "{search_key}" in "{cur_path}"')
                 create_search_bttn(frame, items_list)
-        root.config(cursor='arrow')
+        # root.config(cursor='arrow')
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
@@ -763,21 +818,36 @@ def main():
 
         def go_to_path():
             global cur_path
-            new_path = simpledialog.askstring('Enter a path', 'Enter a valid path to go to:')
+            if OTHER_OS_PLATFORM == 'windows':
+                dir_sign = '\\'
+            else:
+                dir_sign = '/'
+            new_path = simpledialog.askstring(title='Enter a path', prompt='Enter a valid path to go to:', parent=root)
             if new_path != '' and new_path != None:
                 while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
                     new_path = new_path[1:]
-                if OTHER_OS_PLATFORM != 'windows':
+                while new_path.endswith('\\') or new_path.endswith('/') or new_path.endswith(' '):
+                    new_path = new_path[:-1]
+                if OTHER_OS_PLATFORM == 'windows':
+                    new_path = new_path[0].upper() + new_path[1:]
+                else:
                     new_path = '/' + new_path
-                new_path = new_path[0].upper() + new_path[1:]
-                answr = manageSSH.chdir(sftp, new_path)
-                if answr == 'path not found':
+                item_type = manageSSH.check_if_item_is_dir(sftp, new_path[:new_path.rfind(dir_sign)], new_path[new_path.rfind(dir_sign) + 1:])
+                if item_type == 'dir':
+                    answr = manageSSH.chdir(sftp, new_path)
+                    if answr == 'path not found':
+                        messagebox.showerror(title="The specified path doesn't exist",
+                                             message=f"{new_path}\ndoesn't exist. Please try a different one")
+                    else:
+                        cur_path = new_path
+                        items_list = sftp.listdir()
+                        update_frame(items_list)
+                elif item_type == 'file':
+                    messagebox.showerror(title="The specified path is a file",
+                                         message=f"{new_path}\nis a file. Please try a different one")
+                else:
                     messagebox.showerror(title="The specified path doesn't exist",
                                          message=f"{new_path}\ndoesn't exist. Please try a different one")
-                else:
-                    cur_path = new_path
-                    items_list = sftp.listdir()
-                    update_frame(items_list)
 
         account.delete('Sign Out')
         account.add_command(label='Disconnect & Sign Out', command=acc_signout, activebackground='steelblue2',
@@ -834,11 +904,13 @@ def main():
                 sftp.close()
 
         def open_cmd_terminal():
-            global row, line, list_count, button_count
+            global row, line, list_count, button_count, cur_dir
             if OTHER_OS_PLATFORM == 'windows':
                 dir_sign = '\\'
             else:
                 dir_sign = '/'
+
+            cur_dir = cur_path
 
             row = 0
             line = 1.0
@@ -849,21 +921,19 @@ def main():
 
             def up_key(event):
                 global list_count, button_count
-                print('up_key')
                 if abs(list_count) < len(cmnds_list):
-                    print('yes')
                     list_count -= 1
                     text_box_dict[f'{button_count}_input'].delete('1.0', 'end')
                     text_box_dict[f'{button_count}_input'].insert('1.0', cmnds_list[list_count])
 
             def down_key(event):
                 global list_count, button_count
-                print('up_key')
-                if abs(list_count) < len(cmnds_list):
-                    print('yes')
+                if list_count < 0:
                     list_count += 1
                     text_box_dict[f'{button_count}_input'].delete('1.0', 'end')
                     text_box_dict[f'{button_count}_input'].insert('1.0', cmnds_list[list_count])
+                if list_count == 0:
+                    text_box_dict[f'{button_count}_input'].delete('1.0', 'end')
 
             def enter_key(event):
                 global row, line, list_count, cur_dir, button_count
@@ -875,7 +945,7 @@ def main():
                 answer_lines = 1
                 cmnd_lines = 1
                 print_msg = ''
-                if cmnd != '':
+                if cmnd.replace('\n', '') != '':
                     cmnd_lines = math.ceil(len(cmnd) / 59)
                     row += cmnd_lines
                     cmnds_list.append(cmnd)
@@ -883,12 +953,20 @@ def main():
                     while cmnd.startswith(' '):
                         cmnd = cmnd[1:]
                     if cmnd.startswith('cd '):
+                        if cmnd.__contains__('cd ..'):
+                            temp = cur_dir[:cur_dir.rfind(dir_sign)]
+                        else:
+                            temp = cur_dir + dir_sign + cmnd[3:].replace('\n', '')
                         stderr = ''
-                        stdout = manageSSH.chdir(sftp, cur_dir.replace('>', '') + dir_sign + cmnd[3:].replace('\n', ''))
+                        stdout = manageSSH.chdir(sftp, temp)
                         if stdout == 'path not found':
                             stderr = 'The system cannot find the path specified.'
+                        else:
+                            cur_dir = temp
                         stdout = ''
                     else:
+                        cmnd = f"cd {cur_dir} && {cmnd}"
+
                         stdin, stdout, stderr = manageSSH.cmd_terminal(ssh, cmnd)
 
                         stdout = stdout.read().decode()
@@ -920,14 +998,7 @@ def main():
 
                 row += answer_lines
 
-                if OTHER_OS_PLATFORM == 'windows':
-                    _, cur_dir, _ = manageSSH.cmd_terminal(ssh, 'cd')
-                else:
-                    _, cur_dir, _ = manageSSH.cmd_terminal(ssh, 'pwd')
-
-                cur_dir = cur_dir.read().decode().replace('\n', '').replace('\r', '') + '>'
-
-                text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir,
+                text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir + '>',
                                                                font=('Arial', calc_width(14)))
                 text_box_dict[f'{button_count}_label'].grid(row=row, column=0, sticky=NW)
 
@@ -950,6 +1021,11 @@ def main():
                 if row > 15:
                     scroll_canvas.yview_moveto('1')
 
+            def close_popup():
+                popup.destroy()
+                sftp.close()
+                refresh_button()
+
             sftp = ssh.open_sftp()
             popup_width = calc_width(800)
             popup_height = calc_height(400)
@@ -957,8 +1033,9 @@ def main():
             popup_y = int((screen_height - popup_height) / 2)
             popup = Toplevel(bg='black')
             popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
-            popup.iconbitmap('assets\\icon.ico')
+            popup.iconbitmap('assets\\cmd-terminal.ico')
             popup.resizable(False, False)
+            popup.protocol("WM_DELETE_WINDOW", close_popup)
 
             def on_mousewheel(event):
                 scroll_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -987,15 +1064,7 @@ def main():
 
             sec_frame.bind("<Configure>", reset_scrollregion)
 
-            if OTHER_OS_PLATFORM == 'windows':
-                popup.title('CMD')
-                _, cur_dir, _ = manageSSH.cmd_terminal(ssh, 'cd')
-            else:
-                popup.title('Terminal')
-                _, cur_dir, _ = manageSSH.cmd_terminal(ssh, 'pwd')
-            cur_dir = cur_dir.read().decode().replace('\n', '').replace('\r', '') + '>'
-
-            text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir,
+            text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir + '>',
                                                            font=('Arial', calc_width(14)))
             text_box_dict[f'{button_count}_label'].grid(row=row, column=0, sticky=NW)
             popup.update()
@@ -1003,8 +1072,11 @@ def main():
             text_box_dict[f'{button_count}_input'] = Text(sec_frame, bg='black', bd='0', fg='white', blockcursor=True,
                                                           insertbackground='white',
                                                           selectforeground='black', selectbackground='white',
-                                                          font=('Arial', calc_width(14)), width=math.floor(
-                    70 - text_box_dict[f'{button_count}_label'].winfo_width() / 12) - 2, height=18,
+                                                          font=('Arial', calc_width(14)),
+                                                          width=math.floor(
+                                                              70 - text_box_dict[
+                                                                  f'{button_count}_label'].winfo_width() / 12) - 2,
+                                                          height=18,
                                                           wrap=CHAR)
             text_box_dict[f'{button_count}_input'].grid(row=row, column=1, sticky=NW)
 
@@ -1014,8 +1086,6 @@ def main():
             text_box_dict[f'{button_count}_input'].bind('<Return>', enter_key)
 
             popup.mainloop()
-
-            sftp.close()
 
 
         go_to = Menu(menubar, tearoff=0)
