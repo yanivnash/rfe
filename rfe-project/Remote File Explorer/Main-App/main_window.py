@@ -13,6 +13,8 @@ from tkinter import simpledialog  # opens the popup for the new folder name inpu
 import pyperclip  # copy to clipboard module
 import re
 import wx  # get screen resolution
+from bs4 import BeautifulSoup
+import requests
 
 OTHER_OS_PLATFORM = None
 
@@ -46,6 +48,11 @@ is_searching = False
 # cur_path = os.getcwd()
 cur_path = ''
 
+try:
+    os.mkdir('downloaded_icons')
+except FileExistsError:
+    pass
+
 
 def calc_width(size):
     if size == 0:
@@ -61,11 +68,35 @@ def calc_height(size):
         return int(app_height / (700 / size))
 
 
-def get_icons_dict():
-    icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\icons')
+def update_icons_dict(icons_path):
+    icons_list = os.listdir(icons_path)
     for icon in icons_list:
-        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\icons\\{icon}'))
-    return icons_dict
+        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{icons_path}\\{icon}'))
+
+
+def download_icon(icon_name):
+    URL = f"https://www.google.com/search?q={icon_name}+logo&newwindow=1&hl=en&sxsrf=ALeKk03_3mH_awXS2UWry7EgXMwViGLtEQ:1619816415283&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjR2aKw7qbwAhVIXRoKHVAkAMwQ_AUoAXoECAEQAw&biw=1920&bih=937"
+
+    HEADERS = ({'User-Agent':
+                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 \
+                (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36', \
+                'Accept-Language': 'en-US, en;q=0.5'})
+
+    webpage = requests.get(URL, headers=HEADERS)
+    soup = BeautifulSoup(webpage.content, "html.parser")
+
+    html_text = str(soup)
+    url_start = html_text[html_text.find('src="h') + 5:]
+    pic_url = url_start[:url_start.find('"')]
+
+    # download the picture
+    response = requests.get(pic_url)
+    with open(f'downloaded_icons/.lnk.{icon_name}.png', 'wb') as image:
+        image.write(response.content)
+    image = Image.open(f'downloaded_icons/.lnk.{icon_name}.png')
+    image_ratio = image.size[1] / calc_height(60)
+    smaller_image = image.resize((int(image.size[0] / image_ratio), calc_height(60)), Image.NEAREST)
+    smaller_image.save(f'downloaded_icons/.lnk.{icon_name}.png')
 
 
 def create_bttn(frame):
@@ -78,6 +109,7 @@ def create_bttn(frame):
     if len(items_list) == 0:
         Label(frame, text='This folder is empty', width=calc_width(150), bg='white').pack()
     else:
+        downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\downloaded_icons')
         for item in items_list:
             btn_text = item
             if item in dirs_list:
@@ -90,8 +122,17 @@ def create_bttn(frame):
                 end_index = item.rfind('.')
                 file_type = item[end_index:].lower()
 
+                if file_type == '.lnk':
+                    item_name = item[:end_index]
+                    file_type = f'.lnk.{item_name}'
+                    if file_type + '.png' not in downloaded_icons_list:
+                        download_icon(item_name)
+                update_icons_dict(f'{ROOT_PROJ_DIR}\\downloaded_icons')
+
                 if len(item) > 30:
                     btn_text = item[0:30] + '...' + file_type
+                    if file_type.startswith('.lnk.'):
+                        btn_text = item[0:30] + '...' + '.lnk'
             else:
                 file_type = '.none'
             try:
@@ -101,6 +142,9 @@ def create_bttn(frame):
             bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
                                                                         compound=TOP, justify=CENTER, image=icon,
                                                                         height=120, width=120)
+
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
+
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
                                                                     pady=9)
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
@@ -440,7 +484,8 @@ def check_new_name(new_name, input_title, type, old_name, initialv):
 
 
 def new_dir_button():
-    new_folder_name = simpledialog.askstring(title='New folder', prompt='Enter a name for the folder:', initialvalue='New folder', parent=root)
+    new_folder_name = simpledialog.askstring(title='New folder', prompt='Enter a name for the folder:',
+                                             initialvalue='New folder', parent=root)
     new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir', '', 'New folder')
     if new_folder_name != False:
         sftp.mkdir(new_folder_name)
@@ -577,7 +622,8 @@ def right_click_search(event):
         end_index = item_path.rfind(dir_sign)
         item_location_path = item_path[:end_index]
         right_click_file_search_menu.add_command(label='Open File Location', command=lambda: double_click_search(event))
-        right_click_file_search_menu.add_command(label='Copy File Location Path', command=lambda: pyperclip.copy(item_location_path))
+        right_click_file_search_menu.add_command(label='Copy File Location Path',
+                                                 command=lambda: pyperclip.copy(item_location_path))
         right_click_file_search_menu.tk_popup(event.x_root, event.y_root)
     sftp.close()
 
@@ -587,6 +633,7 @@ def create_frame(items_list):
 
     def f_refresh(event):
         refresh_button()
+
     root.bind('<F5>', f_refresh)
 
     count = 0
@@ -637,7 +684,6 @@ def create_frame(items_list):
 
     disconnect_btn = Button(wrapper1, text='Disconnect', bg=buttons_bg_color, command=acc_signout)
     disconnect_btn.grid(column=6, row=0, sticky=W)
-
 
     up_btn = Button(wrapper1, image=up_pic, bg=buttons_bg_color, command=up_button)
     up_btn.grid(column=0, row=1)
@@ -695,8 +741,10 @@ def create_frame(items_list):
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
+
         def search2(event):
             search()
+
         root.bind('<Return>', search2)
         search_bar_entry.bind('<FocusOut>', entry_lost)
 
@@ -707,7 +755,7 @@ def create_frame(items_list):
         search_bar_entry.insert(0, 'Search')
         root.bind('<Return>', no_action)
         search_bar_entry.bind('<FocusIn>', entry_click)
-    
+
     if is_searching:
         stop_search_btn = Button(wrapper1, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
         stop_search_btn.grid(column=5, row=1, sticky=E)
@@ -751,7 +799,6 @@ def main():
     SELF_NAME = os.getlogin()
     SELF_IP = socket.gethostbyname(socket.gethostname())
 
-
     root = Tk()
     x = int((screen_width - app_width) / 2)
     y = int((screen_height - app_height) / 2)
@@ -790,7 +837,8 @@ def main():
     root.config(menu=menubar)
     root.resizable(False, False)
 
-    email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu, None)
+    email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu,
+                                                                None)
     if email != None and ssh != None and sftp != None:
         global cur_path, OTHER_OS_PLATFORM
         root.protocol("WM_DELETE_WINDOW", close_window)
@@ -808,7 +856,7 @@ def main():
         print(f'OTHER_OS_PLATFORM = {OTHER_OS_PLATFORM}\ncur_path = {cur_path}')  # TEMP
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
-        icons_dict = get_icons_dict()
+        update_icons_dict(f'{ROOT_PROJ_DIR}\\icons')
         new_dir_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\new_dir.png'))
         search_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\search.png'))
         up_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\up.png'))
@@ -832,7 +880,8 @@ def main():
                     new_path = new_path[0].upper() + new_path[1:]
                 else:
                     new_path = '/' + new_path
-                item_type = manageSSH.check_if_item_is_dir(sftp, new_path[:new_path.rfind(dir_sign)], new_path[new_path.rfind(dir_sign) + 1:])
+                item_type = manageSSH.check_if_item_is_dir(sftp, new_path[:new_path.rfind(dir_sign)],
+                                                           new_path[new_path.rfind(dir_sign) + 1:])
                 if item_type == 'dir':
                     answr = manageSSH.chdir(sftp, new_path)
                     if answr == 'path not found':
@@ -1087,7 +1136,6 @@ def main():
 
             popup.mainloop()
 
-
         go_to = Menu(menubar, tearoff=0)
         menubar.add_cascade(label='Go to...', menu=go_to)
         if OTHER_OS_PLATFORM == 'windows':
@@ -1116,13 +1164,14 @@ def main():
             menu_name = 'Terminal'
         menubar.add_cascade(label=menu_name, menu=cmd_terminal)
         cmd_terminal.add_command(label=f'Open {menu_name}',
-                                  command=open_cmd_terminal, activebackground='steelblue2',
-                                  activeforeground='black')
+                                 command=open_cmd_terminal, activebackground='steelblue2',
+                                 activeforeground='black')
 
         end_video_name = f'{ROOT_PROJ_DIR}\\assets\\end-animation.mp4'
         LoginRegister.play_video(end_video_name)
 
         root.mainloop()
+
 
 if __name__ == '__main__':
     main()

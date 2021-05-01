@@ -196,7 +196,9 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 sftp = ssh.open_sftp()
                 if check_var.get() == 1:
                     manageSERVER.update_pc_in_account(email, (host, username))
-                ip_frame.quit()
+                load_label = Label(ip_frame, text='Downloading Icons...',bg='white', font=('Eras Bold ITC', main_window.calc_width(30)))
+                load_label.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))
+                load_label.after(10, ip_frame.quit)
 
     back_pic = ImageTk.PhotoImage(
         Image.open(f'{ROOT_PROJ_DIR}\\assets\\back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
@@ -1788,14 +1790,17 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         server_status(main_frame)
         if email == False:
             return None, None, None, None, None, None
-        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         show_icon = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize((main_window.calc_width(30), main_window.calc_height(30)),
-                                                           Image.ANTIALIAS))
+            Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize(
+                (main_window.calc_width(30), main_window.calc_height(30)),
+                Image.ANTIALIAS))
         hide_icon = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/hide.png').resize((main_window.calc_width(30), main_window.calc_height(30)),
-                                                           Image.ANTIALIAS))
+            Image.open(f'{ROOT_PROJ_DIR}/assets/hide.png').resize(
+                (main_window.calc_width(30), main_window.calc_height(30)),
+                Image.ANTIALIAS))
 
         play_video(start_video_name)
         start_login_window(main_frame)
