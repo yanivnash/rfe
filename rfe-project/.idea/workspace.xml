@@ -2,7 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Adobe Photoshop CC 2018.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Colasoft Packet Builder 2.0.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Control Panel.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Discord.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.HP Smart.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Steam.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.This Pc.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Vegas Pro 14.0 (64-bit).png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.jpeg.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,10 +53,13 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Desktop/Remote File Explorer - backup" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/Remote File Explorer/Main-App/icons" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\git\rfe\rfe-project\Remote File Explorer\Main-App\icons" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer\Main-App\assets" />
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer\Main-App" />
@@ -468,7 +482,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619827967247</updated>
     </task>
-    <option name="localTasksCounter" value="48" />
+    <task id="LOCAL-00048" summary="final-update">
+      <created>1619828143254</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1619828143254</updated>
+    </task>
+    <option name="localTasksCounter" value="49" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

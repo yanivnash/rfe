@@ -1,5 +1,8 @@
 __author__ = 'Yaniv Nash'
 
+import manageSERVER
+import manageSSH
+import main_window
 import threading
 from tkinter import *
 from tkinter import messagebox, ttk
@@ -9,12 +12,11 @@ import psutil
 import wx
 import re
 from PIL import ImageTk, Image
+import pyperclip  # copy to clipboard module
 import sys
 import os
+import time
 import socket
-import manageSERVER
-import manageSSH
-import main_window
 
 ROOT_PROJ_DIR = os.getcwd()
 SELF_NAME = os.getlogin()
@@ -37,9 +39,9 @@ screen_height = main_window.screen_height
 
 label_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
-start_video_name = f'{ROOT_PROJ_DIR}\\assets\\start-animation.mp4'
-mid_video_name = f'{ROOT_PROJ_DIR}\\assets\\mid-animation.mp4'
-end_video_name = f'{ROOT_PROJ_DIR}\\assets\\end-animation.mp4'
+start_video_name = f'{ROOT_PROJ_DIR}/assets/start-animation.mp4'
+mid_video_name = f'{ROOT_PROJ_DIR}/assets/mid-animation.mp4'
+end_video_name = f'{ROOT_PROJ_DIR}/assets/end-animation.mp4'
 
 
 def no_action(event):
@@ -105,27 +107,30 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):
 
 
 def get_network_ip_list():
-    ipconfig = os.popen('ipconfig').read()
-    self_ip = ipconfig[ipconfig.find('IPv4 Address'):ipconfig.find('Subnet Mask')]
-    subnet_mask = ipconfig[ipconfig.find('Subnet Mask'):ipconfig.find('Default Gateway')]
-    if 'Subnet Mask' in subnet_mask and 'IPv4 Address' in self_ip:
-        self_ip = self_ip[self_ip.find(': ') + 2:].replace('\n', '').replace(' ', '')
-        count = subnet_mask.count('255')
-        masked_ip = self_ip
-        for _ in range(4 - count):
-            masked_ip = masked_ip[:masked_ip.rfind('.')]
+    if SELF_OS_PLATFORM == 'windows':
+        ipconfig = os.popen('ipconfig').read()
+        self_ip = ipconfig[ipconfig.find('IPv4 Address'):ipconfig.find('Subnet Mask')]
+        subnet_mask = ipconfig[ipconfig.find('Subnet Mask'):ipconfig.find('Default Gateway')]
+        if 'Subnet Mask' in subnet_mask and 'IPv4 Address' in self_ip:
+            self_ip = self_ip[self_ip.find(': ') + 2:].replace('\n', '').replace(' ', '')
+            count = subnet_mask.count('255')
+            masked_ip = self_ip
+            for _ in range(4 - count):
+                masked_ip = masked_ip[:masked_ip.rfind('.')]
 
-        arp = os.popen('arp -a').read()
-        arp = arp[arp.find(f'Interface: {self_ip}'):]
-        while arp.count('Interface:') > 1:
-            arp = arp[:arp.rfind('Interface:')]
+            arp = os.popen('arp -a').read()
+            arp = arp[arp.find(f'Interface: {self_ip}'):]
+            while arp.count('Interface:') > 1:
+                arp = arp[:arp.rfind('Interface:')]
 
-        arp = arp.split()
-        network_ips = list()
-        for ip in arp:
-            if ip.startswith(masked_ip):
-                network_ips.append(ip)
-        return network_ips
+            arp = arp.split()
+            network_ips = list()
+            for ip in arp:
+                if ip.startswith(masked_ip):
+                    network_ips.append(ip)
+            return network_ips
+        else:
+            return []
     else:
         return []
 
@@ -201,9 +206,9 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 load_label.after(10, ip_frame.quit)
 
     back_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
     signout_bttn = Button(ip_frame, image=signout_pic, cursor='hand2',
                           font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
                           command=acc_signout)
@@ -402,7 +407,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
     canvas = Canvas(frame, bg='white')
 
     enter_ip_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\entry.png').resize((main_window.calc_width(55), main_window.calc_height(41)),
+        Image.open(f'{ROOT_PROJ_DIR}/assets/entry.png').resize((main_window.calc_width(55), main_window.calc_height(41)),
                                        Image.ANTIALIAS))
     show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
                                   bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
@@ -447,21 +452,14 @@ def check_sshd_service(service_name):
                 return 'OFF'
         else:
             return 'NOT INSTALLED'
-
-    elif SELF_OS_PLATFORM == 'linux':
-        pass
-    elif SELF_OS_PLATFORM == 'macos':
-        service = os.popen('sudo systemsetup -getremotelogin').read()
-        if service.__contains__('On'):
-            return 'ON'
-        elif service.__contains__('Off'):
-            return 'OFF'
+    else:
+        return None
 
 
 def set_be_controlled(be_controlled_frame):
     def close_window():
         sshd_status = check_sshd_service('sshd')
-        if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED':
+        if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED' or sshd_status == None:
             close_msg_box = messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
             if close_msg_box == 'yes':
                 root.destroy()
@@ -479,212 +477,98 @@ def set_be_controlled(be_controlled_frame):
     def recheck_sshd():
         set_be_controlled(be_controlled_frame)
 
-    import time
     def run_power_shell(cmnd):
-        if SELF_OS_PLATFORM == 'windows':
-            install_and_on_cmnd = """
-                Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
-                Start-Service sshd
-                """
+        install_and_on_cmnd = """
+            Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+            Start-Service sshd
+            """
 
-            on_cmnd = """
-                Start-Service sshd
-                """
+        on_cmnd = """
+            Start-Service sshd
+            """
 
-            off_cmnd = """
-                Stop-Service sshd
-                """
+        off_cmnd = """
+            Stop-Service sshd
+            """
 
-            if cmnd == 'install_and_on_cmnd':
-                def start():
-                    for x in range(200):
-                        p_bar['value'] += 0.1
-                        root.update_idletasks()
-                        time.sleep(0.01)
-                    for x in range(4):
-                        root.update_idletasks()
-                        sshd_status = check_sshd_service('sshd')
-                        if sshd_status == 'ON':
-                            p_bar['value'] = 100
-                            recheck_sshd()
-                            break
-                        else:
-                            time.sleep(2)
-                            for x in range(200):
-                                p_bar['value'] += 0.1
-                                root.update_idletasks()
-                                time.sleep(0.01)
-
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + install_and_on_cmnd)
-                    loading_label = Label(frame, text='Installing SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    p_bar = ttk.Progressbar(loading_label, orient=HORIZONTAL, length=400, mode='determinate')
-                    p_bar.pack(pady=100)
+        if cmnd == 'install_and_on_cmnd':
+            def start():
+                for x in range(200):
+                    p_bar['value'] += 0.1
                     root.update_idletasks()
-                    start()
-
+                    time.sleep(0.01)
+                for x in range(4):
+                    root.update_idletasks()
                     sshd_status = check_sshd_service('sshd')
                     if sshd_status == 'ON':
-                        root.update_idletasks()
-                        time.sleep(1)
+                        p_bar['value'] = 100
                         recheck_sshd()
+                        break
                     else:
-                        loading_label.place(x=0, y=0, width=610, height=392)
-                        p_bar.pack(pady=100)
-                        start()
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Installed & Started without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
-            elif cmnd == 'on_cmnd':
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + on_cmnd)
-                    loading_label = Label(frame, text='Starting SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    loading_label.after(5000, recheck_sshd)
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
-            elif cmnd == 'off_cmnd':
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + off_cmnd)
-                    loading_label = Label(frame, text='Stopping SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    loading_label.after(5000, recheck_sshd)
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Stopped without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
+                        time.sleep(2)
+                        for x in range(200):
+                            p_bar['value'] += 0.1
+                            root.update_idletasks()
+                            time.sleep(0.01)
 
-        elif SELF_OS_PLATFORM == 'linux':
-            install_and_on_cmnd = """
-                            sudo apt-get install openssh-server ii
-                            sudo start ssh
-                            """
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + install_and_on_cmnd)
+                loading_label = Label(frame, text='Installing SSH Service...',
+                                      font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                loading_label.place(x=0, y=0, width=610, height=392)
+                p_bar = ttk.Progressbar(loading_label, orient=HORIZONTAL, length=400, mode='determinate')
+                p_bar.pack(pady=100)
+                root.update_idletasks()
+                start()
 
-            on_cmnd = """
-                            sudo start ssh
-                            """
-
-            off_cmnd = """
-                            sudo stop ssh
-                            """
-
-            if cmnd == 'install_and_on_cmnd':
-                def start():
-                    for x in range(200):
-                        p_bar['value'] += 0.1
-                        root.update_idletasks()
-                        time.sleep(0.01)
-                    for x in range(4):
-                        root.update_idletasks()
-                        sshd_status = check_sshd_service('sshd')
-                        if sshd_status == 'ON':
-                            p_bar['value'] = 100
-                            recheck_sshd()
-                            break
-                        else:
-                            time.sleep(2)
-                            for x in range(200):
-                                p_bar['value'] += 0.1
-                                root.update_idletasks()
-                                time.sleep(0.01)
-
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe',
-                                         lpParameters='/c ' + install_and_on_cmnd)
-                    loading_label = Label(frame, text='Installing SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    p_bar = ttk.Progressbar(loading_label, orient=HORIZONTAL, length=400, mode='determinate')
-                    p_bar.pack(pady=100)
+                sshd_status = check_sshd_service('sshd')
+                if sshd_status == 'ON':
                     root.update_idletasks()
+                    time.sleep(1)
+                    recheck_sshd()
+                else:
+                    loading_label.place(x=0, y=0, width=610, height=392)
+                    p_bar.pack(pady=100)
                     start()
-
-                    sshd_status = check_sshd_service('sshd')
-                    if sshd_status == 'ON':
-                        root.update_idletasks()
-                        time.sleep(1)
-                        recheck_sshd()
-                    else:
-                        loading_label.place(x=0, y=0, width=610, height=392)
-                        p_bar.pack(pady=100)
-                        start()
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Installed & Started without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
-            elif cmnd == 'on_cmnd':
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + on_cmnd)
-                    loading_label = Label(frame, text='Starting SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    loading_label.after(5000, recheck_sshd)
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
-            elif cmnd == 'off_cmnd':
-                try:
-                    shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + off_cmnd)
-                    loading_label = Label(frame, text='Stopping SSH Service...',
-                                          font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
-                    loading_label.place(x=0, y=0, width=610, height=392)
-                    loading_label.after(5000, recheck_sshd)
-                    return 'DONE'
-                except pywintypes.error:
-                    messagebox.showerror(title='Access Denied',
-                                         message=f"The SSH Service can't be Stopped without Admin access,\nPlease click 'Yes' in the popup window")
-                    return 'REJECTED'
-                loading_label.destroy()
-
-        elif SELF_OS_PLATFORM == 'macos':
-            on_cmnd = """
-                            sudo systemsetup -setremotelogin on
-                            """
-
-            off_cmnd = """
-                            sudo systemsetup -setremotelogin off
-                            """
-            if cmnd == 'on_cmnd':
-                os.popen(on_cmnd)
+                return 'DONE'
+            except pywintypes.error:
+                messagebox.showerror(title='Access Denied',
+                                     message=f"The SSH Service can't be Installed & Started without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
+            loading_label.destroy()
+        elif cmnd == 'on_cmnd':
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + on_cmnd)
                 loading_label = Label(frame, text='Starting SSH Service...',
                                       font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
                 loading_label.place(x=0, y=0, width=610, height=392)
                 loading_label.after(5000, recheck_sshd)
                 return 'DONE'
-                loading_label.destroy()
-            elif cmnd == 'off_cmnd':
-                os.popen(off_cmnd)
+            except pywintypes.error:
+                messagebox.showerror(title='Access Denied',
+                                     message=f"The SSH Service can't be Started without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
+            loading_label.destroy()
+        elif cmnd == 'off_cmnd':
+            try:
+                shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + off_cmnd)
                 loading_label = Label(frame, text='Stopping SSH Service...',
                                       font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
                 loading_label.place(x=0, y=0, width=610, height=392)
                 loading_label.after(5000, recheck_sshd)
                 return 'DONE'
-                loading_label.destroy()
+            except pywintypes.error:
+                messagebox.showerror(title='Access Denied',
+                                     message=f"The SSH Service can't be Stopped without Admin access,\nPlease click 'Yes' in the popup window")
+                return 'REJECTED'
+            loading_label.destroy()
 
     sshd_status = check_sshd_service('sshd')
     main_title = Label(be_controlled_frame, text='Be Controlled:',
                        font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window.calc_width(350), y=main_window.calc_height(25))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
 
     signout_bttn = Button(be_controlled_frame, image=signout_pic, cursor='hand2',
                           font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color,
@@ -694,53 +578,76 @@ def set_be_controlled(be_controlled_frame):
     frame = Frame(be_controlled_frame, bg='white')
     frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
                 height=main_window.calc_height(392))
-    refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\refresh.png').resize(
-        (main_window.calc_width(50), main_window.calc_height(54)), Image.ANTIALIAS))
 
-    refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'),
-                          command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
-    refresh_bttn.place(x=10, y=10)
-    subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white')
-    v_mark_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\v.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
-                                                             Image.ANTIALIAS))
-    x_mark_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\x.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
-                                                             Image.ANTIALIAS))
-    mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), compound=LEFT, justify=CENTER,
-                       bg='white', padx=20)
-    if sshd_status == 'ON':
-        mark_label.configure(text='SSH Service is ON', image=v_mark_pic, fg='green')
-        mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
-        subtitle.configure(
-            text=f"This computer is ready to be connected to,\n\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
-        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
-        off_bttn = Button(frame, text='Stop SSH Service', cursor='hand2',
-                          font=('Eras Bold ITC', main_window.calc_width(15)), bg='brown1',
-                          command=lambda: run_power_shell('off_cmnd'))
-        off_bttn.place(x=main_window.calc_width(200), y=main_window.calc_height(310))
+    if SELF_OS_PLATFORM == 'windows':
+        refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/refresh.png').resize(
+            (main_window.calc_width(50), main_window.calc_height(54)), Image.ANTIALIAS))
+        refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'),
+                              command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
+        refresh_bttn.place(x=10, y=10)
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white')
+        v_mark_pic = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/v.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
+                                                                 Image.ANTIALIAS))
+        x_mark_pic = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/x.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
+                                                                 Image.ANTIALIAS))
+        mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), compound=LEFT, justify=CENTER,
+                           bg='white', padx=20)
+        if sshd_status == 'ON':
+            mark_label.configure(text='SSH Service is ON', image=v_mark_pic, fg='green')
+            mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
+            subtitle.configure(
+                text=f"This computer is ready to be connected to,\n\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
+            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+            off_bttn = Button(frame, text='Stop SSH Service', cursor='hand2',
+                              font=('Eras Bold ITC', main_window.calc_width(15)), bg='brown1',
+                              command=lambda: run_power_shell('off_cmnd'))
+            off_bttn.place(x=main_window.calc_width(200), y=main_window.calc_height(310))
 
-    elif sshd_status == 'OFF':
-        start_button = Button(frame, text='Start SSH Service', cursor='hand2',
-                              font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
-                              command=lambda: run_power_shell('on_cmnd'))
-        start_button.place(x=main_window.calc_width(200), y=main_window.calc_height(300))
-        mark_label.configure(text='SSH Service is OFF', image=x_mark_pic, fg='red')
-        mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
-        subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
-                           text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo turn the service on please click the button bellow\nand approve the window that will popup:")
-        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+        elif sshd_status == 'OFF':
+            start_button = Button(frame, text='Start SSH Service', cursor='hand2',
+                                  font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
+                                  command=lambda: run_power_shell('on_cmnd'))
+            start_button.place(x=main_window.calc_width(200), y=main_window.calc_height(300))
+            mark_label.configure(text='SSH Service is OFF', image=x_mark_pic, fg='red')
+            mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
+            subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
+                               text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo turn the service on please click the button bellow\nand approve the window that will popup:")
+            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
 
-    elif sshd_status == 'NOT INSTALLED':
-        start_button = Button(frame, text='Install & Start SSH Service', cursor='hand2',
-                              font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
-                              command=lambda: run_power_shell('install_and_on_cmnd'))
-        start_button.place(x=main_window.calc_width(160), y=main_window.calc_height(300))
-        mark_label.configure(text='SSH Service is\nNOT INSTALLED', image=x_mark_pic, fg='red')
-        mark_label.place(x=main_window.calc_width(130), y=main_window.calc_height(10))
-        subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
-                           text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo install the service and turn it on\nplease click the button bellow\nand approve the window that will popup:")
-        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+        elif sshd_status == 'NOT INSTALLED':
+            start_button = Button(frame, text='Install & Start SSH Service', cursor='hand2',
+                                  font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
+                                  command=lambda: run_power_shell('install_and_on_cmnd'))
+            start_button.place(x=main_window.calc_width(160), y=main_window.calc_height(300))
+            mark_label.configure(text='SSH Service is\nNOT INSTALLED', image=x_mark_pic, fg='red')
+            mark_label.place(x=main_window.calc_width(130), y=main_window.calc_height(10))
+            subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
+                               text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo install the service and turn it on\nplease click the button bellow\nand approve the window that will popup:")
+            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+
+    elif SELF_OS_PLATFORM == 'linux':
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white',
+                         wraplength=600,
+                         text=f"To connect to this computer make sure the SSH Server is enabled:\n\nTo install & start the server, run:\nsudo apt install openssh-server\n\nYour information:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
+        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(80), width=main_window.calc_width(610))
+
+        copy_bttn = Button(frame, text='Copy Command', cursor='hand2',
+                          font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color,
+                          command=lambda: pyperclip.copy('sudo apt install openssh-server'))
+        copy_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+
+    elif SELF_OS_PLATFORM == 'macos':
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white',
+                         wraplength=600,
+                         text=f"To connect to this computer make sure the SSH Server is enabled:\n\nTo start the server, run:\nsudo systemsetup -setremotelogin on\n\nYour information:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
+        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(80), width=main_window.calc_width(610))
+
+        copy_bttn = Button(frame, text='Copy Command', cursor='hand2',
+                           font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color,
+                           command=lambda: pyperclip.copy('sudo systemsetup -setremotelogin on'))
+        copy_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
 
     be_controlled_frame.mainloop()
 
@@ -1096,7 +1003,7 @@ def start_forgot_window(main_frame):
         start_login_window(main_frame)
 
     back_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}\\assets\\back.png').resize((main_window.calc_width(46), main_window.calc_height(35)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_width(46), main_window.calc_height(35)), Image.ANTIALIAS))
 
     def new_pass_code():
 
@@ -1364,11 +1271,11 @@ def stream(vid_label, vid_frame, video_name):
         vid_label.config(image=frame_image)
         vid_label.image = frame_image
         count += 1
-        if video_name == f'{ROOT_PROJ_DIR}\\assets\\mid-animation.mp4' and count == 25:
+        if video_name == f'{ROOT_PROJ_DIR}/assets/mid-animation.mp4' and count == 25:
             vid_frame.destroy()
-        elif video_name == f'{ROOT_PROJ_DIR}\\assets\\start-animation.mp4' and count == 20:
+        elif video_name == f'{ROOT_PROJ_DIR}/assets/start-animation.mp4' and count == 20:
             vid_frame.destroy()
-        elif video_name == f'{ROOT_PROJ_DIR}\\assets\\end-animation.mp4' and count == 26:
+        elif video_name == f'{ROOT_PROJ_DIR}/assets/end-animation.mp4' and count == 26:
             vid_frame.destroy()
 
 
@@ -1731,13 +1638,13 @@ def choose_mode_window(email):
             root.title('Remote File Explorer')
             choose_frame = Frame(root)
             choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-            bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
+            bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
             Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
             control_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}\\assets\\control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
+                Image.open(f'{ROOT_PROJ_DIR}/assets/control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
                                                      Image.ANTIALIAS))
             be_controlled_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}\\assets\\be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
+                Image.open(f'{ROOT_PROJ_DIR}/assets/be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
                                                            Image.ANTIALIAS))
             mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
             try:
@@ -1752,7 +1659,7 @@ def choose_mode_window(email):
         root.title('Remote File Explorer')
         ip_frame = Frame(root)
         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
@@ -1760,7 +1667,7 @@ def choose_mode_window(email):
         root.title('Remote File Explorer')
         be_controlled_frame = Frame(root)
         be_controlled_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         set_be_controlled(be_controlled_frame)
 
@@ -1791,7 +1698,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         if email == False:
             return None, None, None, None, None, None
         bg = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}\\assets\\background.png').resize((app_width, app_height), Image.ANTIALIAS))
+            Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         show_icon = ImageTk.PhotoImage(
             Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize(

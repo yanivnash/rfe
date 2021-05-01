@@ -71,7 +71,7 @@ def calc_height(size):
 def update_icons_dict(icons_path):
     icons_list = os.listdir(icons_path)
     for icon in icons_list:
-        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{icons_path}\\{icon}'))
+        icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{icons_path}/{icon}'))
 
 
 def download_icon(icon_name):
@@ -109,7 +109,7 @@ def create_bttn(frame):
     if len(items_list) == 0:
         Label(frame, text='This folder is empty', width=calc_width(150), bg='white').pack()
     else:
-        downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}\\downloaded_icons')
+        downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}/downloaded_icons')
         for item in items_list:
             btn_text = item
             if item in dirs_list:
@@ -127,7 +127,7 @@ def create_bttn(frame):
                     file_type = f'.lnk.{item_name}'
                     if file_type + '.png' not in downloaded_icons_list:
                         download_icon(item_name)
-                update_icons_dict(f'{ROOT_PROJ_DIR}\\downloaded_icons')
+                update_icons_dict(f'{ROOT_PROJ_DIR}/downloaded_icons')
 
                 if len(item) > 30:
                     btn_text = item[0:30] + '...' + file_type
@@ -497,6 +497,12 @@ def update_frame(items_list):
     wrapper1.destroy()
     wrapper2.destroy()
     frame.destroy()
+    items_num = len(items_list)
+
+    if items_num >= 50:
+        extras_list = items_list[50:]
+        items_list = [f'& {items_num - 50} more'] + items_list[:50]
+
     create_frame(items_list)
     create_bttn(frame)
 
@@ -515,12 +521,15 @@ def create_search_bttn(frame, items_list):
         dir_sign = '\\'
     else:
         dir_sign = '/'
+
+    downloaded_icons_list = list()
+    if len(items_list) > 0:
+        downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}/downloaded_icons')
     sftp = ssh.open_sftp()
     for item in items_list:
         end_index = item.rfind(dir_sign)
         item_name = item[end_index + 1:]
         item_path = item[:end_index]
-        # sftp = ssh.open_sftp()
         item_type = manageSSH.check_if_item_is_dir(sftp, item_path, item_name)
         if item_type == 'dir':
             dirs_list.append(item_path + dir_sign + item_name)
@@ -537,11 +546,19 @@ def create_search_bttn(frame, items_list):
                 btn_text = btn_text[0:30] + '...'
         elif item in files_list:
             # if 'item' is a file
-            end_index = item_name.rfind('.')
-            file_type = item_name[end_index:].lower()
+            file_type = item_name[item_name.rfind('.'):].lower()
+
+            if file_type == '.lnk':
+                item_name = item_name[:item_name.rfind('.')]
+                file_type = f'.lnk.{item_name}'
+                if file_type + '.png' not in downloaded_icons_list:
+                    download_icon(item_name)
+            update_icons_dict(f'{ROOT_PROJ_DIR}/downloaded_icons')
 
             if len(item_name) > 30:
                 btn_text = btn_text[0:30] + '...' + file_type
+                if file_type.startswith('.lnk.'):
+                    btn_text = item[0:30] + '...' + '.lnk'
         else:
             file_type = '.none'
         try:
@@ -551,6 +568,7 @@ def create_search_bttn(frame, items_list):
         bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
                                                                     compound=TOP, justify=CENTER, image=icon,
                                                                     height=120, width=120)
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
                                                                 pady=9)
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click_search)
@@ -856,11 +874,17 @@ def main():
         print(f'OTHER_OS_PLATFORM = {OTHER_OS_PLATFORM}\ncur_path = {cur_path}')  # TEMP
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
-        update_icons_dict(f'{ROOT_PROJ_DIR}\\icons')
-        new_dir_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\new_dir.png'))
-        search_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\search.png'))
-        up_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\up.png'))
-        ref_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}\\assets\\refresh.png'))
+        update_icons_dict(f'{ROOT_PROJ_DIR}/icons')
+        new_dir_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/new_dir.png'))
+        search_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/search.png'))
+        up_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/up.png'))
+        ref_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/refresh.png'))
+
+        items_num = len(items_list)
+        if items_num >= 50:
+            extras_list = items_list[50:]
+            items_list = [f'& {items_num - 50} more'] + items_list[:50]
+
         create_frame(items_list)
         create_bttn(frame)
 
@@ -1082,7 +1106,7 @@ def main():
             popup_y = int((screen_height - popup_height) / 2)
             popup = Toplevel(bg='black')
             popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
-            popup.iconbitmap('assets\\cmd-terminal.ico')
+            popup.iconbitmap('assets/cmd-terminal.ico')
             popup.resizable(False, False)
             popup.protocol("WM_DELETE_WINDOW", close_popup)
 
@@ -1167,7 +1191,7 @@ def main():
                                  command=open_cmd_terminal, activebackground='steelblue2',
                                  activeforeground='black')
 
-        end_video_name = f'{ROOT_PROJ_DIR}\\assets\\end-animation.mp4'
+        end_video_name = f'{ROOT_PROJ_DIR}/assets/end-animation.mp4'
         LoginRegister.play_video(end_video_name)
 
         root.mainloop()
