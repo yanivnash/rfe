@@ -1,15 +1,15 @@
 __author__ = 'Yaniv Nash'
 
-import manageSSH  # the file with funcs that connect to the ssh
 import LoginRegister
+import manageSSH  # the file with funcs that connect to the ssh
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox, filedialog
+from tkinter import simpledialog  # opens the popup for the new folder name input
 import socket
 import os
 import math
 from PIL import ImageTk, Image
-from tkinter import simpledialog  # opens the popup for the new folder name input
 import pyperclip  # copy to clipboard module
 import re
 import wx  # get screen resolution
@@ -181,6 +181,30 @@ def double_click(event):
     sftp.close()
 
 
+def right_click(event):
+    key_list = list(bttns_dict.keys())
+    val_list = list(bttns_dict.values())
+    item_name = key_list[val_list.index(event.widget)]
+    item_name = item_name[:item_name.find('_btn_')]
+    sftp = ssh.open_sftp()
+    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
+
+    right_click_dir_menu = Menu(root, tearoff=False)
+    right_click_file_menu = Menu(root, tearoff=False)
+
+    if item_type == 'dir':
+        right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
+        right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
+        right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
+        right_click_dir_menu.tk_popup(event.x_root, event.y_root)
+    elif item_type == 'file':
+        right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
+        right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
+        right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
+        right_click_file_menu.tk_popup(event.x_root, event.y_root)
+    sftp.close()
+
+
 def download_file(event):
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
@@ -200,32 +224,6 @@ def download_file(event):
         sftp.get(remote_path, local_path)
         refresh_button()
         sftp.close()
-
-
-def right_click(event):
-    key_list = list(bttns_dict.keys())
-    val_list = list(bttns_dict.values())
-    item_name = key_list[val_list.index(event.widget)]
-    item_name = item_name[:item_name.find('_btn_')]
-    sftp = ssh.open_sftp()
-    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-
-    right_click_dir_menu = Menu(root, tearoff=False)
-    right_click_file_menu = Menu(root, tearoff=False)
-
-    if item_type == 'dir':
-        right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
-        right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
-        right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
-        # right_click_dir_menu.add_command(label='Duplicate Folder', command=lambda: duplicate_item(event))
-        right_click_dir_menu.tk_popup(event.x_root, event.y_root)
-    elif item_type == 'file':
-        right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
-        right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
-        right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
-        # right_click_file_menu.add_command(label='Duplicate File', command=lambda: duplicate_item(event))
-        right_click_file_menu.tk_popup(event.x_root, event.y_root)
-    sftp.close()
 
 
 def rename_item(event):
@@ -286,7 +284,7 @@ def remove_item(event):
                                          message="There's an error, Try to delete it's contents then try again")
                 refresh_button()
             else:
-                tree_list = manageSSH.tree_items(sftp, item_path, [], '', OTHER_OS_PLATFORM)
+                tree_list = manageSSH.search_tree_items(sftp, item_path, [], '', OTHER_OS_PLATFORM)
                 temp = tree_list.copy()
                 longest_path = 0
                 for item in tree_list:
@@ -313,11 +311,6 @@ def remove_item(event):
                 except:
                     messagebox.showerror(title="Can't delete this folder",
                                          message="There's an error, Please try again later")
-                # try:
-                #     sftp.rmdir(item_path)
-                #     refresh_button()
-                # except:
-                #     messagebox.showerror(title="Can't delete this folder", message="This folder isn't empty")
     elif item_type == 'file':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f'Are you sure you want to Permanently Delete the File:\n"{item_name}" ?')
@@ -327,47 +320,6 @@ def remove_item(event):
             except PermissionError:
                 messagebox.showerror(title="Can't delete this file",
                                      message="This file is open or being used by another software and can't be deleted at the moment")
-    refresh_button()
-    sftp2.close()
-
-
-def duplicate_item(event):
-    global sftp
-    if OTHER_OS_PLATFORM == 'windows':
-        dir_sign = '\\'
-    else:
-        dir_sign = '/'
-    key_list = list(bttns_dict.keys())
-    val_list = list(bttns_dict.values())
-    item_name = key_list[val_list.index(event.widget)]
-    item_name = item_name[0:item_name.find('_btn_')]
-    item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
-    new_name = f'{item_name}(copy)'
-    dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
-    if item_type == 'file':
-        file_type = item_name[item_name.rfind('.'):]
-        new_name = f"{item_name[:item_name.rfind('.')]}(copy)"
-        while new_name + file_type in dirs_list:
-            new_name += '(copy)'
-        new_name += file_type
-    elif item_type == 'dir':
-        while new_name in dirs_list:
-            new_name += '(copy)'
-
-    sftp2 = ssh.open_sftp()
-    # new_name = check_new_name(new_name, 'Duplicate', item_type, item_name, '')
-
-    # if new_name != False:
-    #     if item_type == 'file':
-    #         new_name = new_name[:new_name.rfind('.')]
-    #         change_type = messagebox.askquestion(title='Change file extension',
-    #                                              message='If you change the file extension the file might be unusable.\nAre you sure you want to continue?',
-    #                                              icon='warning')
-    #                 if change_type == 'no':
-    #                     return
-
-    new_path = cur_path + dir_sign + new_name
-    sftp2.cp(item_name, new_path)
     refresh_button()
     sftp2.close()
 
@@ -738,7 +690,7 @@ def create_frame(items_list):
         search_key = search_bar_entry.get()
         if search_key != '':
             sftp = ssh.open_sftp()
-            items_list = manageSSH.tree_items(sftp, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
+            items_list = manageSSH.search_tree_items(sftp, cur_path, temp_list, search_key, OTHER_OS_PLATFORM)
             sftp.close()
             if items_list == []:
                 messagebox.showinfo(title='Not Found',

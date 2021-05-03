@@ -52,9 +52,9 @@ def cmd_terminal(ssh, cmnd):
 
 def check_if_item_is_dir(sftp, cur_path, item_name):
     chdir(sftp, cur_path)
-    for file in sftp.listdir_attr():
-        if str(file)[55:] == item_name:
-            if stat.S_ISDIR(file.st_mode):
+    for item in sftp.listdir_attr():
+        if str(item)[55:] == item_name:
+            if stat.S_ISDIR(item.st_mode):
                 return 'dir'
             else:
                 return 'file'
@@ -78,7 +78,7 @@ def get_dirs_files_lists(sftp, path):
     return dirs_list, files_list
 
 
-def tree_items(sftp, remotedir, tree_list, search_key, plat):
+def search_tree_items(sftp, remotedir, tree_list, search_key, plat):
     for item in sftp.listdir_attr(remotedir):
         if plat == 'windows':
             remotepath = remotedir + '\\' + item.filename
@@ -86,7 +86,7 @@ def tree_items(sftp, remotedir, tree_list, search_key, plat):
             remotepath = remotedir + '/' + item.filename
         mode = item.st_mode
         if stat.S_ISDIR(mode):
-            tree_items(sftp, remotepath, tree_list, search_key, plat)
+            search_tree_items(sftp, remotepath, tree_list, search_key, plat)
             if item.filename.lower().__contains__(search_key.lower()):
                 tree_list.append(remotepath)
         elif stat.S_ISREG(mode):

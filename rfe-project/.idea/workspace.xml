@@ -2,18 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Adobe Photoshop CC 2018.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Colasoft Packet Builder 2.0.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Control Panel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Discord.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.HP Smart.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Steam.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.This Pc.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/downloaded_icons/.lnk.Vegas Pro 14.0 (64-bit).png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/icons/.jpeg.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -67,7 +59,7 @@
       <recent name="C:\git\rfe\rfe-project\Remote File Explorer - oop\GUI\icons" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main_window">
+  <component name="RunManager">
     <configuration name="main_window" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="rfe-project" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -89,58 +81,9 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="rfe-project" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Remote File Explorer/Main-App" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Remote File Explorer/Main-App/test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="test2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="rfe-project" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Remote File Explorer/Main-App" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <list>
-      <item itemvalue="Python.main_window" />
-      <item itemvalue="Python.test" />
-      <item itemvalue="Python.test2" />
-    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main_window" />
-        <item itemvalue="Python.test" />
-        <item itemvalue="Python.test2" />
       </list>
     </recent_temporary>
   </component>
@@ -489,7 +432,14 @@
       <option name="project" value="LOCAL" />
       <updated>1619828143254</updated>
     </task>
-    <option name="localTasksCounter" value="49" />
+    <task id="LOCAL-00049" summary="final-update">
+      <created>1619904644243</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1619904644243</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -542,20 +492,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="final-update" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py</url>
-          <line>76</line>
-          <option name="timeStamp" value="33" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Remote File Explorer/Main-App/test2.py</url>
-          <line>109</line>
-          <option name="timeStamp" value="34" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
         <watch expression="icons_dict" language="Python" />
