@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSERVER.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSERVER.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -93,13 +93,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1614104636514</updated>
-    </task>
-    <task id="LOCAL-00004" summary="added an OOP folder">
-      <created>1614111548510</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1614111548510</updated>
     </task>
     <task id="LOCAL-00005" summary="update">
       <created>1614216764042</created>
@@ -437,7 +430,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620144946737</updated>
     </task>
-    <option name="localTasksCounter" value="53" />
+    <task id="LOCAL-00053" summary="final-update">
+      <created>1620145003127</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1620145003127</updated>
+    </task>
+    <option name="localTasksCounter" value="54" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

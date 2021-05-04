@@ -6,6 +6,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox, filedialog
 from tkinter import simpledialog  # opens the popup for the new folder name input
+import paramiko
 import socket
 import os
 import math
@@ -344,11 +345,18 @@ def up_button():
 def refresh_button():
     global is_searching
     is_searching = False
-    sftp2 = ssh.open_sftp()
-    manageSSH.chdir(sftp2, cur_path)
-    items_list = sftp2.listdir()
-    update_frame(items_list)
-    sftp2.close()
+    try:
+        sftp2 = ssh.open_sftp()
+        manageSSH.chdir(sftp2, cur_path)
+        items_list = sftp2.listdir()
+        update_frame(items_list)
+        sftp2.close()
+    except paramiko.ssh_exception.SSHException:
+        messagebox.showerror(title='Disconnected',
+                             message='The connection was disconnected!\nPlease check the connection and try again')
+        manageSSH.disconnect_ssh(ssh)
+        root.destroy()
+        main()
 
 
 def drives_box_change(event):
