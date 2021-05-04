@@ -1290,9 +1290,9 @@ def server_status(main_frame):
         error_label = Label(error_frame, text='error', bg='white', font=('Arial', main_window.calc_width(17), 'bold'))
         if status == 'SERVER IS DOWN':
             error_label.configure(
-                text='The servers are currently DOWN!\n(You may also want to check your internet connection)\nPlease try again later.')
+                text='The server is currently DOWN!\n(You may also want to check your internet connection)\nPlease try again later.')
         elif status == 'ERROR':
-            error_label.configure(text='There was an error connecting to the servers!\nPlease try again later.')
+            error_label.configure(text='There was an error connecting to the server!\nPlease try again later.')
         error_label.place(x=main_window.calc_width(305), y=main_window.calc_height(170),
                           width=main_window.calc_width(610), anchor=CENTER)
         error_frame.mainloop()
@@ -1367,7 +1367,7 @@ def choose_mode_window(email):
 
         popup = Toplevel(bg=label_bg_color)
         popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
-        popup.iconbitmap('icon.ico')
+        popup.iconbitmap('assets/icon.ico')
         popup.resizable(False, False)
         popup.title(title)
 
@@ -1507,7 +1507,7 @@ def choose_mode_window(email):
 
         popup = Toplevel(bg=label_bg_color)
         popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
-        popup.iconbitmap('icon.ico')
+        popup.iconbitmap('assets/icon.ico')
         popup.resizable(False, False)
         popup.title('Change Password')
 

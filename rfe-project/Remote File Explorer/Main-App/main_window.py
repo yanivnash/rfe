@@ -649,7 +649,7 @@ def create_frame(items_list):
     copy_btn.bind("<Button-1>", copy_path_button)
     copy_btn.grid(column=4, row=0, sticky=W)
 
-    ip_username_label = Label(wrapper1, text=f'Connected to:\n{host} - {username}', wraplength=450, bg='white')
+    ip_username_label = Label(wrapper1, text=f'Connected to:\n{username}@{host}', wraplength=450, bg='white')
     ip_username_label.grid(column=5, row=0)
 
     disconnect_btn = Button(wrapper1, text='Disconnect', bg=buttons_bg_color, command=acc_signout)
@@ -823,7 +823,6 @@ def main():
         elif manageSSH.run_action(ssh, 'uname').read().decode() == 'Darwin\n':
             OTHER_OS_PLATFORM = 'macos'
             cur_path = manageSSH.run_action(ssh, 'pwd').read().decode().replace('\n', '')
-        print(f'OTHER_OS_PLATFORM = {OTHER_OS_PLATFORM}\ncur_path = {cur_path}')  # TEMP
         manageSSH.chdir(sftp, cur_path)
         items_list = sftp.listdir()
         update_icons_dict(f'{ROOT_PROJ_DIR}/icons')

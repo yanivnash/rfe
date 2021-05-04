@@ -96,3 +96,6 @@ def reset_password(email, reset_code, new_password):
 def reset_ip_dict(email, password):
     send_object = json.dumps({'action': 'RESET_IP_DICT', 'email': email, 'password': password}).encode(FORMAT)
     return send_to_server(send_object)  # True = ip dict was reset | False = ip dict wasn't reset
+
+if __name__ == '__main__':
+    print(update_pc_in_account('yanivnash@gmail.com', ('172.20.129.178', 'Administrator')))
