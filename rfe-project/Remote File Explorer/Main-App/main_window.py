@@ -45,8 +45,6 @@ icons_dict = dict()
 ROOT_PROJ_DIR = os.getcwd()
 
 is_searching = False
-# cur_path = 'C:\\'
-# cur_path = os.getcwd()
 cur_path = ''
 
 try:
@@ -56,6 +54,9 @@ except FileExistsError:
 
 
 def calc_width(size):
+    """
+
+    """
     if size == 0:
         return 0
     else:
@@ -90,7 +91,6 @@ def download_icon(icon_name):
     url_start = html_text[html_text.find('src="h') + 5:]
     pic_url = url_start[:url_start.find('"')]
 
-    # download the picture
     response = requests.get(pic_url)
     with open(f'downloaded_icons/.lnk.{icon_name}.png', 'wb') as image:
         image.write(response.content)
@@ -107,9 +107,13 @@ def create_bttn(frame):
     sftp = ssh.open_sftp()
     dirs_list, files_list = manageSSH.get_dirs_files_lists(sftp, cur_path)
     items_list = dirs_list + files_list
-    if len(items_list) == 0:
+    items_len = len(items_list)
+    if items_len == 0:
         Label(frame, text='This folder is empty', width=calc_width(150), bg='white').pack()
     else:
+        if items_len >= 200:
+            # extras_list = items_list[200:]
+            items_list = items_list[:200] + [f'& {items_len - 200} more.>']
         downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}/downloaded_icons')
         for item in items_list:
             btn_text = item
@@ -120,11 +124,10 @@ def create_bttn(frame):
                     btn_text = item[0:30] + '...'
             elif item in files_list:
                 # if 'item' is a file
-                end_index = item.rfind('.')
-                file_type = item[end_index:].lower()
+                file_type = item[item.rfind('.'):].lower()
 
                 if file_type == '.lnk':
-                    item_name = item[:end_index]
+                    item_name = item[:item.rfind('.')]
                     file_type = f'.lnk.{item_name}'
                     if file_type + '.png' not in downloaded_icons_list:
                         download_icon(item_name)
@@ -140,20 +143,31 @@ def create_bttn(frame):
                 icon = icons_dict[file_type + '.png']
             except KeyError:
                 icon = icons_dict['.none.png']
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
+            if item.endswith('more.>'):
+                icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
+                btn_text = btn_text[:item.rfind('.')]
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_width(100), text=btn_text,
                                                                         compound=TOP, justify=CENTER, image=icon,
-                                                                        height=120, width=120)
+                                                                        height=calc_height(120), width=calc_width(120))
 
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
 
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
-                                                                    pady=9)
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=calc_width(9),
+                                                                    pady=calc_height(9))
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
             clm += 1
             if clm == 7:
                 clm = 0
                 rw += 1
+
+    if items_list[0].endswith('more.>'):
+        items_len = len(items_list) - 1
+    else:
+        items_len = len(items_list)
+    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_width(10), y=app_height - 11,
+                                                                              width=calc_width(200),
+                                                                              height=calc_height(11))
 
 
 def double_click(event):
@@ -269,32 +283,28 @@ def remove_item(event):
     item_name = item_name[0:item_name.find('_btn_')]
     item_type = manageSSH.check_if_item_is_dir(sftp, cur_path, item_name)
     if OTHER_OS_PLATFORM == 'windows':
-        item_path = cur_path + '\\' + item_name
+        dir_sign = '\\'
     else:
-        item_path = cur_path + '/' + item_name
+        dir_sign = '\\'
+    item_path = cur_path + dir_sign + item_name
     sftp2 = ssh.open_sftp()
     if item_type == 'dir':
         dlt_msg_box = messagebox.askquestion(title='Delete',
                                              message=f"""Are you sure you want to Permanently Delete the folder:\n"{item_name}"\nand all it's contents?""")
         if dlt_msg_box == 'yes':
-            if OTHER_OS_PLATFORM == 'windows':
-                try:
-                    sftp2.rmdir(item_path)
-                except OSError:
-                    messagebox.showerror(title="Can't delete this folder",
-                                         message="There's an error, Try to delete it's contents then try again")
-                refresh_button()
-            else:
-                tree_list = manageSSH.search_tree_items(sftp, item_path, [], '', OTHER_OS_PLATFORM)
+            try:
+                sftp2.rmdir(item_path)
+            except:
+                tree_list = manageSSH.search_tree_items(sftp2, item_path, [], '', OTHER_OS_PLATFORM)
                 temp = tree_list.copy()
                 longest_path = 0
                 for item in tree_list:
-                    if item.count('/') > longest_path:
-                        longest_path = item.count('/')
+                    if item.count(dir_sign) > longest_path:
+                        longest_path = item.count(dir_sign)
                 sorted_items_list = []
                 while temp != [] and longest_path >= 0:
                     for item in tree_list:
-                        if item.count('/') == longest_path:
+                        if item.count(dir_sign) == longest_path:
                             sorted_items_list.append(item)
                             temp.remove(item)
                     longest_path -= 1
@@ -360,7 +370,8 @@ def refresh_button():
 
 
 def drives_box_change(event):
-    global cur_path
+    global cur_path, is_searching
+    is_searching = False
     selected_drive = event.widget.get()
     cur_path = selected_drive
     sftp = ssh.open_sftp()
@@ -457,12 +468,6 @@ def update_frame(items_list):
     wrapper1.destroy()
     wrapper2.destroy()
     frame.destroy()
-    items_num = len(items_list)
-
-    if items_num >= 50:
-        extras_list = items_list[50:]
-        items_list = [f'& {items_num - 50} more'] + items_list[:50]
-
     create_frame(items_list)
     create_bttn(frame)
 
@@ -485,6 +490,10 @@ def create_search_bttn(frame, items_list):
     downloaded_icons_list = list()
     if len(items_list) > 0:
         downloaded_icons_list = os.listdir(f'{ROOT_PROJ_DIR}/downloaded_icons')
+    items_len = len(items_list)
+    if items_len >= 200:
+        # extras_list = items_list[200:]
+        items_list = items_list[:200] + [f'& {items_len - 200} more.>']
     sftp = ssh.open_sftp()
     for item in items_list:
         end_index = item.rfind(dir_sign)
@@ -525,9 +534,12 @@ def create_search_bttn(frame, items_list):
             icon = icons_dict[file_type + '.png']
         except KeyError:
             icon = icons_dict['.none.png']
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=100, text=btn_text,
+        if item.endswith('more.>'):
+            icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
+            btn_text = btn_text[:item.rfind('.')]
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_width(100), text=btn_text,
                                                                     compound=TOP, justify=CENTER, image=icon,
-                                                                    height=120, width=120)
+                                                                    height=calc_height(120), width=calc_width(120))
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
                                                                 pady=9)
@@ -538,6 +550,14 @@ def create_search_bttn(frame, items_list):
             clm = 0
             rw += 1
         sftp.close()
+
+    if items_list[0].endswith('more.>'):
+        items_len = len(items_list) - 1
+    else:
+        items_len = len(items_list)
+    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_width(10), y=app_height - 11,
+                                                                              width=calc_width(200),
+                                                                              height=calc_height(11))
 
 
 def double_click_search(event):
@@ -570,7 +590,8 @@ def double_click_search(event):
         update_frame(items_list)
 
     elif item_type == 'item not found':
-        print(f'{item_name} - not found')
+        if not item_name.endswith('more.>'):
+            print(f'{item_name} - not found')
     else:
         pass
     sftp.close()
@@ -704,11 +725,6 @@ def create_frame(items_list):
                 messagebox.showinfo(title='Not Found',
                                     message="Couldn't find any files or folders with this Search Key in the current path!")
             else:
-                items_num = len(items_list)
-                if items_num >= 50:
-                    extras_list = items_list[50:]
-                    items_list = [f'& {items_num - 50} more'] + items_list[:50]
-
                 wrapper1.destroy()
                 wrapper2.destroy()
                 frame.destroy()
@@ -838,11 +854,6 @@ def main():
         search_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/search.png'))
         up_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/up.png'))
         ref_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/refresh.png'))
-
-        items_num = len(items_list)
-        if items_num >= 50:
-            extras_list = items_list[50:]
-            items_list = [f'& {items_num - 50} more'] + items_list[:50]
 
         create_frame(items_list)
         create_bttn(frame)

@@ -79,11 +79,12 @@ def get_dirs_files_lists(sftp, path):
 
 
 def search_tree_items(sftp, remotedir, tree_list, search_key, plat):
+    if plat == 'windows':
+        dir_sign = '\\'
+    else:
+        dir_sign = '/'
     for item in sftp.listdir_attr(remotedir):
-        if plat == 'windows':
-            remotepath = remotedir + '\\' + item.filename
-        else:
-            remotepath = remotedir + '/' + item.filename
+        remotepath = remotedir + dir_sign + item.filename
         mode = item.st_mode
         if stat.S_ISDIR(mode):
             search_tree_items(sftp, remotepath, tree_list, search_key, plat)
