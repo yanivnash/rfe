@@ -53,9 +53,11 @@ except FileExistsError:
     pass
 
 
-def calc_width(size):
+def calc_size(size):
     """
-
+    Calculates a certain size compared to the size of the app.
+    :param size: the size when the app size is default (1070x700).
+    :return: the size scaled to match the current app size.
     """
     if size == 0:
         return 0
@@ -63,20 +65,24 @@ def calc_width(size):
         return int(app_width / (1070 / size))
 
 
-def calc_height(size):
-    if size == 0:
-        return 0
-    else:
-        return int(app_height / (700 / size))
-
-
 def update_icons_dict(icons_path):
+    """
+    Updates the global var "icons_dir" to contain all the icons in a folder,
+    their name as the key and an image object as the value.
+    :param icons_path: the path to the folder that contains the icons you want to update.
+    :return: None
+    """
     icons_list = os.listdir(icons_path)
     for icon in icons_list:
         icons_dict[icon] = ImageTk.PhotoImage(Image.open(f'{icons_path}/{icon}'))
 
 
 def download_icon(icon_name):
+    """
+    Searches google images for an icon and download it.
+    :param icon_name: the name of the icon that needs to be downloaded.
+    :return: None
+    """
     URL = f"https://www.google.com/search?q={icon_name}+logo&newwindow=1&hl=en&sxsrf=ALeKk03_3mH_awXS2UWry7EgXMwViGLtEQ:1619816415283&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjR2aKw7qbwAhVIXRoKHVAkAMwQ_AUoAXoECAEQAw&biw=1920&bih=937"
 
     HEADERS = ({'User-Agent':
@@ -95,12 +101,17 @@ def download_icon(icon_name):
     with open(f'downloaded_icons/.lnk.{icon_name}.png', 'wb') as image:
         image.write(response.content)
     image = Image.open(f'downloaded_icons/.lnk.{icon_name}.png')
-    image_ratio = image.size[1] / calc_height(60)
-    smaller_image = image.resize((int(image.size[0] / image_ratio), calc_height(60)), Image.NEAREST)
+    image_ratio = image.size[1] / calc_size(60)
+    smaller_image = image.resize((int(image.size[0] / image_ratio), calc_size(60)), Image.NEAREST)
     smaller_image.save(f'downloaded_icons/.lnk.{icon_name}.png')
 
 
 def create_bttn(frame):
+    """
+    Creates the buttons that represent the files and folders on the remote computer.
+    :param frame: a tkinter frame object that contains all the buttons.
+    :return: None
+    """
     global icons_dict, bttns_dict, sftp, right_click_file_menu, right_click_dir_menu
     clm = 0
     rw = 2
@@ -109,7 +120,7 @@ def create_bttn(frame):
     items_list = dirs_list + files_list
     items_len = len(items_list)
     if items_len == 0:
-        Label(frame, text='This folder is empty', width=calc_width(150), bg='white').pack()
+        Label(frame, text='This folder is empty', width=calc_size(150), bg='white').pack()
     else:
         if items_len >= 200:
             # extras_list = items_list[200:]
@@ -146,14 +157,15 @@ def create_bttn(frame):
             if item.endswith('more.>'):
                 icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
                 btn_text = btn_text[:item.rfind('.')]
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_width(100), text=btn_text,
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100), text=btn_text,
                                                                         compound=TOP, justify=CENTER, image=icon,
-                                                                        height=calc_height(120), width=calc_width(120))
+                                                                        height=calc_size(120), width=calc_size(120))
 
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
 
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=calc_width(9),
-                                                                    pady=calc_height(9))
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=calc_size(
+                9),
+                                                                    pady=calc_size(9))
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
             clm += 1
@@ -165,12 +177,17 @@ def create_bttn(frame):
         items_len = len(items_list) - 1
     else:
         items_len = len(items_list)
-    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_width(10), y=app_height - 11,
-                                                                              width=calc_width(200),
-                                                                              height=calc_height(11))
+    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_size(10), y=app_height - 11,
+                                                                              width=calc_size(200),
+                                                                              height=calc_size(11))
 
 
 def double_click(event):
+    """
+    Goes to the clicked folder and updates the screen when double clicking one of the folders buttons.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     global items_list, cur_path, frame, bttns_dict
     if OTHER_OS_PLATFORM == 'windows':
         dir_sign = '\\'
@@ -197,6 +214,11 @@ def double_click(event):
 
 
 def right_click(event):
+    """
+    Creates a menu matching when right clicking one of the files or folders buttons.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
@@ -210,23 +232,27 @@ def right_click(event):
     if item_type == 'dir':
         right_click_dir_menu.add_command(label='Open Folder', command=lambda: double_click(event))
         right_click_dir_menu.add_command(label='Rename Folder', command=lambda: rename_item(event))
-        right_click_dir_menu.add_command(label='Delete Folder', command=lambda: remove_item(event))
+        right_click_dir_menu.add_command(label='Delete Folder', command=lambda: delete_item(event))
         right_click_dir_menu.tk_popup(event.x_root, event.y_root)
     elif item_type == 'file':
         right_click_file_menu.add_command(label='Download File', command=lambda: download_file(event))
         right_click_file_menu.add_command(label='Rename File', command=lambda: rename_item(event))
-        right_click_file_menu.add_command(label='Delete File', command=lambda: remove_item(event))
+        right_click_file_menu.add_command(label='Delete File', command=lambda: delete_item(event))
         right_click_file_menu.tk_popup(event.x_root, event.y_root)
     sftp.close()
 
 
 def download_file(event):
+    """
+    Downloads a file from the remote computer to the local computer through SFTP.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
     item_name = key_list[val_list.index(event.widget)]
     file = item_name[:item_name.find('_btn_')]
     file_type = file[file.rfind('.'):]
-    # file_name = file[:file.rfind('.')]
     local_path = filedialog.asksaveasfilename(defaultextension=file_type, title='Choose where to save the file',
                                               initialfile=file, filetypes=((file_type, file_type),))
     if local_path:
@@ -237,11 +263,17 @@ def download_file(event):
 
         sftp = ssh.open_sftp()
         sftp.get(remote_path, local_path)
-        refresh_button()
+        refresh_screen()
         sftp.close()
 
 
 def rename_item(event):
+    """
+    Gets a new name for a file or folder as an input, checks it that it's a valid name
+    and finally renames said file or folder on the remote computer.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     global sftp
     if OTHER_OS_PLATFORM == 'windows':
         dir_sign = '\\'
@@ -271,11 +303,16 @@ def rename_item(event):
 
             new_path = cur_path + dir_sign + new_name
             sftp2.rename(old_path, new_path)
-            refresh_button()
+            refresh_screen()
     sftp2.close()
 
 
-def remove_item(event):
+def delete_item(event):
+    """
+    Deletes a specified file or folder on the remote computer.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     global sftp
     key_list = list(bttns_dict.keys())
     val_list = list(bttns_dict.values())
@@ -331,11 +368,15 @@ def remove_item(event):
             except PermissionError:
                 messagebox.showerror(title="Can't delete this file",
                                      message="This file is open or being used by another software and can't be deleted at the moment")
-    refresh_button()
+    refresh_screen()
     sftp2.close()
 
 
 def up_button():
+    """
+    Goes one dir up and updates the screen.
+    :return: None
+    """
     global cur_path, is_searching
     is_searching = False
     manageSSH.chdir(sftp, '..')
@@ -352,7 +393,11 @@ def up_button():
     update_frame(items_list)
 
 
-def refresh_button():
+def refresh_screen():
+    """
+    Refreshes the app's screen.
+    :return: None
+    """
     global is_searching
     is_searching = False
     try:
@@ -370,6 +415,11 @@ def refresh_button():
 
 
 def drives_box_change(event):
+    """
+    Goes to the chosen drive.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     global cur_path, is_searching
     is_searching = False
     selected_drive = event.widget.get()
@@ -382,6 +432,10 @@ def drives_box_change(event):
 
 
 def close_window():
+    """
+    Asks for confirmation and if granted, closes the window.
+    :return: None
+    """
     discon_msg_box = messagebox.askquestion(title='Disconnect & Close',
                                             message='Are you sure you want to close the window and disconnect?')
     if discon_msg_box == 'yes':
@@ -390,12 +444,28 @@ def close_window():
 
 
 def copy_path_button(event):
+    """
+    Copies the current path and shows feedback.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     pyperclip.copy(cur_path)
     event.widget.configure(text='Copied!')
     event.widget.after(3000, lambda: event.widget.configure(text='Copy Path'))
 
 
 def check_new_name(new_name, input_title, type, old_name, initialv):
+    """
+    Checks if a new file or folder name is already taken or invalid.
+    :param new_name: (String) A new name that needs to be checked
+    :param input_title: (String) The title that will be shown on the popup window if a new input is required
+    :param type: (String) If the new name belongs to a file or a folder
+    :param old_name: (String) The current name of the file or folder
+    :param initialv: (String) The popup's initial value when asking for a new input
+    :return: (Bool/String) False - if the user entered an empty input, clicked "Cancel" or
+    the new name is the same as the current name
+    new_name - if the name is valid
+    """
     sftp = ssh.open_sftp()
     manageSSH.chdir(sftp, cur_path)
     items_list = sftp.listdir()
@@ -537,9 +607,9 @@ def create_search_bttn(frame, items_list):
         if item.endswith('more.>'):
             icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
             btn_text = btn_text[:item.rfind('.')]
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_width(100), text=btn_text,
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100), text=btn_text,
                                                                     compound=TOP, justify=CENTER, image=icon,
-                                                                    height=calc_height(120), width=calc_width(120))
+                                                                    height=calc_size(120), width=calc_size(120))
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
                                                                 pady=9)
@@ -555,9 +625,9 @@ def create_search_bttn(frame, items_list):
         items_len = len(items_list) - 1
     else:
         items_len = len(items_list)
-    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_width(10), y=app_height - 11,
-                                                                              width=calc_width(200),
-                                                                              height=calc_height(11))
+    Label(root, text=f'{items_len} items', bg=frame_bg_color, anchor=W).place(x=calc_size(10), y=app_height - 11,
+                                                                              width=calc_size(200),
+                                                                              height=calc_size(11))
 
 
 def double_click_search(event):
@@ -631,7 +701,7 @@ def create_frame(items_list):
     global frame, wrapper1, wrapper2, count, drives_list, is_searching, cur_path_label
 
     def f_refresh(event):
-        refresh_button()
+        refresh_screen()
 
     root.bind('<F5>', f_refresh)
 
@@ -707,7 +777,7 @@ def create_frame(items_list):
         drive_label = Label(wrapper1, text='Drive Select:', bg='white')
         drive_label.grid(column=2, row=0)
 
-    ref_btn = Button(wrapper1, image=ref_pic, bg=buttons_bg_color, command=refresh_button)
+    ref_btn = Button(wrapper1, image=ref_pic, bg=buttons_bg_color, command=refresh_screen)
 
     def search():
         global is_searching
@@ -751,7 +821,7 @@ def create_frame(items_list):
         search_bar_entry.bind('<FocusIn>', entry_click)
 
     if is_searching:
-        stop_search_btn = Button(wrapper1, text='Stop Search', bg=buttons_bg_color, command=refresh_button)
+        stop_search_btn = Button(wrapper1, text='Stop Search', bg=buttons_bg_color, command=refresh_screen)
         stop_search_btn.grid(column=5, row=1, sticky=E)
         ref_btn.grid(column=3, row=1)
     else:
@@ -759,11 +829,11 @@ def create_frame(items_list):
         new_dir_btn = Button(wrapper1, text='New folder', compound=TOP, justify=CENTER, image=new_dir_pic,
                              bg=buttons_bg_color, command=new_dir_button)
         new_dir_btn.grid(column=3, row=1)
-        search_bar_entry = Entry(wrapper1, text='Search', font=(calc_width(20)))
+        search_bar_entry = Entry(wrapper1, text='Search', font=(calc_size(20)))
         search_bar_entry.delete(0, 'end')
         search_bar_entry.insert(0, 'Search')
         search_bar_entry.bind('<FocusIn>', entry_click)
-        search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_height(1), padx=calc_width(25))
+        search_bar_entry.grid(column=5, row=1, sticky=E, ipady=calc_size(1), padx=calc_size(25))
         search_btn = Button(wrapper1, image=search_pic, bg=buttons_bg_color, command=search)
         search_btn.grid(column=5, row=1, sticky=E)
 
@@ -943,7 +1013,7 @@ def main():
 
                 remote_path = cur_path + file
                 sftp.put(local_path, remote_path)
-                refresh_button()
+                refresh_screen()
                 sftp.close()
 
         def open_cmd_terminal():
@@ -1032,7 +1102,7 @@ def main():
                                                                blockcursor=True,
                                                                insertbackground='white',
                                                                selectforeground='black', selectbackground='white',
-                                                               font=('Arial', calc_width(14)),
+                                                               font=('Arial', calc_size(14)),
                                                                width=55,
                                                                height=answer_lines)
                 text_box_dict[f'{button_count}_answer'].insert('end', print_msg)
@@ -1042,7 +1112,7 @@ def main():
                 row += answer_lines
 
                 text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir + '>',
-                                                               font=('Arial', calc_width(14)))
+                                                               font=('Arial', calc_size(14)))
                 text_box_dict[f'{button_count}_label'].grid(row=row, column=0, sticky=NW)
 
                 popup.update()
@@ -1050,7 +1120,7 @@ def main():
                                                               blockcursor=True,
                                                               insertbackground='white',
                                                               selectforeground='black', selectbackground='white',
-                                                              font=('Arial', calc_width(14)),
+                                                              font=('Arial', calc_size(14)),
                                                               width=math.floor(70 - text_box_dict[
                                                                   f'{button_count - 1}_label'].winfo_width() / 12) - 2,
                                                               height=18, wrap=CHAR)
@@ -1067,11 +1137,11 @@ def main():
             def close_popup():
                 popup.destroy()
                 sftp.close()
-                refresh_button()
+                refresh_screen()
 
             sftp = ssh.open_sftp()
-            popup_width = calc_width(800)
-            popup_height = calc_height(400)
+            popup_width = calc_size(800)
+            popup_height = calc_size(400)
             popup_x = int((screen_width - popup_width) / 2)
             popup_y = int((screen_height - popup_height) / 2)
             popup = Toplevel(bg='black')
@@ -1108,14 +1178,14 @@ def main():
             sec_frame.bind("<Configure>", reset_scrollregion)
 
             text_box_dict[f'{button_count}_label'] = Label(sec_frame, bg='black', fg='green', text=cur_dir + '>',
-                                                           font=('Arial', calc_width(14)))
+                                                           font=('Arial', calc_size(14)))
             text_box_dict[f'{button_count}_label'].grid(row=row, column=0, sticky=NW)
             popup.update()
 
             text_box_dict[f'{button_count}_input'] = Text(sec_frame, bg='black', bd='0', fg='white', blockcursor=True,
                                                           insertbackground='white',
                                                           selectforeground='black', selectbackground='white',
-                                                          font=('Arial', calc_width(14)),
+                                                          font=('Arial', calc_size(14)),
                                                           width=math.floor(
                                                               70 - text_box_dict[
                                                                   f'{button_count}_label'].winfo_width() / 12) - 2,

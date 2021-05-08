@@ -85,22 +85,22 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):
         choose_frame.quit()
 
     main_title = Label(choose_frame, text='Choose an action for this PC:',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(180), y=main_window.calc_height(25))
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_size(180), y=main_window.calc_size(25))
     frame = Frame(choose_frame, bg='white')
-    frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
-                height=main_window.calc_height(392))
+    frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(610),
+                height=main_window.calc_size(392))
     control_button = Button(frame, cursor='hand2', command=control_bttn, image=control_pic, bd=0, bg='white')
-    control_button.place(x=main_window.calc_width(70), y=main_window.calc_height(142))
-    control_label = Label(frame, text='CONTROL', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'),
+    control_button.place(x=main_window.calc_size(70), y=main_window.calc_size(142))
+    control_label = Label(frame, text='CONTROL', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'),
                           fg='gray20', bg='white')
-    control_label.place(x=main_window.calc_width(75), y=main_window.calc_height(100))
+    control_label.place(x=main_window.calc_size(75), y=main_window.calc_size(100))
     be_controlled_button = Button(frame, cursor='hand2', command=be_controlled_bttn, image=be_controlled_pic, bd=0,
                                   bg='white')
-    be_controlled_button.place(x=main_window.calc_width(350), y=main_window.calc_height(140))
-    control_label = Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', main_window.calc_height(20), 'bold'),
+    be_controlled_button.place(x=main_window.calc_size(350), y=main_window.calc_size(140))
+    control_label = Label(frame, text='BE CONTROLLED', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'),
                           fg='gray20', bg='white')
-    control_label.place(x=main_window.calc_width(320), y=main_window.calc_height(100))
+    control_label.place(x=main_window.calc_size(320), y=main_window.calc_size(100))
 
     choose_frame.mainloop()
     return mode
@@ -153,12 +153,12 @@ def login_to_ssh_client(ip_frame, ip_dict):
     ip_butns_dict = dict()
 
     main_title = Label(ip_frame, text='Choose a computer to connect to:',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(120), y=main_window.calc_height(25))
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_size(120), y=main_window.calc_size(25))
 
     frame = Frame(ip_frame, bg='white')
-    frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
-                height=main_window.calc_height(392))
+    frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(610),
+                height=main_window.calc_size(392))
 
     def mouse_wheel(event):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -201,24 +201,26 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 sftp = ssh.open_sftp()
                 if check_var.get() == 1:
                     manageSERVER.update_pc_in_account(email, (host, username))
-                load_label = Label(ip_frame, text='Downloading Icons...',bg='white', font=('Eras Bold ITC', main_window.calc_width(30)))
-                load_label.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610), height=main_window.calc_height(392))
+                load_label = Label(ip_frame, text='Downloading Icons...', bg='white', font=('Eras Bold ITC',
+                                                                                            main_window.calc_size(30)))
+                load_label.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(
+                    610), height=main_window.calc_size(392))
                 load_label.after(10, ip_frame.quit)
 
     back_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_width(57), main_window.calc_height(44)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_size(57), main_window.calc_size(44)), Image.ANTIALIAS))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)), Image.ANTIALIAS))
     signout_bttn = Button(ip_frame, image=signout_pic, cursor='hand2',
-                          font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                          font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                           command=acc_signout)
-    signout_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+    signout_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
     def create_enter_frame():
         global check_var, username
 
         main_title.configure(text="Enter a computer's info to connect to:")
-        main_title.place(x=main_window.calc_width(85), y=main_window.calc_height(25))
+        main_title.place(x=main_window.calc_size(85), y=main_window.calc_size(25))
 
         def return_button(event):
             connect_button.invoke()
@@ -234,69 +236,69 @@ def login_to_ssh_client(ip_frame, ip_dict):
             if host == '' or username == '':
                 if host == '':
                     ip_error_title.configure(text='Please enter an ip')
-                    ip_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(110),
-                                         width=main_window.calc_width(500))
+                    ip_error_title.place(x=main_window.calc_size(50), y=main_window.calc_size(110),
+                                         width=main_window.calc_size(500))
                 if username == '':
                     username_error_title.configure(text='Please enter a username')
-                    username_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(215),
-                                               width=main_window.calc_width(500))
+                    username_error_title.place(x=main_window.calc_size(50), y=main_window.calc_size(215),
+                                               width=main_window.calc_size(500))
             else:
                 try_connect(host, username)
 
         enter_frame = Frame(frame, bg='white')
-        enter_frame.place(x=main_window.calc_width(0), y=main_window.calc_height(0), width=main_window.calc_width(610),
-                          height=main_window.calc_height(392))
+        enter_frame.place(x=main_window.calc_size(0), y=main_window.calc_size(0), width=main_window.calc_size(610),
+                          height=main_window.calc_size(392))
 
         def close_enter_frame():
             main_title.configure(text='Choose a computer to connect to:')
-            main_title.place(x=main_window.calc_width(120), y=main_window.calc_height(25))
+            main_title.place(x=main_window.calc_size(120), y=main_window.calc_size(25))
 
             root.bind('<Return>', no_action)
             enter_frame.destroy()
 
         signout_bttn = Button(enter_frame, command=close_enter_frame, cursor='hand2', bg=buttons_bg_color,
                               image=back_pic)
-        signout_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+        signout_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
         ip_error_title = Label(enter_frame, text='Please enter an ip',
-                               font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-        ip_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(110),
-                             width=main_window.calc_width(500))
+                               font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+        ip_error_title.place(x=main_window.calc_size(50), y=main_window.calc_size(110),
+                             width=main_window.calc_size(500))
         username_error_title = Label(enter_frame, text='Please enter a username',
-                                     font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-        username_error_title.place(x=main_window.calc_width(50), y=main_window.calc_height(215),
-                                   width=main_window.calc_width(500))
+                                     font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+        username_error_title.place(x=main_window.calc_size(50), y=main_window.calc_size(215),
+                                   width=main_window.calc_size(500))
         ip_error_title.place_forget()
         username_error_title.place_forget()
 
         # enter ip
-        Label(enter_frame, text='IP:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(285), y=main_window.calc_height(35))
-        enter_ip = Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+        Label(enter_frame, text='IP:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(285), y=main_window.calc_size(35))
+        enter_ip = Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                          justify='center')
-        enter_ip.place(x=main_window.calc_width(55), y=main_window.calc_height(75), width=main_window.calc_width(500),
-                       height=main_window.calc_height(35))
+        enter_ip.place(x=main_window.calc_size(55), y=main_window.calc_size(75), width=main_window.calc_size(500),
+                       height=main_window.calc_size(35))
 
         # enter username
-        Label(enter_frame, text='Username:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(225), y=main_window.calc_height(140))  # (x=225, y=140)
-        enter_username = Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+        Label(enter_frame, text='Username:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(225), y=main_window.calc_size(140))  # (x=225, y=140)
+        enter_username = Entry(enter_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                                justify='center')
-        enter_username.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                             width=main_window.calc_width(500), height=main_window.calc_height(35))
+        enter_username.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                             width=main_window.calc_size(500), height=main_window.calc_size(35))
 
         check_var = IntVar(value=1)
         save_to_acc = Checkbutton(enter_frame, cursor='hand2',
                                   text="Save this PC's info to your account for future connections", fg='gray20',
-                                  bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_width(10)), onvalue=1,
+                                  bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_size(10)), onvalue=1,
                                   offvalue=0, variable=check_var)
-        save_to_acc.place(x=main_window.calc_width(105), y=main_window.calc_height(245))
+        save_to_acc.place(x=main_window.calc_size(105), y=main_window.calc_size(245))
 
         connect_button = Button(enter_frame, text='Connect', cursor='hand2',
-                                font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                                font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg=buttons_bg_color,
                                 command=check_ip)
-        connect_button.place(x=main_window.calc_width(255), y=main_window.calc_height(292),
-                             width=main_window.calc_width(100), height=main_window.calc_height(35))
+        connect_button.place(x=main_window.calc_size(255), y=main_window.calc_size(292),
+                             width=main_window.calc_size(100), height=main_window.calc_size(35))
 
         enter_ip.focus()
 
@@ -318,16 +320,16 @@ def login_to_ssh_client(ip_frame, ip_dict):
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         scrollable_frame.bind_all("<MouseWheel>", no_action)
 
-        Label(scrollable_frame, height=main_window.calc_height(2), bg='white').pack()
+        Label(scrollable_frame, height=main_window.calc_size(2), bg='white').pack()
 
         local_ip_list = get_network_ip_list()
         if local_ip_list == []:
-            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window.calc_width(20)),
-                  bg=buttons_bg_color).place(x=main_window.calc_width(155), y=main_window.calc_height(170))
+            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window.calc_size(20)),
+                  bg=buttons_bg_color).place(x=main_window.calc_size(155), y=main_window.calc_size(170))
         else:
             for local_ip in local_ip_list:
                 ip_butns_dict[f'{local_ip}-bttn'] = Button(scrollable_frame, bd=0, text=local_ip, cursor='hand2',
-                                                           font=('Eras Bold ITC', main_window.calc_width(12)),
+                                                           font=('Eras Bold ITC', main_window.calc_size(12)),
                                                            anchor=CENTER, fg='gray20', bg=buttons_bg_color)
                 ip_butns_dict[f'{local_ip}-bttn'].pack(anchor=CENTER, pady=4)
                 ip_butns_dict[f'{local_ip}-bttn'].bind("<Button-1>", ip_butn_click)
@@ -336,19 +338,19 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
             if (num_of_temp_items - len(local_ip_list)) > 0:
                 for _ in range(num_of_temp_items - len(local_ip_list)):
-                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window.calc_width(12)),
+                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window.calc_size(12)),
                            state='disable').pack(anchor=CENTER, pady=4)
 
         if len(local_ip_list) > 8:
             canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
-                                 width=main_window.calc_width(610))
+                                 width=main_window.calc_size(610))
             canvas.configure(yscrollcommand=scrollbar.set)
             canvas.pack(side="left", fill="both", expand=True)
             scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
             scrollbar.pack(side="right", fill="y")
         else:
             canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
-                                 width=main_window.calc_width(610))
+                                 width=main_window.calc_size(610))
             canvas.configure(yscrollcommand=scrollbar.set)
             canvas.pack(side="left", fill="both", expand=True)
         canvas.yview_moveto('0.0')
@@ -365,19 +367,19 @@ def login_to_ssh_client(ip_frame, ip_dict):
         scrollable_frame.bind("<Configure>", lambda e: canvas.configure(scrollregion=canvas.bbox("all")))
         scrollable_frame.bind_all("<MouseWheel>", no_action)
 
-        Label(scrollable_frame, height=main_window.calc_height(2), bg='white').pack()
+        Label(scrollable_frame, height=main_window.calc_size(2), bg='white').pack()
 
         if ip_dict == {}:
-            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window.calc_width(20)),
-                  bg=buttons_bg_color).place(x=main_window.calc_width(155), y=main_window.calc_height(170))
+            Label(scrollable_frame, text='No IP Addresses Found', font=('Eras Bold ITC', main_window.calc_size(20)),
+                  bg=buttons_bg_color).place(x=main_window.calc_size(155), y=main_window.calc_size(170))
         else:
             Label(scrollable_frame, wraplength=550,
                   text="*The Local IP addresses are only available if you're connected to the same local network as they are",
-                  font=('Eras Bold ITC', main_window.calc_width(10)), bg='white').pack()
+                  font=('Eras Bold ITC', main_window.calc_size(10)), bg='white').pack()
             for key, value in ip_dict.items():
                 ip_butns_dict[f'{key}-{value}'] = Button(scrollable_frame, bd=0, text=f'{value} - {key}',
                                                          cursor='hand2',
-                                                         font=('Eras Bold ITC', main_window.calc_width(12)),
+                                                         font=('Eras Bold ITC', main_window.calc_size(12)),
                                                          anchor=CENTER, fg='gray20', bg=buttons_bg_color)
                 ip_butns_dict[f'{key}-{value}'].pack(anchor=CENTER, pady=4)
                 ip_butns_dict[f'{key}-{value}'].bind("<Button-1>", ip_butn_click)
@@ -386,19 +388,19 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
             if (num_of_temp_items - len(ip_dict) - 1) > 0:
                 for _ in range(num_of_temp_items - len(ip_dict) - 1):
-                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window.calc_width(12)),
+                    Button(scrollable_frame, bg='white', bd=0, font=('Eras Bold ITC', main_window.calc_size(12)),
                            state='disable').pack(anchor=CENTER, pady=4)
 
         if len(ip_dict) > 8:
             canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
-                                 width=main_window.calc_width(610))
+                                 width=main_window.calc_size(610))
             canvas.configure(yscrollcommand=scrollbar.set)
             canvas.pack(side="left", fill="both", expand=True)
             scrollable_frame.bind_all("<MouseWheel>", mouse_wheel)
             scrollbar.pack(side="right", fill="y")
         else:
             canvas.create_window((0, 0), window=scrollable_frame, anchor=S,
-                                 width=main_window.calc_width(610))
+                                 width=main_window.calc_size(610))
             canvas.configure(yscrollcommand=scrollbar.set)
             canvas.pack(side="left", fill="both", expand=True)
         canvas.yview_moveto('0.0')
@@ -407,22 +409,22 @@ def login_to_ssh_client(ip_frame, ip_dict):
     canvas = Canvas(frame, bg='white')
 
     enter_ip_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/entry.png').resize((main_window.calc_width(55), main_window.calc_height(41)),
-                                       Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/entry.png').resize((main_window.calc_size(55), main_window.calc_size(41)),
+                                                               Image.ANTIALIAS))
     show_enter_frame_btn = Button(frame, command=create_enter_frame, image=enter_ip_pic, cursor='hand2',
                                   bg=buttons_bg_color, compound=BOTTOM, text='Enter an IP',
-                                  font=('Eras Bold ITC', main_window.calc_width(10)))
-    show_enter_frame_btn.place(x=main_window.calc_width(490), y=main_window.calc_height(60))
+                                  font=('Eras Bold ITC', main_window.calc_size(10)))
+    show_enter_frame_btn.place(x=main_window.calc_size(490), y=main_window.calc_size(60))
 
     local_ip_bttn = Button(frame, cursor='hand2', command=show_local_ip_list, bg=buttons_bg_color, borderwidth=3,
-                           text='Local Network IPs', font=('Eras Bold ITC', main_window.calc_width(14)))
-    local_ip_bttn.place(x=main_window.calc_width(0), y=main_window.calc_height(0), width=main_window.calc_width(305),
-                        height=main_window.calc_height(40))
+                           text='Local Network IPs', font=('Eras Bold ITC', main_window.calc_size(14)))
+    local_ip_bttn.place(x=main_window.calc_size(0), y=main_window.calc_size(0), width=main_window.calc_size(305),
+                        height=main_window.calc_size(40))
 
     account_ip_bttn = Button(frame, cursor='hand2', command=show_account_ip_list, bg=buttons_bg_color, borderwidth=3,
-                             text='IPs saved to your account', font=('Eras Bold ITC', main_window.calc_width(14)))
-    account_ip_bttn.place(x=main_window.calc_width(305), y=main_window.calc_height(0),
-                          width=main_window.calc_width(305), height=main_window.calc_height(40))
+                             text='IPs saved to your account', font=('Eras Bold ITC', main_window.calc_size(14)))
+    account_ip_bttn.place(x=main_window.calc_size(305), y=main_window.calc_size(0),
+                          width=main_window.calc_size(305), height=main_window.calc_size(40))
 
     scrollbar = Scrollbar(frame, orient="vertical", command=canvas.yview)
     scrollbar.pack()
@@ -514,7 +516,7 @@ def set_be_controlled(be_controlled_frame):
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + install_and_on_cmnd)
                 loading_label = Label(frame, text='Installing SSH Service...',
-                                      font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                                      font=('Eras Bold ITC', main_window.calc_size(20)), bg='white')
                 loading_label.place(x=0, y=0, width=610, height=392)
                 p_bar = ttk.Progressbar(loading_label, orient=HORIZONTAL, length=400, mode='determinate')
                 p_bar.pack(pady=100)
@@ -540,7 +542,7 @@ def set_be_controlled(be_controlled_frame):
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + on_cmnd)
                 loading_label = Label(frame, text='Starting SSH Service...',
-                                      font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                                      font=('Eras Bold ITC', main_window.calc_size(20)), bg='white')
                 loading_label.place(x=0, y=0, width=610, height=392)
                 loading_label.after(5000, recheck_sshd)
                 return 'DONE'
@@ -553,7 +555,7 @@ def set_be_controlled(be_controlled_frame):
             try:
                 shell.ShellExecuteEx(lpVerb='runas', lpFile='powershell.exe', lpParameters='/c ' + off_cmnd)
                 loading_label = Label(frame, text='Stopping SSH Service...',
-                                      font=('Eras Bold ITC', main_window.calc_width(20)), bg='white')
+                                      font=('Eras Bold ITC', main_window.calc_size(20)), bg='white')
                 loading_label.place(x=0, y=0, width=610, height=392)
                 loading_label.after(5000, recheck_sshd)
                 return 'DONE'
@@ -565,89 +567,89 @@ def set_be_controlled(be_controlled_frame):
 
     sshd_status = check_sshd_service('sshd')
     main_title = Label(be_controlled_frame, text='Be Controlled:',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(350), y=main_window.calc_height(25))
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_size(350), y=main_window.calc_size(25))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_width(57), main_window.calc_height(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)), Image.ANTIALIAS))
 
     signout_bttn = Button(be_controlled_frame, image=signout_pic, cursor='hand2',
-                          font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                          font=('Eras Bold ITC', main_window.calc_size(12)), fg='gray20', bg=buttons_bg_color,
                           command=acc_signout)
-    signout_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+    signout_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
     frame = Frame(be_controlled_frame, bg='white')
-    frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
-                height=main_window.calc_height(392))
+    frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(610),
+                height=main_window.calc_size(392))
 
     if SELF_OS_PLATFORM == 'windows':
         refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/refresh.png').resize(
-            (main_window.calc_width(50), main_window.calc_height(54)), Image.ANTIALIAS))
-        refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window.calc_width(10), 'bold'),
+            (main_window.calc_size(50), main_window.calc_size(54)), Image.ANTIALIAS))
+        refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window.calc_size(10), 'bold'),
                               command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
         refresh_bttn.place(x=10, y=10)
-        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white')
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), fg='gray20', bg='white')
         v_mark_pic = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/v.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
-                                                                 Image.ANTIALIAS))
+            Image.open(f'{ROOT_PROJ_DIR}/assets/v.png').resize((main_window.calc_size(70), main_window.calc_size(70)),
+                                                               Image.ANTIALIAS))
         x_mark_pic = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/x.png').resize((main_window.calc_width(70), main_window.calc_height(70)),
-                                                                 Image.ANTIALIAS))
-        mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), compound=LEFT, justify=CENTER,
+            Image.open(f'{ROOT_PROJ_DIR}/assets/x.png').resize((main_window.calc_size(70), main_window.calc_size(70)),
+                                                               Image.ANTIALIAS))
+        mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), compound=LEFT, justify=CENTER,
                            bg='white', padx=20)
         if sshd_status == 'ON':
             mark_label.configure(text='SSH Service is ON', image=v_mark_pic, fg='green')
-            mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
+            mark_label.place(x=main_window.calc_size(110), y=main_window.calc_size(10))
             subtitle.configure(
                 text=f"This computer is ready to be connected to,\n\nEnter it's info and connect to it:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
-            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+            subtitle.place(x=main_window.calc_size(0), y=main_window.calc_size(130), width=main_window.calc_size(610))
             off_bttn = Button(frame, text='Stop SSH Service', cursor='hand2',
-                              font=('Eras Bold ITC', main_window.calc_width(15)), bg='brown1',
+                              font=('Eras Bold ITC', main_window.calc_size(15)), bg='brown1',
                               command=lambda: run_power_shell('off_cmnd'))
-            off_bttn.place(x=main_window.calc_width(200), y=main_window.calc_height(310))
+            off_bttn.place(x=main_window.calc_size(200), y=main_window.calc_size(310))
 
         elif sshd_status == 'OFF':
             start_button = Button(frame, text='Start SSH Service', cursor='hand2',
-                                  font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
+                                  font=('Eras Bold ITC', main_window.calc_size(15)), bg='dodger blue',
                                   command=lambda: run_power_shell('on_cmnd'))
-            start_button.place(x=main_window.calc_width(200), y=main_window.calc_height(300))
+            start_button.place(x=main_window.calc_size(200), y=main_window.calc_size(300))
             mark_label.configure(text='SSH Service is OFF', image=x_mark_pic, fg='red')
-            mark_label.place(x=main_window.calc_width(110), y=main_window.calc_height(10))
-            subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
+            mark_label.place(x=main_window.calc_size(110), y=main_window.calc_size(10))
+            subtitle.configure(font=('Eras Bold ITC', main_window.calc_size(14), 'bold'),
                                text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo turn the service on please click the button bellow\nand approve the window that will popup:")
-            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+            subtitle.place(x=main_window.calc_size(0), y=main_window.calc_size(130), width=main_window.calc_size(610))
 
         elif sshd_status == 'NOT INSTALLED':
             start_button = Button(frame, text='Install & Start SSH Service', cursor='hand2',
-                                  font=('Eras Bold ITC', main_window.calc_width(15)), bg='dodger blue',
+                                  font=('Eras Bold ITC', main_window.calc_size(15)), bg='dodger blue',
                                   command=lambda: run_power_shell('install_and_on_cmnd'))
-            start_button.place(x=main_window.calc_width(160), y=main_window.calc_height(300))
+            start_button.place(x=main_window.calc_size(160), y=main_window.calc_size(300))
             mark_label.configure(text='SSH Service is\nNOT INSTALLED', image=x_mark_pic, fg='red')
-            mark_label.place(x=main_window.calc_width(130), y=main_window.calc_height(10))
-            subtitle.configure(font=('Eras Bold ITC', main_window.calc_width(14), 'bold'),
+            mark_label.place(x=main_window.calc_size(130), y=main_window.calc_size(10))
+            subtitle.configure(font=('Eras Bold ITC', main_window.calc_size(14), 'bold'),
                                text=f"This computer needs to have the SSH service running\nfor other computers to connect to it.\n\nTo install the service and turn it on\nplease click the button bellow\nand approve the window that will popup:")
-            subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(130), width=main_window.calc_width(610))
+            subtitle.place(x=main_window.calc_size(0), y=main_window.calc_size(130), width=main_window.calc_size(610))
 
     elif SELF_OS_PLATFORM == 'linux':
-        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white',
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), fg='gray20', bg='white',
                          wraplength=600,
                          text=f"To connect to this computer make sure the SSH Server is enabled:\n\nTo install & start the server, run:\nsudo apt install openssh-server\n\nYour information:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
-        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(80), width=main_window.calc_width(610))
+        subtitle.place(x=main_window.calc_size(0), y=main_window.calc_size(80), width=main_window.calc_size(610))
 
         copy_bttn = Button(frame, text='Copy Command', cursor='hand2',
-                          font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color,
-                          command=lambda: pyperclip.copy('sudo apt install openssh-server'))
-        copy_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+                           font=('Eras Bold ITC', main_window.calc_size(15)), bg=buttons_bg_color,
+                           command=lambda: pyperclip.copy('sudo apt install openssh-server'))
+        copy_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
     elif SELF_OS_PLATFORM == 'macos':
-        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_width(18), 'bold'), fg='gray20', bg='white',
+        subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), fg='gray20', bg='white',
                          wraplength=600,
                          text=f"To connect to this computer make sure the SSH Server is enabled:\n\nTo start the server, run:\nsudo systemsetup -setremotelogin on\n\nYour information:\nIP: {SELF_IP}\nUsername: {SELF_NAME}")
-        subtitle.place(x=main_window.calc_width(0), y=main_window.calc_height(80), width=main_window.calc_width(610))
+        subtitle.place(x=main_window.calc_size(0), y=main_window.calc_size(80), width=main_window.calc_size(610))
 
         copy_bttn = Button(frame, text='Copy Command', cursor='hand2',
-                           font=('Eras Bold ITC', main_window.calc_width(15)), bg=buttons_bg_color,
+                           font=('Eras Bold ITC', main_window.calc_size(15)), bg=buttons_bg_color,
                            command=lambda: pyperclip.copy('sudo systemsetup -setremotelogin on'))
-        copy_bttn.place(x=main_window.calc_width(10), y=main_window.calc_height(10))
+        copy_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
     be_controlled_frame.mainloop()
 
@@ -671,24 +673,24 @@ def start_login_window(main_frame):
         if enter_email.get() == '' or enter_password.get() == '':
             if enter_email.get() == '':
                 email_error_title.configure(text='Please enter your email')
-                email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(110),
-                                        width=main_window.calc_width(500))
+                email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(110),
+                                        width=main_window.calc_size(500))
             if enter_password.get() == '':
                 pass_error_title.configure(text='Please enter your password')
-                pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(215),
-                                       width=main_window.calc_width(500))
+                pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(215),
+                                       width=main_window.calc_size(500))
 
         elif not manageSERVER.check_if_email_exists(enter_email.get()):
             # check if email doesn't exist in the DB
             email_error_title.configure(text="This email address doesn't have an account")
-            email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(110),
-                                    width=main_window.calc_width(500))
+            email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(110),
+                                    width=main_window.calc_size(500))
 
         elif not manageSERVER.login(enter_email.get(), enter_password.get(), check_var.get()):
             # check if password doesn't match the email
             pass_error_title.configure(text='Email or Password are incorrect, Try again')
-            pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(215),
-                                   width=main_window.calc_width(500))
+            pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(215),
+                                   width=main_window.calc_size(500))
 
         else:
             # email exists and the password matches
@@ -718,69 +720,69 @@ def start_login_window(main_frame):
             show_hide_button.configure(image=hide_icon)
 
     login_frame = Frame(main_frame, bg='white')
-    login_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
-                      height=main_window.calc_height(392))
+    login_frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(610),
+                      height=main_window.calc_size(392))
 
     email_error_title = Label(login_frame, text='Please enter your email',
-                              font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-    email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(110),
-                            width=main_window.calc_width(500))
+                              font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+    email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(110),
+                            width=main_window.calc_size(500))
     pass_error_title = Label(login_frame, text='Please enter your password',
-                             font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-    pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(215),
-                           width=main_window.calc_width(500))
+                             font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+    pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(215),
+                           width=main_window.calc_size(500))
     email_error_title.place_forget()
     pass_error_title.place_forget()
 
     main_title = Label(main_frame, text='Remote File Explorer - Login',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(180), y=main_window.calc_height(25))  # (x=180, y=25)
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_size(180), y=main_window.calc_size(25))  # (x=180, y=25)
 
     # enter email
-    Label(login_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-          bg='white').place(x=main_window.calc_width(255), y=main_window.calc_height(35))
-    enter_email = Entry(login_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+    Label(login_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+          bg='white').place(x=main_window.calc_size(255), y=main_window.calc_size(35))
+    enter_email = Entry(login_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                         justify='center')
-    enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(75), width=main_window.calc_width(500),
-                      height=main_window.calc_height(35))
+    enter_email.place(x=main_window.calc_size(55), y=main_window.calc_size(75), width=main_window.calc_size(500),
+                      height=main_window.calc_size(35))
 
     # enter password
-    Label(login_frame, text='Password:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-          bg='white').place(x=main_window.calc_width(225), y=main_window.calc_height(140))
-    enter_password = Entry(login_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+    Label(login_frame, text='Password:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+          bg='white').place(x=main_window.calc_size(225), y=main_window.calc_size(140))
+    enter_password = Entry(login_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                            justify='center', show='•')
-    enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                         width=main_window.calc_width(500), height=main_window.calc_height(35))
+    enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                         width=main_window.calc_size(500), height=main_window.calc_size(35))
 
     show_hide_button = Button(login_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
-    show_hide_button.place(x=main_window.calc_width(555), y=main_window.calc_height(180),
-                           width=main_window.calc_width(35), height=main_window.calc_height(35))
+    show_hide_button.place(x=main_window.calc_size(555), y=main_window.calc_size(180),
+                           width=main_window.calc_size(35), height=main_window.calc_size(35))
 
     check_var = IntVar(value=1)
     save_to_acc = Checkbutton(login_frame, cursor='hand2',
                               text="Save this PC's info to your account for future connections", fg='gray20',
-                              bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_width(10)), onvalue=1,
+                              bg=buttons_bg_color, font=('Eras Bold ITC', main_window.calc_size(10)), onvalue=1,
                               offvalue=0, variable=check_var)
-    save_to_acc.place(x=main_window.calc_width(105), y=main_window.calc_height(245))
+    save_to_acc.place(x=main_window.calc_size(105), y=main_window.calc_size(245))
 
-    login_button = Button(login_frame, text='Login', cursor='hand2', font=('Eras Bold ITC', main_window.calc_width(15)),
+    login_button = Button(login_frame, text='Login', cursor='hand2', font=('Eras Bold ITC', main_window.calc_size(15)),
                           fg='gray20', bg=buttons_bg_color, command=submit)
-    login_button.place(x=main_window.calc_width(255), y=main_window.calc_height(292), width=main_window.calc_width(100),
-                       height=main_window.calc_height(35))
+    login_button.place(x=main_window.calc_size(255), y=main_window.calc_size(292), width=main_window.calc_size(100),
+                       height=main_window.calc_size(35))
 
     register_button = Button(login_frame, text="Create a new account", cursor='hand2', bd=0,
-                             font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                             font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                              command=register)
-    register_button.place(x=main_window.calc_width(130), y=main_window.calc_height(350))
+    register_button.place(x=main_window.calc_size(130), y=main_window.calc_size(350))
 
     sep_line = ttk.Separator(login_frame, orient=VERTICAL)
-    sep_line.place(x=main_window.calc_width(302), y=main_window.calc_height(342), width=main_window.calc_width(1),
-                   height=main_window.calc_height(40))
+    sep_line.place(x=main_window.calc_size(302), y=main_window.calc_size(342), width=main_window.calc_size(1),
+                   height=main_window.calc_size(40))
 
     forgot_button = Button(login_frame, text='Reset your password', cursor='hand2', bd=0,
-                           font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                           font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                            command=forgot_pass)
-    forgot_button.place(x=main_window.calc_width(320), y=main_window.calc_height(350))
+    forgot_button.place(x=main_window.calc_size(320), y=main_window.calc_size(350))
 
     enter_email.focus()
 
@@ -806,30 +808,30 @@ def start_register_window(main_frame):
                 enter_email.get()):
             if enter_email.get() == '':
                 email_error_title.configure(text='Please enter your email')
-                email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                                        width=main_window.calc_width(500))
+                email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                                        width=main_window.calc_size(500))
             if enter_password.get() == '':
-                pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                                       width=main_window.calc_width(500))
+                pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                                       width=main_window.calc_size(500))
             if re_enter_password.get() == '':
                 re_pass_error_title.configure(text='Please Retype the password')
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                          width=main_window.calc_size(500))
             if not email_regex(enter_email.get()) and enter_email.get() != '':
                 # check if email is invalid
                 email_error_title.configure(text='Please enter a valid email address')
-                email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                                        width=main_window.calc_width(500))
+                email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                                        width=main_window.calc_size(500))
         elif enter_password.get() != re_enter_password.get():
             # check if the two passwords aren't the same
             re_pass_error_title.configure(text="The passwords don't match")
-            re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                      width=main_window.calc_width(500))
+            re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                      width=main_window.calc_size(500))
         elif manageSERVER.check_if_email_exists(enter_email.get()):
             # check if email exists already
             email_error_title.configure(text='This email address already has an account')
-            email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                                    width=main_window.calc_width(500))
+            email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                                    width=main_window.calc_size(500))
         else:
             email = enter_email.get()
             password = enter_password.get()
@@ -846,8 +848,8 @@ def start_register_window(main_frame):
                 main_frame.quit()
             elif not new_user_answr:
                 re_pass_error_title.configure(text="An error occurred, account wasn't created. Please try again later")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                          width=main_window.calc_size(500))
 
     def login():
         main_title.destroy()
@@ -881,81 +883,81 @@ def start_register_window(main_frame):
         re_pass_error_title.place_forget()
         if password1 != password2:
             re_pass_error_title.configure(text="The passwords don't match")
-            re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                      width=main_window.calc_width(500))
+            re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                      width=main_window.calc_size(500))
 
     register_frame = Frame(main_frame, bg='white')
-    register_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133),
-                         width=main_window.calc_width(610), height=main_window.calc_height(392))
+    register_frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133),
+                         width=main_window.calc_size(610), height=main_window.calc_size(392))
 
     email_error_title = Label(register_frame, text='Please enter your email',
-                              font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-    email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                            width=main_window.calc_width(500))
+                              font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+    email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                            width=main_window.calc_size(500))
     pass_error_title = Label(register_frame, text='Please enter a password',
-                             font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-    pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                           width=main_window.calc_width(500))
+                             font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+    pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                           width=main_window.calc_size(500))
     re_pass_error_title = Label(register_frame, text='Please Retype the password',
-                                font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
-    re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                              width=main_window.calc_width(500))
+                                font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
+    re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                              width=main_window.calc_size(500))
     email_error_title.place_forget()
     pass_error_title.place_forget()
     re_pass_error_title.place_forget()
 
     main_title = Label(root, text='Remote File Explorer - Register',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20', bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(150), y=main_window.calc_height(25))
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
+    main_title.place(x=main_window.calc_size(150), y=main_window.calc_size(25))
 
     # enter email
-    Label(register_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-          bg='white').place(x=main_window.calc_width(255), y=main_window.calc_height(10))
-    enter_email = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+    Label(register_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+          bg='white').place(x=main_window.calc_size(255), y=main_window.calc_size(10))
+    enter_email = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                         justify='center')
-    enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(50), width=main_window.calc_width(500),
-                      height=main_window.calc_height(35))
+    enter_email.place(x=main_window.calc_size(55), y=main_window.calc_size(50), width=main_window.calc_size(500),
+                      height=main_window.calc_size(35))
 
     # enter password
-    Label(register_frame, text='Password:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-          bg='white').place(x=main_window.calc_width(225), y=main_window.calc_height(105))
-    enter_password = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+    Label(register_frame, text='Password:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+          bg='white').place(x=main_window.calc_size(225), y=main_window.calc_size(105))
+    enter_password = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                            justify='center', show="•")
-    enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(145),
-                         width=main_window.calc_width(500), height=main_window.calc_height(35))
+    enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(145),
+                         width=main_window.calc_size(500), height=main_window.calc_size(35))
 
     enter_password.bind("<Key>", key_entered)
 
     show_hide_button1 = Button(register_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                command=show_hide_pass1)
-    show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(145),
-                            width=main_window.calc_width(35), height=main_window.calc_height(35))
+    show_hide_button1.place(x=main_window.calc_size(555), y=main_window.calc_size(145),
+                            width=main_window.calc_size(35), height=main_window.calc_size(35))
 
     # re-enter password
-    Label(register_frame, text='Retype Password:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'),
-          fg='gray20', bg='white').place(x=main_window.calc_width(180), y=main_window.calc_height(200))
-    re_enter_password = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+    Label(register_frame, text='Retype Password:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'),
+          fg='gray20', bg='white').place(x=main_window.calc_size(180), y=main_window.calc_size(200))
+    re_enter_password = Entry(register_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                               bg='white', justify='center', show="•")
-    re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(240),
-                            width=main_window.calc_width(500), height=main_window.calc_height(35))
+    re_enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(240),
+                            width=main_window.calc_size(500), height=main_window.calc_size(35))
 
     re_enter_password.bind("<Key>", key_entered)
 
     show_hide_button2 = Button(register_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                command=show_hide_pass2)
-    show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(240),
-                            width=main_window.calc_width(35), height=main_window.calc_height(35))
+    show_hide_button2.place(x=main_window.calc_size(555), y=main_window.calc_size(240),
+                            width=main_window.calc_size(35), height=main_window.calc_size(35))
 
     register_button = Button(register_frame, text='Register', cursor='hand2',
-                             font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                             font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg=buttons_bg_color,
                              command=submit)
-    register_button.place(x=main_window.calc_width(255), y=main_window.calc_height(300),
-                          width=main_window.calc_width(100), height=main_window.calc_height(35))
+    register_button.place(x=main_window.calc_size(255), y=main_window.calc_size(300),
+                          width=main_window.calc_size(100), height=main_window.calc_size(35))
 
     login_button = Button(register_frame, text="Login to your account", cursor='hand2', bd=0,
-                          font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                          font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                           command=login)
-    login_button.place(x=main_window.calc_width(227), y=main_window.calc_height(350))
+    login_button.place(x=main_window.calc_size(227), y=main_window.calc_size(350))
 
     enter_email.focus()
 
@@ -975,13 +977,13 @@ def start_forgot_window(main_frame):
         email_error_title.place_forget()
         if enter_email.get() == '':
             email_error_title.configure(text='Please enter your email', fg='red')
-            email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(205),
-                                    width=main_window.calc_width(500))
+            email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(205),
+                                    width=main_window.calc_size(500))
         elif not manageSERVER.check_if_email_exists(enter_email.get()):
             # check if email doesn't exist
             email_error_title.configure(text="This email address doesn't have an account", fg='red')
-            email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(205),
-                                    width=main_window.calc_width(500))
+            email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(205),
+                                    width=main_window.calc_size(500))
         else:
             # email exists
             email = enter_email.get()
@@ -989,12 +991,12 @@ def start_forgot_window(main_frame):
                 email_error_title.configure(
                     text='Email Sent!\nCheck your inbox and get back here with the reset code to reset you password',
                     fg='green')
-                email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225),
-                                        width=main_window.calc_width(610), anchor=CENTER)
+                email_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(225),
+                                        width=main_window.calc_size(610), anchor=CENTER)
             else:
                 email_error_title.configure(text='There was an error!\nPlease try again', fg='red')
-                email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(225),
-                                        width=main_window.calc_width(610), anchor=CENTER)
+                email_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(225),
+                                        width=main_window.calc_size(610), anchor=CENTER)
 
     def login():
         main_title.destroy()
@@ -1003,7 +1005,7 @@ def start_forgot_window(main_frame):
         start_login_window(main_frame)
 
     back_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_width(46), main_window.calc_height(35)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_size(46), main_window.calc_size(35)), Image.ANTIALIAS))
 
     def new_pass_code():
 
@@ -1021,12 +1023,12 @@ def start_forgot_window(main_frame):
             root.bind('<Return>', return_button)
 
         enter_code_frame = Frame(main_frame, bg='white')
-        enter_code_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133),
-                               width=main_window.calc_width(610), height=main_window.calc_height(392))
+        enter_code_frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133),
+                               width=main_window.calc_size(610), height=main_window.calc_size(392))
         back_bttn = Button(enter_code_frame, image=back_pic, cursor='hand2',
-                           font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                           font=('Eras Bold ITC', main_window.calc_size(12)), fg='gray20', bg=buttons_bg_color,
                            command=close_code_frame)
-        back_bttn.place(x=main_window.calc_width(5), y=main_window.calc_height(5))
+        back_bttn.place(x=main_window.calc_size(5), y=main_window.calc_size(5))
 
         def show_hide_pass1():
             if enter_password.cget('show') == '':
@@ -1054,76 +1056,76 @@ def start_forgot_window(main_frame):
             re_pass_error_title.place_forget()
             if password1 != password2:
                 re_pass_error_title.configure(text="The passwords don't match")
-                re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338),
-                                          width=main_window.calc_width(610), anchor=CENTER)
+                re_pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(338),
+                                          width=main_window.calc_size(610), anchor=CENTER)
 
         # enter reset code
         Label(enter_code_frame, text='Reset Code:',
-              font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(305), y=main_window.calc_height(20),
-                                width=main_window.calc_width(300), anchor=CENTER)
-        enter_reset_code = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
+              font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(305), y=main_window.calc_size(20),
+                                width=main_window.calc_size(300), anchor=CENTER)
+        enter_reset_code = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_size(15)),
                                  fg='gray20',
                                  bg='white', justify='center')
-        enter_reset_code.place(x=main_window.calc_width(305), y=main_window.calc_height(57),
-                               width=main_window.calc_width(300), height=main_window.calc_height(35), anchor=CENTER)
+        enter_reset_code.place(x=main_window.calc_size(305), y=main_window.calc_size(57),
+                               width=main_window.calc_size(300), height=main_window.calc_size(35), anchor=CENTER)
 
         # enter email
         Label(enter_code_frame, text='Email:',
-              font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(255),
-                                y=main_window.calc_height(85))
-        enter_email = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+              font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(255),
+                                y=main_window.calc_size(85))
+        enter_email = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                             bg='white', justify='center')
-        enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(122),
-                          width=main_window.calc_width(500),
-                          height=main_window.calc_height(35))
+        enter_email.place(x=main_window.calc_size(55), y=main_window.calc_size(122),
+                          width=main_window.calc_size(500),
+                          height=main_window.calc_size(35))
 
         # enter password
         Label(enter_code_frame, text='New Password:',
-              font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(165), y=main_window.calc_height(167),
-                                width=main_window.calc_width(300))
-        enter_password = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+              font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(165), y=main_window.calc_size(167),
+                                width=main_window.calc_size(300))
+        enter_password = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                                bg='white', justify='center', show="•")
-        enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(204),
-                             width=main_window.calc_width(500),
-                             height=main_window.calc_height(35))
+        enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(204),
+                             width=main_window.calc_size(500),
+                             height=main_window.calc_size(35))
 
         enter_password.bind("<Key>", key_entered)
 
         show_hide_button1 = Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                    command=show_hide_pass1)
-        show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(204),
-                                width=main_window.calc_width(35),
-                                height=main_window.calc_height(35))
+        show_hide_button1.place(x=main_window.calc_size(555), y=main_window.calc_size(204),
+                                width=main_window.calc_size(35),
+                                height=main_window.calc_size(35))
 
         # re-enter password
         Label(enter_code_frame, text='Retype New Password:',
-              font=('Eras Bold ITC', main_window.calc_width(20), 'bold'), fg='gray20',
-              bg='white').place(x=main_window.calc_width(140),
-                                y=main_window.calc_height(254))
-        re_enter_password = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_width(15)),
+              font=('Eras Bold ITC', main_window.calc_size(20), 'bold'), fg='gray20',
+              bg='white').place(x=main_window.calc_size(140),
+                                y=main_window.calc_size(254))
+        re_enter_password = Entry(enter_code_frame, font=('Eras Bold ITC', main_window.calc_size(15)),
                                   fg='gray20', bg='white', justify='center', show="•")
-        re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(291),
-                                width=main_window.calc_width(500),
-                                height=main_window.calc_height(35))
+        re_enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(291),
+                                width=main_window.calc_size(500),
+                                height=main_window.calc_size(35))
 
         re_enter_password.bind("<Key>", key_entered)
 
         show_hide_button2 = Button(enter_code_frame, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                    command=show_hide_pass2)
-        show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(291),
-                                width=main_window.calc_width(35), height=main_window.calc_height(35))
+        show_hide_button2.place(x=main_window.calc_size(555), y=main_window.calc_size(291),
+                                width=main_window.calc_size(35), height=main_window.calc_size(35))
 
         reset_code_error_title = Label(enter_code_frame, text='Please enter the code you received in the email',
-                                       font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+                                       font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
         email_error_title = Label(enter_code_frame, text='Please enter your email',
-                                  font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+                                  font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
         pass_error_title = Label(enter_code_frame, text='Please enter a password',
-                                 font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+                                 font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
         re_pass_error_title = Label(enter_code_frame, text='Please Retype the password',
-                                    font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+                                    font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
 
         def reset_pass():
             reset_code_error_title.place_forget()
@@ -1134,35 +1136,35 @@ def start_forgot_window(main_frame):
             if reset_pass_bttn['text'] == 'Reset Password':
                 if enter_reset_code.get() == '' or enter_email.get() == '' or enter_password.get() == '' or re_enter_password.get() == '':
                     if enter_reset_code.get() == '':
-                        reset_code_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(83),
-                                                     width=main_window.calc_width(610),
-                                                     height=main_window.calc_height(16), anchor=CENTER)
+                        reset_code_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(83),
+                                                     width=main_window.calc_size(610),
+                                                     height=main_window.calc_size(16), anchor=CENTER)
 
                     if enter_email.get() == '':
                         email_error_title.configure(text='Please enter your email')
-                        email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(167),
-                                                width=main_window.calc_width(610), height=main_window.calc_height(16),
+                        email_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(167),
+                                                width=main_window.calc_size(610), height=main_window.calc_size(16),
                                                 anchor=CENTER)
 
                     if enter_password.get() == '':
-                        pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(252),
-                                               width=main_window.calc_width(610), anchor=CENTER)
+                        pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(252),
+                                               width=main_window.calc_size(610), anchor=CENTER)
 
                     if re_enter_password.get() == '':
                         re_pass_error_title.configure(text='Please Retype the password')
-                        re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338),
-                                                  width=main_window.calc_width(610), anchor=CENTER)
+                        re_pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(338),
+                                                  width=main_window.calc_size(610), anchor=CENTER)
 
                 elif enter_password.get() != re_enter_password.get():
                     # check if the two passwords aren't the same
                     re_pass_error_title.configure(text="The passwords don't match")
-                    re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338),
-                                              width=main_window.calc_width(610), anchor=CENTER)
+                    re_pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(338),
+                                              width=main_window.calc_size(610), anchor=CENTER)
                 elif not manageSERVER.check_if_email_exists(enter_email.get()):
                     # check if email doesn't exist
                     email_error_title.configure(text="This email address doesn't has an account")
-                    email_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(167),
-                                            width=main_window.calc_width(610), height=main_window.calc_height(8),
+                    email_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(167),
+                                            width=main_window.calc_size(610), height=main_window.calc_size(8),
                                             anchor=CENTER)
                 else:
                     email = enter_email.get()
@@ -1172,8 +1174,8 @@ def start_forgot_window(main_frame):
                         re_pass_error_title.configure(
                             text='Some Information is incorrect! Please make sure the code and your email are correct and try again',
                             fg='red')
-                        re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338),
-                                                  width=main_window.calc_width(610), anchor=CENTER)
+                        re_pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(338),
+                                                  width=main_window.calc_size(610), anchor=CENTER)
                     else:
                         enter_reset_code.configure(text='')
                         enter_email.configure(text='')
@@ -1181,8 +1183,8 @@ def start_forgot_window(main_frame):
                         re_enter_password.configure(text='')
 
                         re_pass_error_title.configure(text='Your password was reset successfully!', fg='green')
-                        re_pass_error_title.place(x=main_window.calc_width(305), y=main_window.calc_height(338),
-                                                  width=main_window.calc_width(610), anchor=CENTER)
+                        re_pass_error_title.place(x=main_window.calc_size(305), y=main_window.calc_size(338),
+                                                  width=main_window.calc_size(610), anchor=CENTER)
                         reset_pass_bttn.configure(text='Go to Log in')
             elif reset_pass_bttn['text'] == 'Go to Log in':
                 main_title.destroy()
@@ -1191,56 +1193,56 @@ def start_forgot_window(main_frame):
                 start_login_window(main_frame)
 
         reset_pass_bttn = Button(enter_code_frame, text='Reset Password', cursor='hand2',
-                                 font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+                                 font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                                  bg=buttons_bg_color, command=reset_pass)
-        reset_pass_bttn.place(x=main_window.calc_width(218), y=main_window.calc_height(352),
-                              width=main_window.calc_width(174), height=main_window.calc_height(35))
+        reset_pass_bttn.place(x=main_window.calc_size(218), y=main_window.calc_size(352),
+                              width=main_window.calc_size(174), height=main_window.calc_size(35))
         enter_reset_code.focus()
 
     reset_frame = Frame(main_frame, bg='white')
-    reset_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133), width=main_window.calc_width(610),
-                      height=main_window.calc_height(392))  # (x=231, y=133, width=610, height=392)
+    reset_frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(610),
+                      height=main_window.calc_size(392))  # (x=231, y=133, width=610, height=392)
 
     email_error_title = Label(reset_frame, text='Please enter your email',
-                              font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg='white')
+                              font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg='white')
 
-    email_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(205),
-                            width=main_window.calc_width(500))  # (x=55, y=205, width=500)
+    email_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(205),
+                            width=main_window.calc_size(500))  # (x=55, y=205, width=500)
     email_error_title.place_forget()
 
     main_title = Label(main_frame, text='Remote File Explorer - Reset Password',
-                       font=('Eras Bold ITC', main_window.calc_width(35), 'bold'), fg='gray20',
+                       font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20',
                        bg=label_bg_color)
-    main_title.place(x=main_window.calc_width(59), y=main_window.calc_height(25))
+    main_title.place(x=main_window.calc_size(59), y=main_window.calc_size(25))
 
     # enter email
-    Label(reset_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_width(20), 'bold'),
-          fg='gray20', bg='white').place(x=main_window.calc_width(255),
-                                         y=main_window.calc_height(130))
-    enter_email = Entry(reset_frame, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg='white',
+    Label(reset_frame, text='Email:', font=('Eras Bold ITC', main_window.calc_size(20), 'bold'),
+          fg='gray20', bg='white').place(x=main_window.calc_size(255),
+                                         y=main_window.calc_size(130))
+    enter_email = Entry(reset_frame, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg='white',
                         justify='center')
-    enter_email.place(x=main_window.calc_width(55), y=main_window.calc_height(170), width=main_window.calc_width(500),
-                      height=main_window.calc_height(35))
+    enter_email.place(x=main_window.calc_size(55), y=main_window.calc_size(170), width=main_window.calc_size(500),
+                      height=main_window.calc_size(35))
 
     # go to enter code screen (button)
-    Label(reset_frame, text='already got a code?', font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20',
-          bg='white').place(x=main_window.calc_width(125), y=main_window.calc_height(15))
+    Label(reset_frame, text='already got a code?', font=('Eras Bold ITC', main_window.calc_size(12)), fg='gray20',
+          bg='white').place(x=main_window.calc_size(125), y=main_window.calc_size(15))
     enter_reset_code_bttn = Button(reset_frame, text='Enter reset code', cursor='hand2',
-                                   font=('Eras Bold ITC', main_window.calc_width(12)), fg='gray20', bg=buttons_bg_color,
+                                   font=('Eras Bold ITC', main_window.calc_size(12)), fg='gray20', bg=buttons_bg_color,
                                    command=new_pass_code)
-    enter_reset_code_bttn.place(x=main_window.calc_width(310), y=main_window.calc_height(10),
-                                width=main_window.calc_width(150), height=main_window.calc_height(35))
+    enter_reset_code_bttn.place(x=main_window.calc_size(310), y=main_window.calc_size(10),
+                                width=main_window.calc_size(150), height=main_window.calc_size(35))
 
     send_email_button = Button(reset_frame, text='Send Email', cursor='hand2',
-                               font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                               font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg=buttons_bg_color,
                                command=submit)
-    send_email_button.place(x=main_window.calc_width(235), y=main_window.calc_height(270),
-                            width=main_window.calc_width(140), height=main_window.calc_height(35))
+    send_email_button.place(x=main_window.calc_size(235), y=main_window.calc_size(270),
+                            width=main_window.calc_size(140), height=main_window.calc_size(35))
 
     login_button = Button(reset_frame, text="Login to your account", cursor='hand2', bd=0,
-                          font=('Eras Bold ITC', main_window.calc_width(10)), fg='gray20', bg=buttons_bg_color,
+                          font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                           command=login)
-    login_button.place(x=main_window.calc_width(228), y=main_window.calc_height(350))
+    login_button.place(x=main_window.calc_size(228), y=main_window.calc_size(350))
 
     enter_email.focus()
 
@@ -1285,16 +1287,16 @@ def server_status(main_frame):
     if status != 'SERVER IS UP':
         email = False
         error_frame = Frame(main_frame, bg='white')
-        error_frame.place(x=main_window.calc_width(231), y=main_window.calc_height(133),
-                          width=main_window.calc_width(610), height=main_window.calc_height(392))
-        error_label = Label(error_frame, text='error', bg='white', font=('Arial', main_window.calc_width(17), 'bold'))
+        error_frame.place(x=main_window.calc_size(231), y=main_window.calc_size(133),
+                          width=main_window.calc_size(610), height=main_window.calc_size(392))
+        error_label = Label(error_frame, text='error', bg='white', font=('Arial', main_window.calc_size(17), 'bold'))
         if status == 'SERVER IS DOWN':
             error_label.configure(
                 text='The server is currently DOWN!\n(You may also want to check your internet connection)\nPlease try again later.')
         elif status == 'ERROR':
             error_label.configure(text='There was an error connecting to the server!\nPlease try again later.')
-        error_label.place(x=main_window.calc_width(305), y=main_window.calc_height(170),
-                          width=main_window.calc_width(610), anchor=CENTER)
+        error_label.place(x=main_window.calc_size(305), y=main_window.calc_size(170),
+                          width=main_window.calc_size(610), anchor=CENTER)
         error_frame.mainloop()
 
 
@@ -1305,8 +1307,8 @@ def choose_mode_window(email):
 
     def create_popup_window(mode, title, label_text, msg_box_text, approve_text):
         global answr
-        popup_width = main_window.calc_width(400)
-        popup_height = main_window.calc_height(200)
+        popup_width = main_window.calc_size(400)
+        popup_height = main_window.calc_size(200)
         popup_x = int((screen_width - popup_width) / 2)
         popup_y = int((screen_height - popup_height) / 2)
 
@@ -1317,18 +1319,18 @@ def choose_mode_window(email):
             if password == '':
                 if password == '':
                     pass_error_title.configure(text='Please enter your password')
-                    pass_error_title.place(x=main_window.calc_width(0), y=main_window.calc_height(120),
-                                           width=main_window.calc_width(400))
+                    pass_error_title.place(x=main_window.calc_size(0), y=main_window.calc_size(120),
+                                           width=main_window.calc_size(400))
             elif not manageSERVER.check_if_email_exists(email):
                 # check if email doesn't exist
                 pass_error_title.configure(text="This email address doesn't have an account")
-                pass_error_title.place(x=main_window.calc_width(0), y=main_window.calc_height(120),
-                                       width=main_window.calc_width(400))
+                pass_error_title.place(x=main_window.calc_size(0), y=main_window.calc_size(120),
+                                       width=main_window.calc_size(400))
             elif not manageSERVER.login(email, password, 0):
                 # check if the password doesn't match the email
                 pass_error_title.configure(text='Password is incorrect, Try again')
-                pass_error_title.place(x=main_window.calc_width(0), y=main_window.calc_height(120),
-                                       width=main_window.calc_width(400))
+                pass_error_title.place(x=main_window.calc_size(0), y=main_window.calc_size(120),
+                                       width=main_window.calc_size(400))
             else:
                 # email exists and the password matches
                 pass_error_title.place_forget()
@@ -1377,38 +1379,38 @@ def choose_mode_window(email):
         popup.bind('<Return>', enter_key)
 
         pass_error_title = Label(popup, text='Please enter your password',
-                                 font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg=label_bg_color)
-        pass_error_title.place(x=main_window.calc_width(0), y=main_window.calc_height(120),
-                               width=main_window.calc_width(400))
+                                 font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg=label_bg_color)
+        pass_error_title.place(x=main_window.calc_size(0), y=main_window.calc_size(120),
+                               width=main_window.calc_size(400))
         pass_error_title.place_forget()
 
         Label(popup, text=label_text, wraplength=popup_width, bg=label_bg_color,
-              font=('Eras Bold ITC', main_window.calc_width(12))).place(x=main_window.calc_width(0),
-                                                                        y=main_window.calc_height(5),
-                                                                        width=main_window.calc_width(400))
+              font=('Eras Bold ITC', main_window.calc_size(12))).place(x=main_window.calc_size(0),
+                                                                       y=main_window.calc_size(5),
+                                                                       width=main_window.calc_size(400))
         Label(popup, text=f'{email}', wraplength=popup_width, bg=label_bg_color,
-              font=('Eras Bold ITC', main_window.calc_width(15))).place(x=main_window.calc_width(0),
-                                                                        y=main_window.calc_height(50),
-                                                                        width=main_window.calc_width(400))
-        enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_width(15)), bg='white', justify='center',
+              font=('Eras Bold ITC', main_window.calc_size(15))).place(x=main_window.calc_size(0),
+                                                                       y=main_window.calc_size(50),
+                                                                       width=main_window.calc_size(400))
+        enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_size(15)), bg='white', justify='center',
                                show='•')
-        enter_password.place(x=main_window.calc_width(32), y=main_window.calc_height(85),
-                             width=main_window.calc_width(300), height=main_window.calc_height(35))
+        enter_password.place(x=main_window.calc_size(32), y=main_window.calc_size(85),
+                             width=main_window.calc_size(300), height=main_window.calc_size(35))
         show_hide_button = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color, command=show_hide_pass)
-        show_hide_button.place(x=main_window.calc_width(333), y=main_window.calc_height(85),
-                               width=main_window.calc_width(35), height=main_window.calc_height(35))
+        show_hide_button.place(x=main_window.calc_size(333), y=main_window.calc_size(85),
+                               width=main_window.calc_size(35), height=main_window.calc_size(35))
 
         confirm_button = Button(popup, text='Confirm', cursor='hand2',
-                                font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                                font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg=buttons_bg_color,
                                 command=submit)
-        confirm_button.place(x=main_window.calc_width(150), y=main_window.calc_height(145),
-                             width=main_window.calc_width(100), height=main_window.calc_height(32))
+        confirm_button.place(x=main_window.calc_size(150), y=main_window.calc_size(145),
+                             width=main_window.calc_size(100), height=main_window.calc_size(32))
         enter_password.focus()
         popup.mainloop()
 
     def change_password():
-        popup_width = main_window.calc_width(610)
-        popup_height = main_window.calc_height(392)
+        popup_width = main_window.calc_size(610)
+        popup_height = main_window.calc_size(392)
         popup_x = int((screen_width - popup_width) / 2)
         popup_y = int((screen_height - popup_height) / 2)
 
@@ -1420,16 +1422,16 @@ def choose_mode_window(email):
             if enter_cur_password.get() == '' or enter_password.get() == '' or re_enter_password.get() == '':
                 if enter_cur_password.get() == '':
                     cur_pass_error_title.configure(text='Please enter your current password')
-                    cur_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                                               width=main_window.calc_width(500))
+                    cur_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                                               width=main_window.calc_size(500))
                 if enter_password.get() == '':
                     pass_error_title.configure(text='Please enter a new password')
-                    pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                                           width=main_window.calc_width(500))
+                    pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                                           width=main_window.calc_size(500))
                 if re_enter_password.get() == '':
                     re_pass_error_title.configure(text='Please Retype the new password')
-                    re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                              width=main_window.calc_width(500))
+                    re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                              width=main_window.calc_size(500))
             elif not manageSERVER.check_if_email_exists(email):
                 # check if email exists
                 messagebox.showerror(title='Error', message="This email address doesn't have an account")
@@ -1438,18 +1440,18 @@ def choose_mode_window(email):
             elif enter_password.get() != re_enter_password.get():
                 # check if the two passwords aren't the same
                 re_pass_error_title.configure(text="The passwords don't match")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                          width=main_window.calc_size(500))
             elif not manageSERVER.login(email, enter_cur_password.get(), 0):
                 cur_pass_error_title.configure(text='The password is incorrect, Try again')
-                cur_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(85),
-                                           width=main_window.calc_width(500))
+                cur_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(85),
+                                           width=main_window.calc_size(500))
             elif enter_cur_password.get() == enter_password.get():
                 # check if the new password is not the same as the current one
                 re_pass_error_title.configure(
                     text="The new password can't be the same as the current one,\nPlease choose a new password")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                          width=main_window.calc_size(500))
 
             else:
                 password = enter_cur_password.get()
@@ -1502,8 +1504,8 @@ def choose_mode_window(email):
             re_pass_error_title.place_forget()
             if password1 != password2:
                 re_pass_error_title.configure(text="The passwords don't match")
-                re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                          width=main_window.calc_width(500))
+                re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                          width=main_window.calc_size(500))
 
         popup = Toplevel(bg=label_bg_color)
         popup.geometry(f'{popup_width}x{popup_height}+{popup_x}+{popup_y}')
@@ -1517,75 +1519,75 @@ def choose_mode_window(email):
         popup.bind('<Return>', enter_key)
 
         cur_pass_error_title = Label(popup, text='Please enter your current password',
-                                     font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg=label_bg_color)
+                                     font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg=label_bg_color)
         pass_error_title = Label(popup, text='Please enter a new password',
-                                 font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg=label_bg_color)
-        pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(180),
-                               width=main_window.calc_width(500))
+                                 font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg=label_bg_color)
+        pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(180),
+                               width=main_window.calc_size(500))
         re_pass_error_title = Label(popup, text='Please Retype the new password',
-                                    font=('Eras Bold ITC', main_window.calc_width(10)), fg='red', bg=label_bg_color)
-        re_pass_error_title.place(x=main_window.calc_width(55), y=main_window.calc_height(275),
-                                  width=main_window.calc_width(500))
+                                    font=('Eras Bold ITC', main_window.calc_size(10)), fg='red', bg=label_bg_color)
+        re_pass_error_title.place(x=main_window.calc_size(55), y=main_window.calc_size(275),
+                                  width=main_window.calc_size(500))
         cur_pass_error_title.place_forget()
         pass_error_title.place_forget()
         re_pass_error_title.place_forget()
 
         Label(popup, text=f"{email}\nCurrent Password:",
-              font=('Eras Bold ITC', main_window.calc_width(15), 'bold'), fg='gray20',
-              bg=label_bg_color).place(x=main_window.calc_width(0),
-                                       y=main_window.calc_height(0), width=main_window.calc_width(610))
-        enter_cur_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+              font=('Eras Bold ITC', main_window.calc_size(15), 'bold'), fg='gray20',
+              bg=label_bg_color).place(x=main_window.calc_size(0),
+                                       y=main_window.calc_size(0), width=main_window.calc_size(610))
+        enter_cur_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                                    bg='white', justify='center', show="•")
-        enter_cur_password.place(x=main_window.calc_width(55), y=main_window.calc_height(50),
-                                 width=main_window.calc_width(500), height=main_window.calc_height(35))
+        enter_cur_password.place(x=main_window.calc_size(55), y=main_window.calc_size(50),
+                                 width=main_window.calc_size(500), height=main_window.calc_size(35))
 
         show_hide_button1 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                    command=show_hide_pass1)
-        show_hide_button1.place(x=main_window.calc_width(555), y=main_window.calc_height(50),
-                                width=main_window.calc_width(35),
-                                height=main_window.calc_height(35))
+        show_hide_button1.place(x=main_window.calc_size(555), y=main_window.calc_size(50),
+                                width=main_window.calc_size(35),
+                                height=main_window.calc_size(35))
 
         Label(popup, text='New Password:',
-              font=('Eras Bold ITC', main_window.calc_width(15), 'bold'), fg='gray20',
-              bg=label_bg_color).place(x=main_window.calc_width(0),
-                                       y=main_window.calc_height(110), width=main_window.calc_width(610))
-        enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+              font=('Eras Bold ITC', main_window.calc_size(15), 'bold'), fg='gray20',
+              bg=label_bg_color).place(x=main_window.calc_size(0),
+                                       y=main_window.calc_size(110), width=main_window.calc_size(610))
+        enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                                bg='white', justify='center', show="•")
-        enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(145),
-                             width=main_window.calc_width(500),
-                             height=main_window.calc_height(35))
+        enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(145),
+                             width=main_window.calc_size(500),
+                             height=main_window.calc_size(35))
 
         enter_password.bind("<Key>", key_entered)
 
         show_hide_button2 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                    command=show_hide_pass2)
-        show_hide_button2.place(x=main_window.calc_width(555), y=main_window.calc_height(145),
-                                width=main_window.calc_width(35),
-                                height=main_window.calc_height(35))
+        show_hide_button2.place(x=main_window.calc_size(555), y=main_window.calc_size(145),
+                                width=main_window.calc_size(35),
+                                height=main_window.calc_size(35))
 
         Label(popup, text='Retype New Password:',
-              font=('Eras Bold ITC', main_window.calc_width(15), 'bold'), fg='gray20',
-              bg=label_bg_color).place(x=main_window.calc_width(0),
-                                       y=main_window.calc_height(205), width=main_window.calc_width(610))
-        re_enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20',
+              font=('Eras Bold ITC', main_window.calc_size(15), 'bold'), fg='gray20',
+              bg=label_bg_color).place(x=main_window.calc_size(0),
+                                       y=main_window.calc_size(205), width=main_window.calc_size(610))
+        re_enter_password = Entry(popup, font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20',
                                   bg='white', justify='center', show="•")
-        re_enter_password.place(x=main_window.calc_width(55), y=main_window.calc_height(240),
-                                width=main_window.calc_width(500),
-                                height=main_window.calc_height(35))
+        re_enter_password.place(x=main_window.calc_size(55), y=main_window.calc_size(240),
+                                width=main_window.calc_size(500),
+                                height=main_window.calc_size(35))
 
         re_enter_password.bind("<Key>", key_entered)
 
         show_hide_button3 = Button(popup, image=show_icon, cursor='hand2', bg=buttons_bg_color,
                                    command=show_hide_pass3)
-        show_hide_button3.place(x=main_window.calc_width(555), y=main_window.calc_height(240),
-                                width=main_window.calc_width(35),
-                                height=main_window.calc_height(35))
+        show_hide_button3.place(x=main_window.calc_size(555), y=main_window.calc_size(240),
+                                width=main_window.calc_size(35),
+                                height=main_window.calc_size(35))
 
         confirm_button = Button(popup, text='Confirm', cursor='hand2',
-                                font=('Eras Bold ITC', main_window.calc_width(15)), fg='gray20', bg=buttons_bg_color,
+                                font=('Eras Bold ITC', main_window.calc_size(15)), fg='gray20', bg=buttons_bg_color,
                                 command=submit)
-        confirm_button.place(x=main_window.calc_width(255), y=main_window.calc_height(315),
-                             width=main_window.calc_width(100), height=main_window.calc_height(35))
+        confirm_button.place(x=main_window.calc_size(255), y=main_window.calc_size(315),
+                             width=main_window.calc_size(100), height=main_window.calc_size(35))
 
         enter_cur_password.focus()
         popup.mainloop()
@@ -1641,11 +1643,11 @@ def choose_mode_window(email):
             bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
             Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
             control_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}/assets/control-pic.png').resize((main_window.calc_width(160), main_window.calc_height(160)),
-                                                     Image.ANTIALIAS))
+                Image.open(f'{ROOT_PROJ_DIR}/assets/control-pic.png').resize((main_window.calc_size(160), main_window.calc_size(160)),
+                                                                             Image.ANTIALIAS))
             be_controlled_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}/assets/be-controlled-pic.png').resize((main_window.calc_width(200), main_window.calc_height(160)),
-                                                           Image.ANTIALIAS))
+                Image.open(f'{ROOT_PROJ_DIR}/assets/be-controlled-pic.png').resize((main_window.calc_size(200), main_window.calc_size(160)),
+                                                                                   Image.ANTIALIAS))
             mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
             try:
                 choose_frame.destroy()
@@ -1702,11 +1704,11 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         show_icon = ImageTk.PhotoImage(
             Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize(
-                (main_window.calc_width(30), main_window.calc_height(30)),
+                (main_window.calc_size(30), main_window.calc_size(30)),
                 Image.ANTIALIAS))
         hide_icon = ImageTk.PhotoImage(
             Image.open(f'{ROOT_PROJ_DIR}/assets/hide.png').resize(
-                (main_window.calc_width(30), main_window.calc_height(30)),
+                (main_window.calc_size(30), main_window.calc_size(30)),
                 Image.ANTIALIAS))
 
         play_video(start_video_name)
