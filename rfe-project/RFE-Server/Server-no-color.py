@@ -14,7 +14,6 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import json
 import datetime
-from termcolor import colored
 import requests
 
 
@@ -35,10 +34,9 @@ class server(object):
         """
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind((self.SERVER, self.PORT))
-        print(colored("[STARTING] Server is up", "yellow"))
+        print("[STARTING] Server is up")
         server.listen()
-        print(colored(f"[LISTENING] Server is listening - {self.EXTERNAL_IP}:{self.PORT} | LOCAL - {self.LOCAL_IP}:{self.PORT}",
-                      "yellow"))
+        print(f"[LISTENING] Server is listening - {self.EXTERNAL_IP}:{self.PORT} | LOCAL - {self.LOCAL_IP}:{self.PORT}")
         while True:
             conn, addr = server.accept()
             thread = threading.Thread(target=self.manage_client_db, args=(conn, addr))
@@ -67,8 +65,8 @@ class server(object):
         sqlite3.register_adapter(dict, lambda d: json.dumps(d).encode('utf-8'))
         sqlite3.register_converter("dictionary", lambda d: json.loads(d.decode('utf-8')))
 
-        print(colored(f"\n{datetime.datetime.now()}", "blue"))
-        print(colored(f"[CONNECTED] {addr[0]}", "green"))
+        print(f"\n{datetime.datetime.now()}")
+        print(f"[CONNECTED] {addr[0]}")
         msg = conn.recv(self.MSG_LEN).decode(self.FORMAT)
         msg = json.loads(msg)
         action = msg["action"]
@@ -423,11 +421,11 @@ class server(object):
         db.commit()
         conn.send(json.dumps(answer).encode(self.FORMAT))
         if type(answer) == type(dict()):
-            print(colored(f"{action} - True"))
+            print(f"{action} - True")
         else:
-            print(colored(f"{action} - {answer}"))
+            print(f"{action} - {answer}")
         conn.close()
-        print(colored(f"[DISCONNECTED] {addr[0]}", "red"))
+        print(f"[DISCONNECTED] {addr[0]}")
 
         # PRINT THE DB
         cursor.execute("""SELECT * FROM users""")

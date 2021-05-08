@@ -19,5 +19,5 @@ pip install -r requirements.txt
 *
 
 after running the commands and the installation was
-successful, set up python 3.9 as the project's interpreter
-and run the file "main_window.py"
+successful, set up python 3.9 or newer as the
+project's interpreter and run the file "main_window.py"

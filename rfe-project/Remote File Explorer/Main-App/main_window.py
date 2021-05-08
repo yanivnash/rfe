@@ -56,8 +56,8 @@ except FileExistsError:
 def calc_size(size):
     """
     Calculates a certain size compared to the size of the app.
-    :param size: the size when the app size is default (1070x700).
-    :return: the size scaled to match the current app size.
+    :param size: The size when the app size is default (1070x700).
+    :return: The size scaled to match the current app size.
     """
     if size == 0:
         return 0
@@ -69,7 +69,7 @@ def update_icons_dict(icons_path):
     """
     Updates the global var "icons_dir" to contain all the icons in a folder,
     their name as the key and an image object as the value.
-    :param icons_path: the path to the folder that contains the icons you want to update.
+    :param icons_path: The path to the folder that contains the icons you want to update.
     :return: None
     """
     icons_list = os.listdir(icons_path)
@@ -80,7 +80,7 @@ def update_icons_dict(icons_path):
 def download_icon(icon_name):
     """
     Searches google images for an icon and download it.
-    :param icon_name: the name of the icon that needs to be downloaded.
+    :param icon_name: The name of the icon that needs to be downloaded.
     :return: None
     """
     URL = f"https://www.google.com/search?q={icon_name}+logo&newwindow=1&hl=en&sxsrf=ALeKk03_3mH_awXS2UWry7EgXMwViGLtEQ:1619816415283&source=lnms&tbm=isch&sa=X&ved=2ahUKEwjR2aKw7qbwAhVIXRoKHVAkAMwQ_AUoAXoECAEQAw&biw=1920&bih=937"
@@ -108,8 +108,8 @@ def download_icon(icon_name):
 
 def create_bttn(frame):
     """
-    Creates the buttons that represent the files and folders on the remote computer.
-    :param frame: a tkinter frame object that contains all the buttons.
+    Creates a buttons grid that represents the files and folders on the remote computer.
+    :param frame: A tkinter frame object that contains all the buttons
     :return: None
     """
     global icons_dict, bttns_dict, sftp, right_click_file_menu, right_click_dir_menu
@@ -184,7 +184,7 @@ def create_bttn(frame):
 
 def double_click(event):
     """
-    Goes to the clicked folder and updates the screen when double clicking one of the folders buttons.
+    When double clicking one of the folders buttons, goes to the clicked folder and updates the screen.
     :param event: An object that contains info about the clicked button and the action
     :return: None
     """
@@ -215,7 +215,7 @@ def double_click(event):
 
 def right_click(event):
     """
-    Creates a menu matching when right clicking one of the files or folders buttons.
+    Creates a matching menu when right clicking one of the files or folders buttons.
     :param event: An object that contains info about the clicked button and the action
     :return: None
     """
@@ -457,14 +457,14 @@ def copy_path_button(event):
 def check_new_name(new_name, input_title, type, old_name, initialv):
     """
     Checks if a new file or folder name is already taken or invalid.
-    :param new_name: (String) A new name that needs to be checked
-    :param input_title: (String) The title that will be shown on the popup window if a new input is required
-    :param type: (String) If the new name belongs to a file or a folder
-    :param old_name: (String) The current name of the file or folder
-    :param initialv: (String) The popup's initial value when asking for a new input
-    :return: (Bool/String) False - if the user entered an empty input, clicked "Cancel" or
-    the new name is the same as the current name
-    new_name - if the name is valid
+    :param new_name: A new name that needs to be checked
+    :param input_title: The title that will be shown on the popup window if a new input is required
+    :param type: If the new name belongs to a file or a folder
+    :param old_name: The current name of the file or folder
+    :param initialv: The popup's initial value when asking for a new input
+    :return: False - if the user entered an empty input, clicked "Cancel" or
+                    the new name is the same as the current name
+            new_name - if the name is valid
     """
     sftp = ssh.open_sftp()
     manageSSH.chdir(sftp, cur_path)
@@ -525,6 +525,10 @@ def check_new_name(new_name, input_title, type, old_name, initialv):
 
 
 def new_dir_button():
+    """
+    Creates a new folder on the remote computer.
+    :return: None
+    """
     new_folder_name = simpledialog.askstring(title='New folder', prompt='Enter a name for the folder:',
                                              initialvalue='New folder', parent=root)
     new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir', '', 'New folder')
@@ -535,6 +539,11 @@ def new_dir_button():
 
 
 def update_frame(items_list):
+    """
+    Updates the main frame of the app.
+    :param items_list: A list with all the items' names in the current remote path
+    :return: None
+    """
     wrapper1.destroy()
     wrapper2.destroy()
     frame.destroy()
@@ -543,6 +552,12 @@ def update_frame(items_list):
 
 
 def create_search_bttn(frame, items_list):
+    """
+    Creates a buttons grid that represents the files and folders on the remote computer that matched the search key.
+    :param frame: A tkinter frame object that contains all the buttons
+    :param items_list: A list with all the items' names in the current remote path
+    :return:
+    """
     global icons_dict, bttns_dict, right_click_dir_search_menu, right_click_file_search_menu
     clm = 0
     rw = 2
@@ -631,6 +646,12 @@ def create_search_bttn(frame, items_list):
 
 
 def double_click_search(event):
+    """
+    When double clicking a file, goes to it's parent dir,
+    when double clocking a folder, goes to that folder.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     global items_list, cur_path, frame, bttns_dict, is_searching
     if OTHER_OS_PLATFORM == 'windows':
         dir_sign = '\\'
@@ -668,6 +689,11 @@ def double_click_search(event):
 
 
 def right_click_search(event):
+    """
+    Creates a matching menu when right clicking one of the files or folders buttons.
+    :param event: An object that contains info about the clicked button and the action
+    :return: None
+    """
     if OTHER_OS_PLATFORM == 'windows':
         dir_sign = '\\'
     else:
@@ -698,12 +724,16 @@ def right_click_search(event):
 
 
 def create_frame(items_list):
+    """
+    Creates the main frame of the app.
+    :param items_list: A list with all the items' names in the current remote path
+    :return: None
+    """
     global frame, wrapper1, wrapper2, count, drives_list, is_searching, cur_path_label
 
-    def f_refresh(event):
+    def f5_refresh(event):
         refresh_screen()
-
-    root.bind('<F5>', f_refresh)
+    root.bind('<F5>', f5_refresh)
 
     count = 0
 
@@ -780,12 +810,14 @@ def create_frame(items_list):
     ref_btn = Button(wrapper1, image=ref_pic, bg=buttons_bg_color, command=refresh_screen)
 
     def search():
+        """
+        Gets a list with items that contains the search key in their names.
+        :return: None
+        """
         global is_searching
         root.bind('<Return>', no_action)
-        # root.config(cursor='exchange')
         is_searching = True
         temp_list = list()
-        extras_list = list()
         search_key = search_bar_entry.get()
         if search_key != '':
             sftp = ssh.open_sftp()
@@ -801,7 +833,6 @@ def create_frame(items_list):
                 create_frame(items_list)
                 cur_path_label.configure(text=f'Searching for "{search_key}" in "{cur_path}"')
                 create_search_bttn(frame, items_list)
-        # root.config(cursor='arrow')
 
     def entry_click(event):
         search_bar_entry.delete(0, 'end')
@@ -848,6 +879,10 @@ def create_frame(items_list):
 
 
 def acc_signout():
+    """
+    Asks for confirmation and if granted, signs out of the account.
+    :return: None
+    """
     discon_msg_box = messagebox.askquestion(title='Disconnect & Sign Out',
                                             message='Are you sure you want to disconnect and sign out of your account?')
     if discon_msg_box == 'yes':
@@ -857,6 +892,10 @@ def acc_signout():
 
 
 def main():
+    """
+    The main func of the file.
+    :return: None
+    """
     global cur_path, root, frame, ssh, new_dir_pic, ref_pic, up_pic, search_pic
     global x, y, username, host, account, menubar, email
 
