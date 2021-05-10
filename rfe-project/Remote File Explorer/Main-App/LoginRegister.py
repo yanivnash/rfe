@@ -203,6 +203,11 @@ def login_to_ssh_client(ip_frame, ip_dict):
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def ip_butn_click(event):
+        """
+        When clicking one of the IP buttons, Asks for a username and tries to connect.
+        :param event: An object that contains info about the action
+        :return: None
+        """
         global ssh, sftp, check_var, username, host
         host = None
         key_list = list(ip_butns_dict.keys())
@@ -221,6 +226,12 @@ def login_to_ssh_client(ip_frame, ip_dict):
             try_connect(host, username)
 
     def try_connect(host, username):
+        """
+        Tries to connect to a client using their IP address, username and password.
+        :param host: The client's IP address
+        :param username: The client's username
+        :return: None
+        """
         global ssh, sftp
         ssh = None
         sftp = None
@@ -242,28 +253,33 @@ def login_to_ssh_client(ip_frame, ip_dict):
                     manageSERVER.update_pc_in_account(email, (host, username))
                 load_label = Label(ip_frame, text='Downloading Icons...', bg='white', font=('Eras Bold ITC',
                                                                                             main_window.calc_size(30)))
-                load_label.place(x=main_window.calc_size(231), y=main_window.calc_size(133), width=main_window.calc_size(
-                    610), height=main_window.calc_size(392))
+                load_label.place(x=main_window.calc_size(231), y=main_window.calc_size(133),
+                                 width=main_window.calc_size(
+                                     610), height=main_window.calc_size(392))
                 load_label.after(10, ip_frame.quit)
 
     back_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_size(57), main_window.calc_size(44)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/back.png').resize((main_window.calc_size(57), main_window.calc_size(44)),
+                                                              Image.ANTIALIAS))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)),
+                                                                 Image.ANTIALIAS))
     signout_bttn = Button(ip_frame, image=signout_pic, cursor='hand2',
                           font=('Eras Bold ITC', main_window.calc_size(10)), fg='gray20', bg=buttons_bg_color,
                           command=acc_signout)
     signout_bttn.place(x=main_window.calc_size(10), y=main_window.calc_size(10))
 
     def create_enter_frame():
+        """
+        Creates a tkinter frame to manually enter a computer's info.
+        :return: None
+        """
         global check_var, username
-
         main_title.configure(text="Enter a computer's info to connect to:")
         main_title.place(x=main_window.calc_size(85), y=main_window.calc_size(25))
 
         def return_button(event):
             connect_button.invoke()
-
         root.bind('<Return>', return_button)
 
         def check_ip():
@@ -348,6 +364,10 @@ def login_to_ssh_client(ip_frame, ip_dict):
         event.widget['background'] = buttons_bg_color
 
     def show_local_ip_list():
+        """
+        Shows buttons with the IP addresses that are in the same local network.
+        :return: None
+        """
         global scrollable_frame, scrollbar, canvas
         scrollbar.destroy()
         scrollable_frame.destroy()
@@ -395,6 +415,10 @@ def login_to_ssh_client(ip_frame, ip_dict):
         canvas.yview_moveto('0.0')
 
     def show_account_ip_list():
+        """
+        Shows buttons with the IP addresses that were saved to the user's account.
+        :return: None
+        """
         global scrollable_frame, scrollbar, canvas
         scrollbar.destroy()
         scrollable_frame.destroy()
@@ -478,6 +502,14 @@ def login_to_ssh_client(ip_frame, ip_dict):
 
 
 def check_sshd_service(service_name):
+    """
+    Checks the current state of a service (only on windows computers).
+    :param service_name: The name of the service
+    :return: 'ON' - if the service is installed and on
+            'OFF' - if the service is installed but off
+            'NOT INSTALLED' - if the service is not installed
+            None - if the service was not found
+    """
     if SELF_OS_PLATFORM == 'windows':
         service = None
         try:
@@ -498,6 +530,11 @@ def check_sshd_service(service_name):
 
 
 def set_be_controlled(be_controlled_frame):
+    """
+    Sets the screen to "be controlled" after the user chose to.
+    :param be_controlled_frame: A tkinter frame object that contains all the other objects
+    :return: None
+    """
     def close_window():
         sshd_status = check_sshd_service('sshd')
         if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED' or sshd_status == None:
@@ -609,7 +646,8 @@ def set_be_controlled(be_controlled_frame):
                        font=('Eras Bold ITC', main_window.calc_size(35), 'bold'), fg='gray20', bg=label_bg_color)
     main_title.place(x=main_window.calc_size(350), y=main_window.calc_size(25))
     signout_pic = ImageTk.PhotoImage(
-        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)), Image.ANTIALIAS))
+        Image.open(f'{ROOT_PROJ_DIR}/assets/signout.png').resize((main_window.calc_size(57), main_window.calc_size(51)),
+                                                                 Image.ANTIALIAS))
 
     signout_bttn = Button(be_controlled_frame, image=signout_pic, cursor='hand2',
                           font=('Eras Bold ITC', main_window.calc_size(12)), fg='gray20', bg=buttons_bg_color,
@@ -624,7 +662,8 @@ def set_be_controlled(be_controlled_frame):
         refresh_pic = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/refresh.png').resize(
             (main_window.calc_size(50), main_window.calc_size(54)), Image.ANTIALIAS))
         refresh_bttn = Button(frame, text='Recheck\nService', font=('Eras Bold ITC', main_window.calc_size(10), 'bold'),
-                              command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic, bg=buttons_bg_color)
+                              command=recheck_sshd, compound=TOP, justify=CENTER, image=refresh_pic,
+                              bg=buttons_bg_color)
         refresh_bttn.place(x=10, y=10)
         subtitle = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), fg='gray20', bg='white')
         v_mark_pic = ImageTk.PhotoImage(
@@ -633,7 +672,8 @@ def set_be_controlled(be_controlled_frame):
         x_mark_pic = ImageTk.PhotoImage(
             Image.open(f'{ROOT_PROJ_DIR}/assets/x.png').resize((main_window.calc_size(70), main_window.calc_size(70)),
                                                                Image.ANTIALIAS))
-        mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), compound=LEFT, justify=CENTER,
+        mark_label = Label(frame, font=('Eras Bold ITC', main_window.calc_size(18), 'bold'), compound=LEFT,
+                           justify=CENTER,
                            bg='white', padx=20)
         if sshd_status == 'ON':
             mark_label.configure(text='SSH Service is ON', image=v_mark_pic, fg='green')
@@ -694,6 +734,11 @@ def set_be_controlled(be_controlled_frame):
 
 
 def start_login_window(main_frame):
+    """
+    Sets the screen to the login screen and the user can login to their existing account.
+    :param main_frame: A tkinter frame object that contains all the other objects
+    :return: None
+    """
     global email, ip_dict, root
     email = None
     ip_dict = None
@@ -827,6 +872,11 @@ def start_login_window(main_frame):
 
 
 def start_register_window(main_frame):
+    """
+    Sets the screen to the register screen and the user can create a new account.
+    :param main_frame: A tkinter frame object that contains all the other objects
+    :return: None
+    """
     global email, ip_dict, root
     email = None
     ip_dict = None
@@ -1002,6 +1052,11 @@ def start_register_window(main_frame):
 
 
 def start_forgot_window(main_frame):
+    """
+    Sets the screen to the forgot password screen and the user can reset their password to their account.
+    :param main_frame:
+    :return:
+    """
     global email, root, reset_frame
     email = None
 
@@ -1293,6 +1348,11 @@ def close_window():
 
 
 def play_video(video_name):
+    """
+    Creates a tkinter frame with a label inside of it, reads the video and starts a new thread to show each image.
+    :param video_name: The name of the video to be played
+    :return: None
+    """
     global video, app_width, app_height, count
     count = 0
     video = imageio.get_reader(video_name)
@@ -1306,6 +1366,13 @@ def play_video(video_name):
 
 
 def stream(vid_label, vid_frame, video_name):
+    """
+    Runs a for loop for each image in the video and shows it on the screen.
+    :param vid_label: The label that contains the video images
+    :param vid_frame: The frame that contains the Label
+    :param video_name: The name of the played video
+    :return: None
+    """
     global count, video
     for image in video.iter_data():
         frame_image = ImageTk.PhotoImage(Image.fromarray(image).resize((app_width, app_height), Image.ANTIALIAS))
@@ -1321,6 +1388,11 @@ def stream(vid_label, vid_frame, video_name):
 
 
 def server_status(main_frame):
+    """
+    Checks if the server is up, if it isn't shows a label.
+    :param main_frame: A tkinter frame object that contains all the other objects
+    :return: None
+    """
     global email
     status = manageSERVER.get_server_status()
     if status != 'SERVER IS UP':
@@ -1339,8 +1411,57 @@ def server_status(main_frame):
         error_frame.mainloop()
 
 
-def choose_mode_window(email):
+def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
+    """
+    The main func of the file.
+    :param root1: A tkinter window
+    :param app_width1: The width of the app
+    :param app_height1: The height of the app
+    :param account1: A tkinter menu object
+    :param ssh_service_menu1: A tkinter menu object
+    :param email1: The user's email address
+    :return: email - the user's email address
+            mode - the mode the user chose for their computer
+            ssh - SSH object that contains the connection info
+            sftp - SFTP object
+            username - the user's username
+            host - the user's IP address
+    """
+    global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
+    global app_width, app_height, account, ssh_service_menu
     global ssh, sftp, username, answr, host
+
+    root = root1
+    app_width = app_width1
+    app_height = app_height1
+    account = account1
+    email = email1
+    ssh_service_menu = ssh_service_menu1
+    root.protocol("WM_DELETE_WINDOW", close_window)
+
+    if email == None:
+        main_frame = Frame(root)
+        main_frame.place(x=0, y=0, width=app_width, height=app_height)
+
+        server_status(main_frame)
+        if email == False:
+            return None, None, None, None, None, None
+        bg = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
+        show_icon = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize(
+                (main_window.calc_size(30), main_window.calc_size(30)),
+                Image.ANTIALIAS))
+        hide_icon = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/hide.png').resize(
+                (main_window.calc_size(30), main_window.calc_size(30)),
+                Image.ANTIALIAS))
+
+        play_video(start_video_name)
+        start_login_window(main_frame)
+        main_frame.mainloop()
+
     answr = None
     host = None
 
@@ -1679,14 +1800,17 @@ def choose_mode_window(email):
             root.title('Remote File Explorer')
             choose_frame = Frame(root)
             choose_frame.place(x=0, y=0, width=app_width, height=app_height)
-            bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
+            bg = ImageTk.PhotoImage(
+                Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
             Label(choose_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
             control_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}/assets/control-pic.png').resize((main_window.calc_size(160), main_window.calc_size(160)),
-                                                                             Image.ANTIALIAS))
+                Image.open(f'{ROOT_PROJ_DIR}/assets/control-pic.png').resize(
+                    (main_window.calc_size(160), main_window.calc_size(160)),
+                    Image.ANTIALIAS))
             be_controlled_pic = ImageTk.PhotoImage(
-                Image.open(f'{ROOT_PROJ_DIR}/assets/be-controlled-pic.png').resize((main_window.calc_size(200), main_window.calc_size(160)),
-                                                                                   Image.ANTIALIAS))
+                Image.open(f'{ROOT_PROJ_DIR}/assets/be-controlled-pic.png').resize(
+                    (main_window.calc_size(200), main_window.calc_size(160)),
+                    Image.ANTIALIAS))
             mode = choose_mode(choose_frame, control_pic, be_controlled_pic)
             try:
                 choose_frame.destroy()
@@ -1700,7 +1824,8 @@ def choose_mode_window(email):
         root.title('Remote File Explorer')
         ip_frame = Frame(root)
         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
@@ -1708,7 +1833,8 @@ def choose_mode_window(email):
         root.title('Remote File Explorer')
         be_controlled_frame = Frame(root)
         be_controlled_frame.place(x=0, y=0, width=app_width, height=app_height)
-        bg = ImageTk.PhotoImage(Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
+        bg = ImageTk.PhotoImage(
+            Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
         Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         set_be_controlled(be_controlled_frame)
 
@@ -1717,41 +1843,3 @@ def choose_mode_window(email):
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
     return email, mode, ssh, sftp, username, host
-
-
-def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
-    global main_frame, show_icon, hide_icon, mode, email, root, ip_dict
-    global app_width, app_height, account, ssh_service_menu
-
-    root = root1
-    app_width = app_width1
-    app_height = app_height1
-    account = account1
-    email = email1
-    ssh_service_menu = ssh_service_menu1
-    root.protocol("WM_DELETE_WINDOW", close_window)
-
-    if email == None:
-        main_frame = Frame(root)
-        main_frame.place(x=0, y=0, width=app_width, height=app_height)
-
-        server_status(main_frame)
-        if email == False:
-            return None, None, None, None, None, None
-        bg = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
-        Label(main_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
-        show_icon = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/show.png').resize(
-                (main_window.calc_size(30), main_window.calc_size(30)),
-                Image.ANTIALIAS))
-        hide_icon = ImageTk.PhotoImage(
-            Image.open(f'{ROOT_PROJ_DIR}/assets/hide.png').resize(
-                (main_window.calc_size(30), main_window.calc_size(30)),
-                Image.ANTIALIAS))
-
-        play_video(start_video_name)
-        start_login_window(main_frame)
-        main_frame.mainloop()
-
-    return choose_mode_window(email)

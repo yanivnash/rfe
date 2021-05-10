@@ -11,6 +11,13 @@ MSG_LEN = 2048
 
 
 def send_to_server(send_object):
+    """
+    Sends a dictionary to the server (using json).
+    :param send_object: The dictionary that needs to be sent to the server
+    :return: json.loads(answr) - the answer from the server
+            'SERVER IS DOWN' - if the server is down
+            'ERROR' - if an error occurred
+    """
     client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     try:
         client.connect((SERVER_IP, PORT))

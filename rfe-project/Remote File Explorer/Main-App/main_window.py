@@ -973,6 +973,10 @@ def main():
         create_bttn(frame)
 
         def go_to_path():
+            """
+            Goes to a specific path in the remote computer.
+            :return: None
+            """
             global cur_path
             if OTHER_OS_PLATFORM == 'windows':
                 dir_sign = '\\'
@@ -1039,6 +1043,10 @@ def main():
             update_frame(items_list)
 
         def copy_file_to_remote():
+            """
+            Copies a file from the local computer to the remote computer.
+            :return: None
+            """
             local_path = filedialog.askopenfilename(title='Choose a file to copy', filetypes=(('All Files', '*.*'),))
             if local_path:
                 file = local_path[local_path.rfind('/'):]
@@ -1061,6 +1069,10 @@ def main():
                 sftp.close()
 
         def open_cmd_terminal():
+            """
+            Opens a window where the user can run commands on the remote computer.
+            :return: None
+            """
             global row, line, list_count, button_count, cur_dir
             if OTHER_OS_PLATFORM == 'windows':
                 dir_sign = '\\'

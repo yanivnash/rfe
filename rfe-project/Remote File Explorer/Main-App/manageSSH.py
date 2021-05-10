@@ -5,6 +5,16 @@ import stat
 
 
 def connect_to_ssh(host, username, password):
+    """
+    Connects to a client using the IP address, username and password.
+    :param host: the user's IP address
+    :param username: the user's username
+    :param password: the user's password
+    :return: ssh - SSH object that contains the connection info
+            "no connection" - if the connection wasn't successful
+            "wrong password/username" - if the IP address / username / password don't match
+            "timeout" - if there was no response after some time
+    """
     port = 22
 
     ssh = paramiko.SSHClient()
@@ -21,6 +31,11 @@ def connect_to_ssh(host, username, password):
 
 
 def disconnect_ssh(ssh):
+    """
+    Disconnects from the client.
+    :param ssh: SSH object that contains the connection info
+    :return: None
+    """
     if ssh:
         try:
             ssh.close()
@@ -29,6 +44,13 @@ def disconnect_ssh(ssh):
 
 
 def chdir(sftp, path):
+    """
+    Goes to a different path in the remote computer.
+    :param sftp: SFTP object
+    :param path: The path to change to
+    :return: True - path changed successfully
+            'path not found' - the path was not found
+    """
     try:
         sftp.chdir(path)
         return True
@@ -40,17 +62,40 @@ def chdir(sftp, path):
             return 'path not found'
 
 
-def run_action(ssh, action):
-    stdin, stdout, stderr = ssh.exec_command(action)
+def run_action(ssh, cmnd):
+    """
+    Runs a command on the remote computer.
+    :param ssh: SSH object that contains the connection info
+    :param cmnd: The command that needs to be ran
+    :return: stdout - the result from the run.
+    """
+    stdin, stdout, stderr = ssh.exec_command(cmnd)
     return stdout
 
 
 def cmd_terminal(ssh, cmnd):
+    """
+    Runs a command on the remote computer.
+    :param ssh: SSH object that contains the connection info
+    :param cmnd: The command that needs to be ran
+    :return: stdin - the input from the run
+            stdout - the result from the run
+            stderr - if an error that occurred during the run
+    """
     stdin, stdout, stderr = ssh.exec_command(cmnd)
     return stdin, stdout, stderr
 
 
 def check_if_item_is_dir(sftp, cur_path, item_name):
+    """
+    Checks if an item is a directory or a file.
+    :param sftp: SFTP object
+    :param cur_path: The item's parent folder's path
+    :param item_name: The name of the item
+    :return: 'dir' - if the item is a directory
+            'file' - if the item is a file
+            'item not found' - if the item was not found.
+    """
     chdir(sftp, cur_path)
     for item in sftp.listdir_attr():
         if str(item)[55:] == item_name:
@@ -62,6 +107,13 @@ def check_if_item_is_dir(sftp, cur_path, item_name):
 
 
 def get_dirs_files_lists(sftp, path):
+    """
+    Gets two lists - one with folders names and another with files names.
+    :param sftp: SFTP object
+    :param path: The path where the folders and files are
+    :return: dirs_list - a list with the folders names
+            files_list - a list with the files names
+    """
     files_list = list()
     dirs_list = list()
     chdir(sftp, path)
@@ -79,6 +131,15 @@ def get_dirs_files_lists(sftp, path):
 
 
 def search_tree_items(sftp, remotedir, tree_list, search_key, plat):
+    """
+    Gets a list with all the paths of folders and files with the search key in their names.
+    :param sftp: SFTP object
+    :param remotedir: The path to search in for folders and files with the search key
+    :param tree_list: An empty list that after running the func will contain all the items
+    :param search_key: The value to be searched
+    :param plat: The os of the remote computer
+    :return: tree_list - a list with all the
+    """
     if plat == 'windows':
         dir_sign = '\\'
     else:
