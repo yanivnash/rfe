@@ -738,6 +738,11 @@ def create_frame(items_list):
     count = 0
 
     def mouse_wheel(event):
+        """
+        Binds the mouse wheel action to scroll the app window.
+        :param event: An object that contains info about the action
+        :return: None
+        """
         global count
         if len(items_list) > 21:
             if event.num == 5 or event.delta == -120:

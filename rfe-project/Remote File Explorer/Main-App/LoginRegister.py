@@ -49,6 +49,12 @@ def no_action(event):
 
 
 def email_regex(email):
+    """
+    Checks if a string is in an email form.
+    :param email: The string that needs to be checked
+    :return: True - if the string matches
+            False - if the string doesn't match
+    """
     regex = r"""^[a-zA-Z]+(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"""
     if re.match(regex, email):
         return True
@@ -57,6 +63,10 @@ def email_regex(email):
 
 
 def acc_signout():
+    """
+    Asks for confirmation and if granted, signs out of the account.
+    :return: None
+    """
     discon_msg_box = messagebox.askquestion(title='Sign Out',
                                             message='Are you sure you want to sign out of your account?')
     if discon_msg_box == 'yes':
@@ -65,6 +75,13 @@ def acc_signout():
 
 
 def choose_mode(choose_frame, control_pic, be_controlled_pic):
+    """
+    Shows the options to "Control" or to "Be Controlled" and lets the user choose.
+    :param choose_frame: A tkinter frame object that contains all the other objects
+    :param control_pic: An image object for the "Control" button
+    :param be_controlled_pic: An image object for the "Be Controlled" button
+    :return: mode - the mode the user chose for their computer ('control'/'be_controlled')
+    """
     global mode, root
     global app_width, app_height
     mode = None
@@ -107,6 +124,10 @@ def choose_mode(choose_frame, control_pic, be_controlled_pic):
 
 
 def get_network_ip_list():
+    """
+    Gets a list with all the IP addresses in the local network.
+    :return: network_ips - A list with all the IP addresses
+    """
     if SELF_OS_PLATFORM == 'windows':
         ipconfig = os.popen('ipconfig').read()
         self_ip = ipconfig[ipconfig.find('IPv4 Address'):ipconfig.find('Subnet Mask')]
@@ -136,10 +157,23 @@ def get_network_ip_list():
 
 
 def login_to_ssh_client(ip_frame, ip_dict):
+    """
+    Starts a screen that lets the user choose a computer to connect to and if the username and password match,
+    it connects the user
+    :param ip_frame: A tkinter frame object that contains all the other objects
+    :param ip_dict: A dictionary that contains the IP addresses and usernames that were saved to the user's account
+    :return: ssh - SSH object that contains the connection info
+            sftp - SFTP object
+            username - the username of the computer that the user connected to
+    """
     global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username, canvas, scrollbar
     global app_width, app_height
 
     def close_window():
+        """
+        Asks for confirmation and if granted, closes the window.
+        :return: None
+        """
         global ssh, sftp, username
         close_msg_box = messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
         if close_msg_box == 'yes':
@@ -161,6 +195,11 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 height=main_window.calc_size(392))
 
     def mouse_wheel(event):
+        """
+        Binds the mouse wheel action to scroll the app window.
+        :param event: An object that contains info about the action
+        :return: None
+        """
         canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def ip_butn_click(event):
