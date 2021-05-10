@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/RFE-Server/Server.py" beforeDir="false" afterPath="$PROJECT_DIR$/RFE-Server/Server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/LoginRegister.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/main_window.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSERVER.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSERVER.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" beforeDir="false" afterPath="$PROJECT_DIR$/Remote File Explorer/Main-App/manageSSH.py" afterDir="false" />
-    </list>
+    <list default="true" id="033ed295-0438-4649-a0b0-05f444bd7f35" name="Default Changelist" comment="final-update" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -98,13 +91,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1614104636514</updated>
-    </task>
-    <task id="LOCAL-00012" summary="update">
-      <created>1617491501808</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1617491501808</updated>
     </task>
     <task id="LOCAL-00013" summary="update">
       <created>1617635968711</created>
@@ -442,7 +428,14 @@
       <option name="project" value="LOCAL" />
       <updated>1620665509967</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="final-update">
+      <created>1620667414287</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1620667414288</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
