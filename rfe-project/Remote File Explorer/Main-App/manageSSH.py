@@ -1,7 +1,7 @@
-__author__ = 'Yaniv Nash'
-
 import paramiko
 import stat
+
+__author__ = 'Yaniv Nash'
 
 
 def connect_to_ssh(host, username, password):

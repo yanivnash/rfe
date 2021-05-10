@@ -1,5 +1,3 @@
-__author__ = 'Yaniv Nash'
-
 import LoginRegister
 import manageSSH  # the file with funcs that connect to the ssh
 from tkinter import *
@@ -16,6 +14,8 @@ import re
 import wx  # get screen resolution
 from bs4 import BeautifulSoup
 import requests
+
+__author__ = 'Yaniv Nash'
 
 OTHER_OS_PLATFORM = None
 
@@ -157,15 +157,15 @@ def create_bttn(frame):
             if item.endswith('more.>'):
                 icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
                 btn_text = btn_text[:item.rfind('.')]
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100), text=btn_text,
-                                                                        compound=TOP, justify=CENTER, image=icon,
-                                                                        height=calc_size(120), width=calc_size(120))
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100),
+                                                                        text=btn_text, compound=TOP, justify=CENTER,
+                                                                        image=icon, height=calc_size(120),
+                                                                        width=calc_size(120))
 
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
 
-            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=calc_size(
-                9),
-                                                                    pady=calc_size(9))
+            bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W,
+                                                                    padx=calc_size(9), pady=calc_size(9))
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind("<Button-3>", right_click)
             bttns_dict[f'{item}_btn_{items_list.index(item)}'].bind('<Double-Button-1>', double_click)
             clm += 1
@@ -291,7 +291,7 @@ def rename_item(event):
     if new_name is not None and new_name != '' and new_name != old_name:
         new_name = check_new_name(new_name, 'Rename', item_type, old_name, old_name)
 
-        if new_name != False:
+        if new_name is not False:
             if item_type == 'file':
                 file_type = old_name[old_name.rfind('.'):]
                 if file_type != new_name[new_name.rfind('.'):]:
@@ -481,7 +481,7 @@ def check_new_name(new_name, input_title, type, old_name, initialv):
         lowered_invalid_names_list.append(invalid_name.lower())
     if type == 'dir':
         while True:
-            if new_name == None or new_name == '' or new_name == old_name:
+            if new_name is None or new_name == '' or new_name == old_name:
                 return False
 
             elif new_name.lower() in lower_items_list:
@@ -504,7 +504,7 @@ def check_new_name(new_name, input_title, type, old_name, initialv):
 
     elif type == 'file':
         while True:
-            if new_name == None or new_name == '' or new_name == old_name:
+            if new_name is None or new_name == '' or new_name == old_name:
                 return False
 
             elif new_name.lower() in lower_items_list:
@@ -532,7 +532,7 @@ def new_dir_button():
     new_folder_name = simpledialog.askstring(title='New folder', prompt='Enter a name for the folder:',
                                              initialvalue='New folder', parent=root)
     new_folder_name = check_new_name(new_folder_name, 'New folder', 'dir', '', 'New folder')
-    if new_folder_name != False:
+    if new_folder_name is not False:
         sftp.mkdir(new_folder_name)
         items_list = sftp.listdir()
         update_frame(items_list)
@@ -622,9 +622,10 @@ def create_search_bttn(frame, items_list):
         if item.endswith('more.>'):
             icon = ImageTk.PhotoImage(Image.open(f'assets/more.png'))
             btn_text = btn_text[:item.rfind('.')]
-        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100), text=btn_text,
-                                                                    compound=TOP, justify=CENTER, image=icon,
-                                                                    height=calc_size(120), width=calc_size(120))
+        bttns_dict[f'{item}_btn_{items_list.index(item)}'] = Button(frame, bg="gray", wraplength=calc_size(100),
+                                                                    text=btn_text, compound=TOP, justify=CENTER,
+                                                                    image=icon, height=calc_size(120),
+                                                                    width=calc_size(120))
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].image = icon
         bttns_dict[f'{item}_btn_{items_list.index(item)}'].grid(column=clm, row=rw, sticky=N + S + E + W, padx=9,
                                                                 pady=9)
@@ -947,7 +948,7 @@ def main():
 
     email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu,
                                                                 None)
-    if email != None and ssh != None and sftp != None:
+    if email is not None and ssh is not None and sftp is not None:
         global cur_path, OTHER_OS_PLATFORM
         root.protocol("WM_DELETE_WINDOW", close_window)
         root.geometry(f'{app_width}x{app_height}+{x}+{y}')
@@ -983,7 +984,7 @@ def main():
             else:
                 dir_sign = '/'
             new_path = simpledialog.askstring(title='Enter a path', prompt='Enter a valid path to go to:', parent=root)
-            if new_path != '' and new_path != None:
+            if new_path != '' and new_path is not None:
                 while new_path.startswith('\\') or new_path.startswith('/') or new_path.startswith(' '):
                     new_path = new_path[1:]
                 while new_path.endswith('\\') or new_path.endswith('/') or new_path.endswith(' '):

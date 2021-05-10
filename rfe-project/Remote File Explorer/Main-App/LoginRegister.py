@@ -1,5 +1,3 @@
-__author__ = 'Yaniv Nash'
-
 import manageSERVER
 import manageSSH
 import main_window
@@ -17,6 +15,8 @@ import sys
 import os
 import time
 import socket
+
+__author__ = 'Yaniv Nash'
 
 ROOT_PROJ_DIR = os.getcwd()
 SELF_NAME = os.getlogin()
@@ -216,7 +216,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         if bttn_name.__contains__('bttn'):
             host = bttn_name[:bttn_name.rfind('-bttn')]
             username = simpledialog.askstring('Enter Username', f'Enter the Username of {host}:', parent=root)
-            if username != None:
+            if username is not None:
                 check_var = IntVar(value=1)
                 try_connect(host, username)
         else:
@@ -236,7 +236,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         ssh = None
         sftp = None
         password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•', parent=root)
-        if password != None:
+        if password is not None:
             ssh = manageSSH.connect_to_ssh(host, username, password)
             if ssh == "wrong password/username":
                 messagebox.showerror(title="Couldn't connect",
@@ -537,7 +537,7 @@ def set_be_controlled(be_controlled_frame):
     """
     def close_window():
         sshd_status = check_sshd_service('sshd')
-        if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED' or sshd_status == None:
+        if sshd_status == 'OFF' or sshd_status == 'NOT INSTALLED' or sshd_status is None:
             close_msg_box = messagebox.askquestion(title='Close', message='Are you sure you want to close the window?')
             if close_msg_box == 'yes':
                 root.destroy()
@@ -1439,12 +1439,12 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
     ssh_service_menu = ssh_service_menu1
     root.protocol("WM_DELETE_WINDOW", close_window)
 
-    if email == None:
+    if email is None:
         main_frame = Frame(root)
         main_frame.place(x=0, y=0, width=app_width, height=app_height)
 
         server_status(main_frame)
-        if email == False:
+        if email is False:
             return None, None, None, None, None, None
         bg = ImageTk.PhotoImage(
             Image.open(f'{ROOT_PROJ_DIR}/assets/background.png').resize((app_width, app_height), Image.ANTIALIAS))
@@ -1617,7 +1617,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
                 password = enter_cur_password.get()
                 new_password = enter_password.get()
                 change_pass_answr = manageSERVER.change_password(email, password, new_password)
-                if change_pass_answr == True:
+                if change_pass_answr is True:
                     messagebox.showinfo(title='Password changed',
                                         message=f'Password changed successfully, a confirmation email was sent to: {email}')
                     popup.destroy()
@@ -1773,7 +1773,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
             main_window.main()
 
     mode = None
-    if email != None:
+    if email is not None:
         try:
             account.delete(email)
             account.delete('Account Settings')
@@ -1820,7 +1820,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
     ssh = None
     sftp = None
     username = None
-    if mode == 'control' and email != None:
+    if mode == 'control' and email is not None:
         root.title('Remote File Explorer')
         ip_frame = Frame(root)
         ip_frame.place(x=0, y=0, width=app_width, height=app_height)
@@ -1829,7 +1829,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         Label(ip_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         ssh, sftp, username = login_to_ssh_client(ip_frame, ip_dict)
 
-    elif mode == 'be_controlled' and email != None:
+    elif mode == 'be_controlled' and email is not None:
         root.title('Remote File Explorer')
         be_controlled_frame = Frame(root)
         be_controlled_frame.place(x=0, y=0, width=app_width, height=app_height)
@@ -1838,7 +1838,7 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         Label(be_controlled_frame, image=bg).place(x=0, y=0, relwidth=1, relheight=1)  # background image
         set_be_controlled(be_controlled_frame)
 
-    if email != None and mode != None and ssh != None:
+    if email is not None and mode is not None and ssh is not None:
         back_frame = Frame(root, bg=label_bg_color)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 

@@ -1,8 +1,8 @@
-__author__ = 'Yaniv Nash'
-
 import socket
 import json
 import os
+
+__author__ = 'Yaniv Nash'
 
 SERVER_IP = '3.142.144.36'  # AWS Server - Change if server is running on a different machine
 PORT = 5050

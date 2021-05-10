@@ -1,9 +1,3 @@
-__author__ = 'Yaniv Nash'
-
-"""
-A server that can receive multiple requests from multiple clients at the same time - using threads
-"""
-
 import socket
 import threading
 import sqlite3
@@ -17,6 +11,12 @@ import datetime
 from termcolor import colored
 import requests
 
+__author__ = 'Yaniv Nash'
+
+"""
+A server that can receive multiple requests from multiple clients at the same time - using threads
+"""
+
 
 class server(object):
     def __init__(self):
@@ -27,7 +27,6 @@ class server(object):
         self.EXTERNAL_IP = requests.get('http://ip.42.pl/raw').text
         self.SERVER = '0.0.0.0'
 
-
     def start_server(self):
         """
         Starts the server and a while loop that accepts client's requests.
@@ -37,13 +36,13 @@ class server(object):
         server.bind((self.SERVER, self.PORT))
         print(colored("[STARTING] Server is up", "yellow"))
         server.listen()
-        print(colored(f"[LISTENING] Server is listening - {self.EXTERNAL_IP}:{self.PORT} | LOCAL - {self.LOCAL_IP}:{self.PORT}",
-                      "yellow"))
+        print(colored(
+            f"[LISTENING] Server is listening - {self.EXTERNAL_IP}:{self.PORT} | LOCAL - {self.LOCAL_IP}:{self.PORT}",
+            "yellow"))
         while True:
             conn, addr = server.accept()
             thread = threading.Thread(target=self.manage_client_db, args=(conn, addr))
             thread.start()
-
 
     def manage_client_db(self, conn, addr):
         """
@@ -81,7 +80,8 @@ class server(object):
                             INSERT INTO users(email,password,ip_dict,reset_code)
                             VALUES(?, ?, ?, ?)
                             """
-                cursor.execute(new_user, (email.lower().encode(self.FORMAT), password.encode(self.FORMAT), ip_dict, ''.encode(self.FORMAT)))
+                cursor.execute(new_user, (
+                email.lower().encode(self.FORMAT), password.encode(self.FORMAT), ip_dict, ''.encode(self.FORMAT)))
                 answer = True
 
                 sender_email = 'rfe.noreply@gmail.com'  # sending email
@@ -147,7 +147,7 @@ class server(object):
             answer = cursor.fetchall()
             if answer:
                 ip_dict = json.loads(answer[0][0])
-                if not pc_ip in ip_dict.keys():
+                if pc_ip not in ip_dict.keys():
                     ip_dict[pc_ip] = pc_name
                     update_ip_dict = "UPDATE users SET ip_dict = ? WHERE email = ?"
                     cursor.execute(update_ip_dict, [(ip_dict), (email.lower().encode(self.FORMAT))])
@@ -171,7 +171,8 @@ class server(object):
             password = msg["password"]
             new_password = msg["new_password"]
             update_password = "UPDATE users SET password = ? WHERE email = ? AND password = ?"
-            cursor.execute(update_password, [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)), (password.encode(self.FORMAT))])
+            cursor.execute(update_password, [(new_password.encode(self.FORMAT)), (email.lower().encode(self.FORMAT)),
+                                             (password.encode(self.FORMAT))])
             find_user = "SELECT password FROM users WHERE email = ?"
             cursor.execute(find_user, [(email.lower().encode(self.FORMAT))])
             answer = cursor.fetchall()[0][0].decode(self.FORMAT)
