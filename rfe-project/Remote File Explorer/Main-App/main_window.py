@@ -32,12 +32,12 @@ screen_width, screen_height = wx.GetDisplaySize()
 if screen_width / screen_height != (1920 / 1080):
     screen_height = screen_width / (1920 / 1080)
 
-if screen_width >= 1070 and screen_height >= 700:
-    screen_width = 1920
-    screen_height = 1080
-
 app_width = int(screen_width / 1.794)
 app_height = int(screen_height / 1.542)
+
+if screen_width >= 1070 and screen_height >= 700:
+    app_width = 1070
+    app_height = 700
 
 bttns_dict = dict()
 icons_dict = dict()
