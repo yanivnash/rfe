@@ -18,6 +18,7 @@ import requests
 __author__ = 'Yaniv Nash'
 
 OTHER_OS_PLATFORM = None
+is_download = None
 
 frame_bg_color = '#e9eed6'
 buttons_bg_color = '#d9dcc7'
@@ -141,8 +142,11 @@ def create_bttn(frame):
                     item_name = item[:item.rfind('.')]
                     file_type = f'.lnk.{item_name}'
                     if file_type + '.png' not in downloaded_icons_list:
-                        download_icon(item_name)
-                update_icons_dict(f'{ROOT_PROJ_DIR}/downloaded_icons')
+                        if is_download:
+                            download_icon(item_name)
+                        else:
+                            file_type = '.lnknodownload'
+                    update_icons_dict(f'{ROOT_PROJ_DIR}/downloaded_icons')
 
                 if len(item) > 30:
                     btn_text = item[0:30] + '...' + file_type
@@ -606,7 +610,8 @@ def create_search_bttn(frame, items_list):
                 item_name = item_name[:item_name.rfind('.')]
                 file_type = f'.lnk.{item_name}'
                 if file_type + '.png' not in downloaded_icons_list:
-                    download_icon(item_name)
+                    file_type = '.lnknodownload'
+                    # download_icon(item_name)
             update_icons_dict(f'{ROOT_PROJ_DIR}/downloaded_icons')
 
             if len(item_name) > 30:
@@ -903,7 +908,7 @@ def main():
     :return: None
     """
     global cur_path, root, frame, ssh, new_dir_pic, ref_pic, up_pic, search_pic
-    global x, y, username, host, account, menubar, email
+    global x, y, username, host, account, menubar, email, is_download
 
     SELF_NAME = os.getlogin()
     SELF_IP = socket.gethostbyname(socket.gethostname())
@@ -946,8 +951,9 @@ def main():
     root.config(menu=menubar)
     root.resizable(False, False)
 
-    email, mode, ssh, sftp, username, host = LoginRegister.main(root, app_width, app_height, account, ssh_service_menu,
-                                                                None)
+    email, mode, ssh, sftp, username, host, is_download = LoginRegister.main(root, app_width, app_height, account,
+                                                                             ssh_service_menu,
+                                                                             None)
     if email is not None and ssh is not None and sftp is not None:
         global cur_path, OTHER_OS_PLATFORM
         root.protocol("WM_DELETE_WINDOW", close_window)

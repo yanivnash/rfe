@@ -43,6 +43,8 @@ start_video_name = f'{ROOT_PROJ_DIR}/assets/start-animation.mp4'
 mid_video_name = f'{ROOT_PROJ_DIR}/assets/mid-animation.mp4'
 end_video_name = f'{ROOT_PROJ_DIR}/assets/end-animation.mp4'
 
+is_download = None
+
 
 def no_action(event):
     pass
@@ -167,7 +169,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
             username - the username of the computer that the user connected to
     """
     global mode, root, count, ssh, sftp, ip_butns_dict, scrollable_frame, email, username, canvas, scrollbar
-    global app_width, app_height
+    global app_width, app_height, is_download
 
     def close_window():
         """
@@ -232,7 +234,7 @@ def login_to_ssh_client(ip_frame, ip_dict):
         :param username: The client's username
         :return: None
         """
-        global ssh, sftp
+        global ssh, sftp, is_download
         ssh = None
         sftp = None
         password = simpledialog.askstring('Enter password', f'Enter the password to {host}:', show='•', parent=root)
@@ -251,8 +253,18 @@ def login_to_ssh_client(ip_frame, ip_dict):
                 sftp = ssh.open_sftp()
                 if check_var.get() == 1:
                     manageSERVER.update_pc_in_account(email, (host, username))
-                load_label = Label(ip_frame, text='Downloading Icons...', bg='white', font=('Eras Bold ITC',
-                                                                                            main_window.calc_size(30)))
+                ask_download = messagebox.askquestion(title='Download Icons?',
+                                                      message='Would you like to download icons to the programs you have on the remote computer?\n(If you choose yes it might take some time to download)')
+                if ask_download == 'yes':
+                    is_download = True
+                    load_label = Label(ip_frame, text='Downloading Icons...', bg='white', font=('Eras Bold ITC',
+                                                                                                main_window.calc_size(
+                                                                                                    30)))
+                else:
+                    is_download = False
+                    load_label = Label(ip_frame, text='Loading...', bg='white', font=('Eras Bold ITC',
+                                                                                      main_window.calc_size(
+                                                                                          30)))
                 load_label.place(x=main_window.calc_size(231), y=main_window.calc_size(133),
                                  width=main_window.calc_size(
                                      610), height=main_window.calc_size(392))
@@ -1842,4 +1854,4 @@ def main(root1, app_width1, app_height1, account1, ssh_service_menu1, email1):
         back_frame = Frame(root, bg=label_bg_color)
         back_frame.place(x=0, y=0, width=app_width, height=app_height)
 
-    return email, mode, ssh, sftp, username, host
+    return email, mode, ssh, sftp, username, host, is_download
